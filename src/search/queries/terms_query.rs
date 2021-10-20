@@ -196,11 +196,7 @@ impl ShouldSkip for TermsQuery<BTreeSet<Scalar>> {
     }
 }
 
-impl ShouldSkip for TermsQuery<TermsLookup> {
-    fn should_skip(&self) -> bool {
-        false
-    }
-}
+impl ShouldSkip for TermsQuery<TermsLookup> {}
 
 #[cfg(test)]
 mod tests {
