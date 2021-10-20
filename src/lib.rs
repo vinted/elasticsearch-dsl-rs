@@ -39,35 +39,16 @@ extern crate pretty_assertions;
 #[macro_use]
 extern crate serde;
 
-// Private modules
+// Macro modules
 #[macro_use]
 mod macros;
-mod response;
-mod ser;
-mod util;
+
+// Crate modules
+pub(crate) mod util;
 
 // Public modules
-pub mod aggregations;
 pub mod analyze;
-pub mod highlight;
-pub mod params;
-pub mod queries;
-pub mod rescoring;
 pub mod search;
-pub mod sort;
-
-// Crate re-exports
-pub(crate) use self::ser::*;
-pub(crate) use self::util::*;
 
 // Public re-exports
-pub use self::aggregations::*;
-pub use self::analyze::*;
-pub use self::highlight::*;
-pub use self::params::*;
-pub use self::queries::params::*;
-pub use self::queries::*;
-pub use self::rescoring::*;
-pub use self::response::*;
 pub use self::search::*;
-pub use self::sort::*;
