@@ -50,7 +50,7 @@ struct Inner {
     format: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    relation: Option<Relation>,
+    relation: Option<RangeRelation>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     time_zone: Option<String>,
@@ -134,7 +134,7 @@ impl RangeQuery {
     }
 
     /// Indicates how the range query matches values for range fields.
-    pub fn relation(mut self, relation: Relation) -> Self {
+    pub fn relation(mut self, relation: RangeRelation) -> Self {
         self.inner.relation = Some(relation);
         self
     }
@@ -200,7 +200,7 @@ mod tests {
                 .gte(2)
                 .lt(3)
                 .lte(4)
-                .relation(Relation::Within)
+                .relation(RangeRelation::Within)
                 .boost(2)
                 .name("range_query_test"),
             json!({
@@ -224,7 +224,7 @@ mod tests {
                 .gte(Utc.ymd(2014, 11, 28).and_hms(12, 0, 2))
                 .lt(Utc.ymd(2014, 11, 28).and_hms(12, 0, 3))
                 .lte(Utc.ymd(2014, 11, 28).and_hms(12, 0, 4))
-                .relation(Relation::Contains)
+                .relation(RangeRelation::Contains)
                 .format("yyyy-MM-dd")
                 .time_zone("UTC")
                 .boost(2)

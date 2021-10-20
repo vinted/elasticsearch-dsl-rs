@@ -1,7 +1,7 @@
 /// Indicates how the range query matches values for range fields.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(rename_all = "UPPERCASE")]
-pub enum Relation {
+pub enum RangeRelation {
     /// Matches documents with a range field value that intersects the query’s range.
     Intersects,
 
