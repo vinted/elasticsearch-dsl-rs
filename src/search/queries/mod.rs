@@ -15,63 +15,30 @@
 // Public modules
 pub mod params;
 
-// Private modules
-mod bool_query;
-mod boosting_query;
-mod constant_score_query;
-mod dis_max_query;
-mod distance_feature_query;
-mod exists_query;
-mod function_score_query;
-mod fuzzy_query;
-mod ids_query;
-mod match_all_query;
-mod match_bool_prefix_query;
-mod match_none_query;
-mod match_phrase_prefix_query;
-mod match_phrase_query;
-mod match_query;
-mod more_like_this_query;
-mod multi_match_query;
-mod nested_query;
-mod percolate_query;
-mod prefix_query;
-mod range_query;
-mod rank_feature_query;
-mod regexp_query;
-mod term_query;
-mod terms_query;
-mod terms_set_query;
-mod wildcard_query;
+pub mod compound;
+pub mod full_text;
+pub mod geo;
+pub mod joining;
+pub mod shape;
+pub mod span;
+pub mod specialized;
+pub mod term_level;
 
-// Public re-exports
-pub use self::bool_query::*;
-pub use self::boosting_query::*;
-pub use self::constant_score_query::*;
-pub use self::dis_max_query::*;
-pub use self::distance_feature_query::*;
-pub use self::exists_query::*;
-pub use self::function_score_query::*;
-pub use self::fuzzy_query::*;
-pub use self::ids_query::*;
+pub use self::compound::*;
+pub use self::full_text::*;
+pub use self::geo::*;
+pub use self::joining::*;
+pub use self::shape::*;
+pub use self::span::*;
+pub use self::specialized::*;
+pub use self::term_level::*;
+
+// Very special queries
+mod match_all_query;
+mod match_none_query;
+
 pub use self::match_all_query::*;
-pub use self::match_bool_prefix_query::*;
 pub use self::match_none_query::*;
-pub use self::match_phrase_prefix_query::*;
-pub use self::match_phrase_query::*;
-pub use self::match_query::*;
-pub use self::more_like_this_query::*;
-pub use self::multi_match_query::*;
-pub use self::nested_query::*;
-pub use self::percolate_query::*;
-pub use self::prefix_query::*;
-pub use self::range_query::*;
-pub use self::rank_feature_query::*;
-pub use self::regexp_query::*;
-pub use self::term_query::*;
-pub use self::terms_query::*;
-pub use self::terms_set_query::*;
-pub use self::wildcard_query::*;
 
 crate::query!(Query {
     Bool(BoolQuery),
