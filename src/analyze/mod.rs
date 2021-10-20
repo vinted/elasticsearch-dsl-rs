@@ -2,10 +2,9 @@
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-analyze.html#analyze-api-query-params>
 mod response;
 
-use serde::ser::{Serialize, SerializeStruct, Serializer};
-
 pub use self::response::*;
-use crate::util::ShouldSkip;
+use crate::util::*;
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// Performs analysis on a text string and returns the resulting tokens.
 /// The basic `analyze`:
@@ -142,7 +141,7 @@ impl Analyze {
         }
     }
 
-    /// Specify an analyzer, either it's buil-in analyzer, custom analyzer, built-in normalizer,
+    /// Specify an analyzer, either it's built-in analyzer, custom analyzer, built-in normalizer,
     /// custom normalizer or field
     pub fn analyzer(mut self, analyzer: impl Into<Analysis>) -> Self {
         self.analyzer = Some(analyzer.into());

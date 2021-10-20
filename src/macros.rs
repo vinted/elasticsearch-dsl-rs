@@ -29,7 +29,7 @@ macro_rules! test_serialization {
 #[cfg(not(debug_assertions))]
 macro_rules! query {
     ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
-        use crate::ShouldSkip;
+        use crate::util::*;
 
         /// A container enum for supported Elasticsearch query types
         #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -79,7 +79,7 @@ macro_rules! query {
 #[cfg(debug_assertions)]
 macro_rules! query {
     ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
-        use crate::ShouldSkip;
+        use crate::util::*;
 
         /// A container enum for supported Elasticsearch query types
         #[derive(Debug, Clone, PartialEq, Serialize)]
