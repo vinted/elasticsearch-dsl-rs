@@ -146,7 +146,6 @@ impl ShouldSkip for FunctionScoreQuery {
 
 #[cfg(test)]
 mod tests {
-    use super::super::*;
     use super::*;
 
     test_serialization! {
