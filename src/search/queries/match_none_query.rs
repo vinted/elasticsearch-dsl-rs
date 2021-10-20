@@ -55,11 +55,7 @@ impl MatchNoneQuery {
     add_boost_and_name!();
 }
 
-impl ShouldSkip for MatchNoneQuery {
-    fn should_skip(&self) -> bool {
-        false
-    }
-}
+impl ShouldSkip for MatchNoneQuery {}
 
 #[cfg(test)]
 mod tests {

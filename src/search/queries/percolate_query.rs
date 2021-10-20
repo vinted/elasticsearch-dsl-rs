@@ -124,11 +124,7 @@ impl<T: PercolateMarker> PercolateQuery<T> {
     }
 }
 
-impl<T: PercolateMarker> ShouldSkip for PercolateQuery<T> {
-    fn should_skip(&self) -> bool {
-        false
-    }
-}
+impl<T: PercolateMarker> ShouldSkip for PercolateQuery<T> {}
 
 impl PercolateQuery<PercolateLookup> {
     /// Creates an instance of [PercolateQuery](PercolateQuery)

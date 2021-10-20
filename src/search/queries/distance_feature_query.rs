@@ -226,11 +226,7 @@ impl<O: Origin> DistanceFeatureQuery<O> {
     add_boost_and_name!();
 }
 
-impl<O: Origin> ShouldSkip for DistanceFeatureQuery<O> {
-    fn should_skip(&self) -> bool {
-        false
-    }
-}
+impl<O: Origin> ShouldSkip for DistanceFeatureQuery<O> {}
 
 #[cfg(test)]
 mod tests {
