@@ -22,10 +22,3 @@
 mod terms_aggregation;
 
 pub use self::terms_aggregation::*;
-
-#[derive(Debug, Clone, Serialize, PartialEq)]
-#[serde(untagged)]
-#[allow(missing_docs)]
-pub enum BucketAggregation {
-    Terms(TermsAggregation),
-}
