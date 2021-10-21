@@ -1,7 +1,7 @@
 [package]
 name = "elasticsearch-dsl"
 version = "0.1.1"
-authors = ["Boost <boost@gmail.com>"]
+authors = ["Boost <boost@vinted.com>"]
 edition = "2018"
 description = "Strongly typed Elasticsearch DSL"
 repository = "https://github.com/vinted/elasticsearch-dsl-rs"
