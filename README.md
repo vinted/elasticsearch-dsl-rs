@@ -15,12 +15,12 @@ Add `elasticsearch-dsl` crate and version to Cargo.toml
 
 ```toml
 [dependencies]
-elasticsearch = "0.1"
+elasticsearch-dsl = "0.1"
 ```
 
 ## Documentation
 
-Documentation for the library is available on [docs.rs](https://docs.rs/)
+Documentation for the library is available on [docs.rs](https://docs.rs/elasticsearch-dsl)
 
 ## Quick start
 
