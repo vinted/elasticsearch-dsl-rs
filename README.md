@@ -42,7 +42,7 @@ let query = Search::new()
     );
 ```
 
-See [examples](examples) for more.
+See examples for more.
 
 #### License
 

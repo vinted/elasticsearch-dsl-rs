@@ -1,4 +1,7 @@
-//! A strongly typed query DSL that maps 1 to 1 with the Elasticsearch query DSL.
+#![doc = include_str!("../README.md")]
+#![doc(
+    html_logo_url = "https://play-lh.googleusercontent.com/VvtT2Dvf_oOC3DL4c2i5hfNvwIqzdU2apScRMlmeRW10Yf-vJXnXqAjdNWE9KW5YvK0"
+)]
 #![deny(
     bad_style,
     const_err,
