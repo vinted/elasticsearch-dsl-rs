@@ -21,10 +21,78 @@ pub use self::bucket::*;
 pub use self::metrics::*;
 pub use self::pipeline::*;
 
-/// Type alias for a collection of aggregations
-pub type Aggregations = std::collections::BTreeMap<String, Aggregation>;
+#[cfg(not(debug_assertions))]
+macro_rules! aggregation {
+    ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
+        /// A container enum for supported Elasticsearch query types
+        #[derive(Debug, Clone, PartialEq, Serialize)]
+        #[serde(untagged)]
+        #[allow(missing_docs)]
+        pub enum $name {
+            $(
+                $variant($query),
+            )*
+        }
 
-crate::aggregation!(Aggregation {
+        $(
+            impl From<$query> for $name {
+                fn from(q: $query) -> Self {
+                    $name::$variant(q)
+                }
+            }
+        )+
+
+        impl $name {
+            /// Gets aggregation name
+            pub fn name(&self) -> String {
+                match self {
+                    $(
+                        Self::$variant(a) => a.name.clone(),
+                    )+
+                }
+            }
+        }
+    };
+}
+
+#[cfg(debug_assertions)]
+macro_rules! aggregation {
+    ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
+        /// A container enum for supported Elasticsearch query types
+        #[derive(Debug, Clone, PartialEq, Serialize)]
+        #[serde(untagged)]
+        #[allow(missing_docs)]
+        pub enum $name {
+            $(
+                $variant(Box<$query>),
+            )*
+        }
+
+        $(
+            impl From<$query> for $name {
+                fn from(q: $query) -> Self {
+                    $name::$variant(Box::new(q))
+                }
+            }
+        )+
+
+        impl $name {
+            /// Gets aggregation name
+            pub fn name(&self) -> String {
+                match self {
+                    $(
+                        Self::$variant(a) => a.name.clone(),
+                    )+
+                }
+            }
+        }
+    };
+}
+
+aggregation!(Aggregation {
     Terms(TermsAggregation),
     TopHits(TopHitsAggregation),
 });
+
+/// Type alias for a collection of aggregations
+pub type Aggregations = std::collections::BTreeMap<String, Aggregation>;
