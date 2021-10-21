@@ -14,13 +14,6 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// ExistsQuery::new("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::exists("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html>
@@ -42,7 +35,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [ExistsQuery](ExistsQuery)
+    /// Creates an instance of [`ExistsQuery`]
     ///
     /// - `field` - Name of the field you wish to search.
     /// While a field is deemed non-existent if the JSON value is `null` or `[]`,
@@ -51,21 +44,7 @@ impl Query {
     ///   - Arrays containing `null` and another value, such as `[null, "foo"]`
     ///   - A custom [`null-value`](https://www.elastic.co/guide/en/elasticsearch/reference/current/null-value.html), defined in field mapping
     pub fn exists(field: impl Into<String>) -> ExistsQuery {
-        ExistsQuery::new(field)
-    }
-}
-
-impl ExistsQuery {
-    /// Creates an instance of [ExistsQuery](ExistsQuery)
-    ///
-    /// - `field` - Name of the field you wish to search.
-    /// While a field is deemed non-existent if the JSON value is `null` or `[]`,
-    /// these values will indicate the field does exist:
-    ///   - Empty strings, such as `""` or `"-"`
-    ///   - Arrays containing `null` and another value, such as `[null, "foo"]`
-    ///   - A custom [`null-value`](https://www.elastic.co/guide/en/elasticsearch/reference/current/null-value.html), defined in field mapping
-    pub fn new(field: impl Into<String>) -> Self {
-        Self {
+        ExistsQuery {
             inner: Inner {
                 field: field.into(),
                 boost: None,
@@ -73,7 +52,9 @@ impl ExistsQuery {
             },
         }
     }
+}
 
+impl ExistsQuery {
     add_boost_and_name!();
 }
 
@@ -85,7 +66,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            ExistsQuery::new("test"),
+            Query::exists("test"),
             json!({
                 "exists": {
                     "field": "test"
@@ -94,7 +75,7 @@ mod tests {
         );
 
         with_all_fields(
-            ExistsQuery::new("test").boost(2).name("test"),
+            Query::exists("test").boost(2).name("test"),
             json!({
                 "exists": {
                     "field": "test",

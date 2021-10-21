@@ -14,18 +14,6 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// DisMaxQuery::new()
-///     .query(MatchQuery::new("t1", "text"))
-///     .query(MatchQuery::new("t2", "text"))
-///     .tie_breaker(0.5)
-///     .boost(3)
-///     .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::dis_max()
 ///     .query(Query::r#match("t1", "text"))
 ///     .query(Query::r#match("t2", "text"))
@@ -55,18 +43,13 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [DisMaxQuery](DisMaxQuery)
+    /// Creates an instance of [`DisMaxQuery`]
     pub fn dis_max() -> DisMaxQuery {
-        DisMaxQuery::new()
+        DisMaxQuery::default()
     }
 }
 
 impl DisMaxQuery {
-    /// Creates an instance of [DisMaxQuery](DisMaxQuery)
-    pub fn new() -> Self {
-        Default::default()
-    }
-
     /// Contains one or more query clauses. Returned documents
     /// **must match one or more** of these queries. If a document matches multiple queries,
     /// Elasticsearch uses the highest
@@ -136,13 +119,12 @@ impl ShouldSkip for DisMaxQuery {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::queries::MatchQuery;
 
     test_serialization! {
         with_required_fields(
-            DisMaxQuery::new()
-                .query(MatchQuery::new("t1", "text"))
-                .query(MatchQuery::new("t2", "text")),
+            Query::dis_max()
+                .query(Query::r#match("t1", "text"))
+                .query(Query::r#match("t2", "text")),
             json!({
                 "dis_max": {
                     "queries": [
@@ -166,8 +148,8 @@ mod tests {
         );
 
         with_multiple_queries(
-            DisMaxQuery::new()
-                .queries([MatchQuery::new("t1", "text"), MatchQuery::new("t2", "text")]),
+            Query::dis_max()
+                .queries([Query::r#match("t1", "text"), Query::r#match("t2", "text")]),
             json!({
                 "dis_max": {
                     "queries": [
@@ -191,9 +173,9 @@ mod tests {
         );
 
         with_all_fields(
-            DisMaxQuery::new()
-                .query(MatchQuery::new("t1", "text"))
-                .query(MatchQuery::new("t2", "text"))
+            Query::dis_max()
+                .query(Query::r#match("t1", "text"))
+                .query(Query::r#match("t2", "text"))
                 .tie_breaker(0.5)
                 .boost(3)
                 .name("test"),

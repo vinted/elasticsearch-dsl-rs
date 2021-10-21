@@ -65,22 +65,12 @@ impl Serialize for TermsAggregationOrder {
 }
 
 impl Aggregation {
-    /// Creates an instance of [TermsAggregation](TermsAggregation)
+    /// Creates an instance of [`TermsAggregation`]
     ///
     /// - `name` - name of the aggregation
     /// - `field` - field to group by
     pub fn terms(name: impl Into<String>, field: impl Into<String>) -> TermsAggregation {
-        TermsAggregation::new(name, field)
-    }
-}
-
-impl TermsAggregation {
-    /// Creates an instance of [TermsAggregation](TermsAggregation)
-    ///
-    /// - `name` - name of the aggregation
-    /// - `field` - field to group by
-    pub fn new(name: impl Into<String>, field: impl Into<String>) -> Self {
-        Self {
+        TermsAggregation {
             name: name.into(),
             terms: TermsAggregationInner {
                 field: field.into(),
@@ -92,7 +82,9 @@ impl TermsAggregation {
             aggs: Aggregations::new(),
         }
     }
+}
 
+impl TermsAggregation {
     /// The `size` parameter can be set to define how many term buckets should be returned out of the overall terms list.
     ///
     /// By default, the node coordinating the search process will request each shard to provide its own top `size` term buckets
@@ -148,12 +140,12 @@ mod tests {
 
     test_serialization! {
         with_field_only(
-            TermsAggregation::new("test_agg", "test_field"),
+            Aggregation::terms("test_agg", "test_field"),
             json!({ "terms": { "field": "test_field" } })
         );
 
         with_all_fields(
-            TermsAggregation::new("test_agg", "test_field")
+            Aggregation::terms("test_agg", "test_field")
                 .size(5u16)
                 .min_doc_count(2u16)
                 .show_term_doc_count_error(false)
@@ -172,10 +164,10 @@ mod tests {
         );
 
         with_sub_aggregations(
-            TermsAggregation::new("test_agg", "test_field")
+            Aggregation::terms("test_agg", "test_field")
                 .size(0u16)
                 .aggregate(
-                    TermsAggregation::new("test_sub_agg", "test_field2").size(3u16)
+                    Aggregation::terms("test_sub_agg", "test_field2").size(3u16)
                 ),
             json!({
                 "terms": {

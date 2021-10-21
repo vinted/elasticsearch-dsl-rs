@@ -38,20 +38,11 @@ struct TopHitsAggregationInner {
 }
 
 impl Aggregation {
-    /// Creates an instance of [TopHitsAggregation](TopHitsAggregation)
+    /// Creates an instance of [`TopHitsAggregation`]
     ///
     /// - `name` - name of the aggregation
     pub fn top_hits(name: impl Into<String>) -> TopHitsAggregation {
-        TopHitsAggregation::new(name)
-    }
-}
-
-impl TopHitsAggregation {
-    /// Creates an instance of [TopHitsAggregation](TopHitsAggregation)
-    ///
-    /// - `name` - name of the aggregation
-    pub fn new(name: impl Into<String>) -> Self {
-        Self {
+        TopHitsAggregation {
             name: name.into(),
             top_hits: TopHitsAggregationInner {
                 _source: None,
@@ -61,7 +52,9 @@ impl TopHitsAggregation {
             },
         }
     }
+}
 
+impl TopHitsAggregation {
     /// Indicates which source fields are returned for matching documents
     pub fn source(mut self, source: impl Into<SourceFilter>) -> Self {
         self.top_hits._source = Some(source.into());
@@ -96,12 +89,12 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            TopHitsAggregation::new("test_agg"),
+            Aggregation::top_hits("test_agg"),
             json!({ "top_hits": { } })
         );
 
         with_all_fields(
-            TopHitsAggregation::new("test_agg")
+            Aggregation::top_hits("test_agg")
                 .source(false)
                 .from(2u8)
                 .size(10u8)

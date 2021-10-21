@@ -11,24 +11,6 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// BoolQuery::new()
-///    .must(TermQuery::new("test1", 1))
-///    .must(TermQuery::new("test2", 2))
-///    .should(TermQuery::new("test1", 3))
-///    .should(TermQuery::new("test2", 4))
-///    .filter(TermQuery::new("test1", 5))
-///    .filter(TermQuery::new("test2", 6))
-///    .must_not(TermQuery::new("test1", 7))
-///    .must_not(TermQuery::new("test2", 8))
-///    .minimum_should_match("2")
-///    .boost(1.3)
-///    .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::bool()
 ///    .must(Query::term("test1", 1))
 ///    .must(Query::term("test2", 2))
@@ -68,18 +50,13 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [BoolQuery](BoolQuery)
+    /// Creates an instance of [`BoolQuery`]
     pub fn bool() -> BoolQuery {
-        BoolQuery::new()
+        BoolQuery::default()
     }
 }
 
 impl BoolQuery {
-    /// Creates an instance of [BoolQuery](BoolQuery)
-    pub fn new() -> Self {
-        Default::default()
-    }
-
     /// The clause (query) must appear in matching documents and will contribute to the score.
     pub fn must(mut self, query: impl Into<Option<Query>>) -> Self {
         let query = query.into();
@@ -233,17 +210,16 @@ impl ShouldSkip for BoolQuery {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::queries::TermQuery;
 
     test_serialization! {
-        with_required_fields(BoolQuery::new(), json!({ "bool": {} }));
+        with_required_fields(Query::bool(), json!({ "bool": {} }));
 
         with_multiple_queries(
-            BoolQuery::new()
-                .musts([TermQuery::new("test1", 1), TermQuery::new("test2", 2)])
-                .shoulds([TermQuery::new("test1", 3), TermQuery::new("test2", 4)])
-                .filters([TermQuery::new("test1", 5), TermQuery::new("test2", 6)])
-                .must_nots([TermQuery::new("test1", 7), TermQuery::new("test2", 8)])
+            Query::bool()
+                .musts([Query::term("test1", 1), Query::term("test2", 2)])
+                .shoulds([Query::term("test1", 3), Query::term("test2", 4)])
+                .filters([Query::term("test1", 5), Query::term("test2", 6)])
+                .must_nots([Query::term("test1", 7), Query::term("test2", 8)])
                 .minimum_should_match("2")
                 .boost(1.3)
                 .name("test"),
@@ -273,15 +249,15 @@ mod tests {
         );
 
         with_all_fields(
-            BoolQuery::new()
-                .must(TermQuery::new("test1", 1))
-                .must(TermQuery::new("test2", 2))
-                .should(TermQuery::new("test1", 3))
-                .should(TermQuery::new("test2", 4))
-                .filter(TermQuery::new("test1", 5))
-                .filter(TermQuery::new("test2", 6))
-                .must_not(TermQuery::new("test1", 7))
-                .must_not(TermQuery::new("test2", 8))
+            Query::bool()
+                .must(Query::term("test1", 1))
+                .must(Query::term("test2", 2))
+                .should(Query::term("test1", 3))
+                .should(Query::term("test2", 4))
+                .filter(Query::term("test1", 5))
+                .filter(Query::term("test2", 6))
+                .must_not(Query::term("test1", 7))
+                .must_not(Query::term("test2", 8))
                 .minimum_should_match("2")
                 .boost(1.3)
                 .name("test"),

@@ -10,15 +10,6 @@ use crate::util::*;
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// MatchAllQuery::new()
-///     .boost(2)
-///     .name("matches_everything");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::match_all()
 ///     .boost(2)
 ///     .name("matches_everything");
@@ -40,18 +31,13 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [MatchAllQuery](MatchAllQuery)
+    /// Creates an instance of [`MatchAllQuery`]
     pub fn match_all() -> MatchAllQuery {
-        MatchAllQuery::new()
+        MatchAllQuery::default()
     }
 }
 
 impl MatchAllQuery {
-    /// Creates an instance of [MatchAllQuery](MatchAllQuery)
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     add_boost_and_name!();
 }
 
@@ -62,10 +48,10 @@ mod tests {
     use super::*;
 
     test_serialization! {
-        with_required_fields(MatchAllQuery::new(), json!({ "match_all": {} }));
+        with_required_fields(Query::match_all(), json!({ "match_all": {} }));
 
         with_all_fields(
-            MatchAllQuery::new().boost(2).name("test"),
+            Query::match_all().boost(2).name("test"),
             json!({ "match_all": { "boost": 2.0, "_name": "test" } })
         );
     }

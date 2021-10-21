@@ -10,13 +10,6 @@ use std::collections::BTreeSet;
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// IdsQuery::new(vec!["2"]);
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::ids(vec!["2"]);
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html>
@@ -39,7 +32,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [IdsQuery](IdsQuery)
+    /// Creates an instance of [`IdsQuery`]
     ///
     /// - `values` - An array of
     /// [document IDs](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-id-field.html).
@@ -48,21 +41,7 @@ impl Query {
         I: IntoIterator,
         I::Item: ToString,
     {
-        IdsQuery::new(values)
-    }
-}
-
-impl IdsQuery {
-    /// Creates an instance of [IdsQuery](IdsQuery)
-    ///
-    /// - `values` - An array of
-    /// [document IDs](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-id-field.html).
-    pub fn new<I>(values: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: ToString,
-    {
-        Self {
+        IdsQuery {
             inner: Inner {
                 values: values.into_iter().map(|value| value.to_string()).collect(),
                 boost: None,
@@ -70,7 +49,9 @@ impl IdsQuery {
             },
         }
     }
+}
 
+impl IdsQuery {
     add_boost_and_name!();
 }
 
@@ -86,7 +67,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            IdsQuery::new(vec![1, 3, 2, 5, 4, 6]),
+            Query::ids(vec![1, 3, 2, 5, 4, 6]),
             json!({
                 "ids": {
                     "values": ["1", "2", "3", "4", "5", "6"],
@@ -95,7 +76,7 @@ mod tests {
         );
 
         with_all_fields(
-            IdsQuery::new(vec![1, 3, 2, 5, 4, 6]).boost(1.3).name("test"),
+            Query::ids(vec![1, 3, 2, 5, 4, 6]).boost(1.3).name("test"),
             json!({
                 "ids": {
                     "values": ["1", "2", "3", "4", "5", "6"],

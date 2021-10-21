@@ -11,15 +11,6 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// MultiMatchQuery::new(vec!["test"], "search text")
-///     .boost(2)
-///     .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::multi_match(vec!["test"], "search text")
 ///     .boost(2)
 ///     .name("test");
@@ -85,7 +76,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [MultiMatchQuery](MultiMatchQuery)
+    /// Creates an instance of [`MultiMatchQuery`]
     ///
     /// - `fields` - Fields you wish to search.
     /// - `query` - Text, number, boolean value or date you wish to find in the provided
@@ -101,28 +92,7 @@ impl Query {
         F::Item: ToString,
         S: Into<String>,
     {
-        MultiMatchQuery::new(fields, query)
-    }
-}
-
-impl MultiMatchQuery {
-    /// Creates an instance of [MultiMatchQuery](MultiMatchQuery)
-    ///
-    /// - `fields` - Fields you wish to search.
-    /// - `query` - Text, number, boolean value or date you wish to find in the provided
-    /// `<field>`. The `match` query
-    /// [analyzes](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
-    /// any provided text before performing a search. This means the `match`
-    /// query can search
-    /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
-    /// fields for analyzed tokens rather than an exact term.
-    pub fn new<F, S>(fields: F, query: S) -> Self
-    where
-        F: IntoIterator,
-        F::Item: ToString,
-        S: Into<String>,
-    {
-        Self {
+        MultiMatchQuery {
             inner: Inner {
                 fields: fields.into_iter().map(|s| s.to_string()).collect(),
                 r#type: None,
@@ -144,7 +114,9 @@ impl MultiMatchQuery {
             },
         }
     }
+}
 
+impl MultiMatchQuery {
     /// The way the multi_match query is executed internally depends on the
     /// type parameter
     pub fn r#type(mut self, r#type: MultiMatchQueryType) -> Self {
@@ -272,7 +244,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            MultiMatchQuery::new(["test"], "search text"),
+            Query::multi_match(["test"], "search text"),
             json!({
                 "multi_match": {
                     "query": "search text",
@@ -282,7 +254,7 @@ mod tests {
         );
 
         with_all_fields(
-            MultiMatchQuery::new(["test"], "search text")
+            Query::multi_match(["test"], "search text")
                 .r#type(MultiMatchQueryType::BestFields(Some(TieBreaker::from(0.2))))
                 .analyzer("search_time_analyzer")
                 .auto_generate_synonyms_phrase_query(true)

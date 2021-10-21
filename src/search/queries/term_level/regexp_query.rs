@@ -13,13 +13,6 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// RegexpQuery::new("test", "username");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::regexp("test", "username");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html>
@@ -56,7 +49,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [RegexpQuery](RegexpQuery)
+    /// Creates an instance of [`RegexpQuery`]
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - Regular expression for terms you wish to find in the provided field. For a list
@@ -70,26 +63,7 @@ impl Query {
     where
         S: Into<String>,
     {
-        RegexpQuery::new(field, value)
-    }
-}
-
-impl RegexpQuery {
-    /// Creates an instance of [RegexpQuery](RegexpQuery)
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `value` - Regular expression for terms you wish to find in the provided field. For a list
-    /// of supported operators, see
-    /// [Regular expression syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/regexp-syntax.html). <br>
-    ///
-    /// By default, regular expressions are limited to 1,000 characters. You can change this limit
-    /// using the
-    /// [`index.max_regex_length`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-regex-length) setting.
-    pub fn new<S>(field: S, value: S) -> RegexpQuery
-    where
-        S: Into<String>,
-    {
-        Self {
+        RegexpQuery {
             field: field.into(),
             inner: Inner {
                 value: value.into(),
@@ -102,7 +76,9 @@ impl RegexpQuery {
             },
         }
     }
+}
 
+impl RegexpQuery {
     /// Enables optional operators for the regular expression. For valid values and more
     /// information, see
     /// [Regular expression syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/regexp-syntax.html#regexp-optional-operators).
@@ -186,7 +162,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            RegexpQuery::new("test", "regexp"),
+            Query::regexp("test", "regexp"),
             json!({
                 "regexp": {
                     "test": {
@@ -197,7 +173,7 @@ mod tests {
         );
 
         with_all_fields(
-            RegexpQuery::new("test", "regexp")
+            Query::regexp("test", "regexp")
                 .flags([RegexpFlag::Complement, RegexpFlag::Interval])
                 .case_insensitive(false)
                 .max_determinized_states(2)

@@ -18,25 +18,9 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// FuzzyQuery::new("test", 123);
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::fuzzy("test", 123);
 /// ```
 /// To create a fuzzy query with string values and optional fields:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// FuzzyQuery::new("test", "username")
-///     .boost(2)
-///     .name("test");
-/// ```
-/// or
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -79,22 +63,12 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [FuzzyQuery](FuzzyQuery)
+    /// Creates an instance of [`FuzzyQuery`]
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - Fuzzy you wish to find in the provided field.
     pub fn fuzzy(field: impl Into<String>, value: impl Into<OptionalScalar>) -> FuzzyQuery {
-        FuzzyQuery::new(field, value)
-    }
-}
-
-impl FuzzyQuery {
-    /// Creates an instance of [FuzzyQuery](FuzzyQuery)
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `value` - Fuzzy you wish to find in the provided field.
-    pub fn new(field: impl Into<String>, value: impl Into<OptionalScalar>) -> Self {
-        Self {
+        FuzzyQuery {
             field: field.into(),
             inner: Inner {
                 value: value.into(),
@@ -108,7 +82,9 @@ impl FuzzyQuery {
             },
         }
     }
+}
 
+impl FuzzyQuery {
     /// Maximum edit distance allowed for matching.
     /// See [Fuzziness](Fuzziness)
     /// for valid values and more information. See
@@ -176,7 +152,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            FuzzyQuery::new("test", 123),
+            Query::fuzzy("test", 123),
             json!({
                 "fuzzy": {
                     "test": {
@@ -187,7 +163,7 @@ mod tests {
         );
 
         with_all_fields(
-            FuzzyQuery::new("test", 123)
+            Query::fuzzy("test", 123)
                 .fuzziness(Fuzziness::Auto)
                 .max_expansions(3)
                 .prefix_length(4)
@@ -212,7 +188,7 @@ mod tests {
         );
 
         with_none(
-            Query::bool().filter(FuzzyQuery::new("test", None::<String>)),
+            Query::bool().filter(Query::fuzzy("test", None::<String>)),
             json!({ "bool": {} })
         )
     }

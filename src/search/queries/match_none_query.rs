@@ -10,15 +10,6 @@ use crate::util::*;
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// MatchNoneQuery::new()
-///     .boost(2)
-///     .name("matches_nothing");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::match_none()
 ///     .boost(2)
 ///     .name("matches_nothing");
@@ -40,18 +31,13 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [MatchNoneQuery](MatchNoneQuery)
+    /// Creates an instance of [`MatchNoneQuery`]
     pub fn match_none() -> MatchNoneQuery {
-        MatchNoneQuery::new()
+        MatchNoneQuery::default()
     }
 }
 
 impl MatchNoneQuery {
-    /// Creates an instance of [MatchNoneQuery](MatchNoneQuery)
-    pub fn new() -> Self {
-        Self::default()
-    }
-
     add_boost_and_name!();
 }
 
@@ -62,10 +48,10 @@ mod tests {
     use super::*;
 
     test_serialization! {
-        with_required_fields(MatchNoneQuery::new(), json!({"match_none": {} }));
+        with_required_fields(Query::match_none(), json!({"match_none": {} }));
 
         with_all_fields(
-            MatchNoneQuery::new().boost(2).name("test"),
+            Query::match_none().boost(2).name("test"),
             json!({ "match_none": { "boost": 2.0, "_name": "test" } })
         );
     }

@@ -10,14 +10,6 @@ use std::marker::PhantomData;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # use serde_json::json;
 /// # let query =
-/// PercolateQuery::new("field", json!({ "message": "search text" }));
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # use serde_json::json;
-/// # let query =
 /// Query::percolate("field", json!({ "message": "search text" }));
 /// ```
 /// To percolate multiple documents:
@@ -26,27 +18,9 @@ use std::marker::PhantomData;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # use serde_json::json;
 /// # let query =
-/// PercolateQuery::new("field", vec![json!({ "message": "search text" }), json!({ "message": "another search text" })]);
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # use serde_json::json;
-/// # let query =
 /// Query::percolate("field", vec![json!({ "message": "search text" }), json!({ "message": "another search text" })]);
 /// ```
 /// To percolate indexed document:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # use serde_json::json;
-/// # let query1 =
-/// PercolateQuery::new("field", PercolateLookup::new("index_name", "document_id"));
-/// # let query2 =
-/// PercolateQuery::new_lookup("field", "index_name", "document_id");
-/// ```
-/// or
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -77,34 +51,12 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [PercolateQuery](PercolateQuery)
+    /// Creates an instance of [`PercolateQuery`]
     ///
     /// - `field` - The field of type `percolator` that holds the indexed queries
     /// - `source` - [Source](PercolateSource) to percolate
     pub fn percolate<T: PercolateMarker>(field: impl Into<String>, source: T) -> PercolateQuery<T> {
-        PercolateQuery::new(field, source)
-    }
-
-    /// Creates an instance of [PercolateQuery](PercolateQuery)
-    ///
-    /// - `field` - The field of type `percolator` that holds the indexed queries
-    /// - `index` - The index the document resides in
-    /// - `id` - The id of the document to fetch
-    pub fn percolate_lookup<S>(field: S, index: S, id: S) -> PercolateQuery<PercolateLookup>
-    where
-        S: Into<String>,
-    {
-        PercolateQuery::new_lookup(field, index, id)
-    }
-}
-
-impl<T: PercolateMarker> PercolateQuery<T> {
-    /// Creates an instance of [PercolateQuery](PercolateQuery)
-    ///
-    /// - `field` - The field of type `percolator` that holds the indexed queries
-    /// - `source` - [Source](PercolateSource) to percolate
-    pub fn new(field: impl Into<String>, source: T) -> Self {
-        Self {
+        PercolateQuery {
             phantom: PhantomData,
             inner: Inner {
                 field: field.into(),
@@ -114,6 +66,27 @@ impl<T: PercolateMarker> PercolateQuery<T> {
         }
     }
 
+    /// Creates an instance of [`PercolateQuery`]
+    ///
+    /// - `field` - The field of type `percolator` that holds the indexed queries
+    /// - `index` - The index the document resides in
+    /// - `id` - The id of the document to fetch
+    pub fn percolate_lookup<S>(field: S, index: S, id: S) -> PercolateQuery<PercolateLookup>
+    where
+        S: Into<String>,
+    {
+        PercolateQuery {
+            phantom: PhantomData,
+            inner: Inner {
+                field: field.into(),
+                name: None,
+                source: PercolateSource::Lookup(PercolateLookup::new(index, id)),
+            },
+        }
+    }
+}
+
+impl<T: PercolateMarker> PercolateQuery<T> {
     /// The suffix to be used for the `_percolator_document_slot` field in case multiple `percolate`
     /// queries have been specified. This is an optional parameter
     pub fn name(mut self, name: impl Into<String>) -> Self {
@@ -125,25 +98,6 @@ impl<T: PercolateMarker> PercolateQuery<T> {
 impl<T: PercolateMarker> ShouldSkip for PercolateQuery<T> {}
 
 impl PercolateQuery<PercolateLookup> {
-    /// Creates an instance of [PercolateQuery](PercolateQuery)
-    ///
-    /// - `field` - The field of type `percolator` that holds the indexed queries
-    /// - `index` - The index the document resides in
-    /// - `id` - The id of the document to fetch
-    pub fn new_lookup<S>(field: S, index: S, id: S) -> Self
-    where
-        S: Into<String>,
-    {
-        Self {
-            phantom: PhantomData,
-            inner: Inner {
-                field: field.into(),
-                name: None,
-                source: PercolateSource::Lookup(PercolateLookup::new(index, id)),
-            },
-        }
-    }
-
     /// Routing to be used to fetch document to percolate
     pub fn routing(mut self, routing: impl Into<String>) -> Self {
         if let PercolateSource::Lookup(ref mut source) = self.inner.source {
@@ -175,7 +129,7 @@ mod tests {
 
     test_serialization! {
         new_with_required_fields(
-            PercolateQuery::new("field_name", json!({"message": "lol"})),
+            Query::percolate("field_name", json!({"message": "lol"})),
             json!({
                 "percolate": {
                     "field": "field_name",
@@ -187,7 +141,7 @@ mod tests {
         );
 
         new_with_all_fields(
-            PercolateQuery::new("field_name", json!({"message": "lol"})).name("toast"),
+            Query::percolate("field_name", json!({"message": "lol"})).name("toast"),
             json!({
                 "percolate": {
                     "field": "field_name",
@@ -200,7 +154,7 @@ mod tests {
         );
 
         new_multiple_with_required_fields(
-            PercolateQuery::new("field_name", vec![json!({"message": "lol"})]),
+            Query::percolate("field_name", vec![json!({"message": "lol"})]),
             json!({
                 "percolate": {
                     "field": "field_name",
@@ -214,7 +168,7 @@ mod tests {
         );
 
         new_multiple_with_all_fields(
-            PercolateQuery::new("field_name", vec![json!({"message": "lol"})]).name("toast"),
+            Query::percolate("field_name", vec![json!({"message": "lol"})]).name("toast"),
             json!({
                 "percolate": {
                     "field": "field_name",
@@ -229,7 +183,7 @@ mod tests {
         );
 
         new_lookup_with_required_fields(
-            PercolateQuery::new_lookup("field_name", "index_name", "document_id"),
+            Query::percolate_lookup("field_name", "index_name", "document_id"),
             json!({
                 "percolate": {
                     "field": "field_name",
@@ -240,7 +194,7 @@ mod tests {
         );
 
         new_lookup_with_all_fields(
-            PercolateQuery::new_lookup("field_name", "index_name", "document_id")
+            Query::percolate_lookup("field_name", "index_name", "document_id")
                 .name("toast")
                 .routing("routing_value")
                 .preference("preference_value")

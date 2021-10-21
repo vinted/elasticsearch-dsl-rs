@@ -11,15 +11,6 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// BoostingQuery::new(TermQuery::new("test1", 123), TermQuery::new("test2", 456), 0.2)
-///    .boost(3)
-///    .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::boosting(Query::term("test1", 123), Query::term("test2", 456), 0.2)
 ///    .boost(3)
 ///    .name("test");
@@ -43,7 +34,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [BoostingQuery](BoostingQuery)
+    /// Creates an instance of [`BoostingQuery`]
     ///
     /// - `positive` - Query you wish to run. Any returned documents must match this query.
     /// - `negative` - Query used to decrease the
@@ -63,32 +54,7 @@ impl Query {
         Q: Into<Query>,
         B: Into<NegativeBoost>,
     {
-        BoostingQuery::new(positive, negative, negative_boost)
-    }
-}
-
-impl BoostingQuery {
-    /// Creates an instance of [BoostingQuery](BoostingQuery)
-    ///
-    /// - `positive` - Query you wish to run. Any returned documents must match this query.
-    /// - `negative` - Query used to decrease the
-    /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
-    /// of matching documents.<br>
-    /// If a returned document matches the `positive` query and this query, the `boosting` query
-    /// calculates the final
-    /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
-    /// for the document as follows:
-    ///     1. Take the original relevance score from the `positive` query.
-    ///     2. Multiply the score by the `negative_boost` value.
-    /// - `negative_boost` - Floating point number between `0` and `1.0` used to decrease the
-    /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
-    /// of documents matching the `negative` query.
-    pub fn new<Q, B>(positive: Q, negative: Q, negative_boost: B) -> Self
-    where
-        Q: Into<Query>,
-        B: Into<NegativeBoost>,
-    {
-        Self {
+        BoostingQuery {
             inner: Inner {
                 positive: Box::new(positive.into()),
                 negative: Box::new(negative.into()),
@@ -98,7 +64,9 @@ impl BoostingQuery {
             },
         }
     }
+}
 
+impl BoostingQuery {
     add_boost_and_name!();
 }
 
@@ -111,11 +79,10 @@ impl ShouldSkip for BoostingQuery {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::queries::TermQuery;
 
     test_serialization! {
         with_required_fields(
-            BoostingQuery::new(TermQuery::new("test1", 123), TermQuery::new("test2", 456), 0.2),
+            Query::boosting(Query::term("test1", 123), Query::term("test2", 456), 0.2),
             json!({
                 "boosting": {
                     "positive": {
@@ -138,7 +105,7 @@ mod tests {
         );
 
         with_all_fields(
-            BoostingQuery::new(TermQuery::new("test1", 123), TermQuery::new("test2", 456), 0.2)
+            Query::boosting(Query::term("test1", 123), Query::term("test2", 456), 0.2)
                 .boost(3)
                 .name("test"),
             json!({
