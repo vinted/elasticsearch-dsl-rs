@@ -138,6 +138,8 @@ impl TermsAggregation {
         self.terms.min_doc_count = Some(min_doc_count.into());
         self
     }
+
+    add_aggregate!();
 }
 
 #[cfg(test)]

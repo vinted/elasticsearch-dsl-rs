@@ -123,83 +123,77 @@ macro_rules! query {
     };
 }
 
-/// Implements repetitive `From<T>` traits for aggregations
+/// Builds query enum from given variants
 #[doc(hidden)]
 #[macro_export]
-macro_rules! implement_aggregations {
-    (Bucket { $($variant:ident($aggregation:ty)),+ $(,)? }) => {
-        impl From<$crate::BucketAggregation> for $crate::Aggregation {
-            fn from(aggregation: $crate::BucketAggregation) -> Self {
-                Self::Bucket(aggregation)
-            }
+#[cfg(not(debug_assertions))]
+macro_rules! query {
+    ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
+        /// A container enum for supported Elasticsearch query types
+        #[derive(Debug, Clone, PartialEq, Serialize)]
+        #[serde(untagged)]
+        #[allow(missing_docs)]
+        pub enum $name {
+            $(
+                $variant($query),
+            )*
         }
 
         $(
-            impl From<$aggregation> for $crate::BucketAggregation {
-                fn from(aggregation: $aggregation) -> Self {
-                    Self::$variant(aggregation)
+            impl From<$query> for $name {
+                fn from(q: $query) -> Self {
+                    $name::$variant(q)
                 }
             }
+        )+
 
-            impl From<$aggregation> for $crate::Aggregation {
-                fn from(aggregation: $aggregation) -> Self {
-                    Self::Bucket(BucketAggregation::$variant(aggregation))
+        impl $name {
+            /// Gets aggregation name
+            pub fn name(&self) -> String {
+                match self {
+                    $(
+                        Self::$variant(a) => a.name.clone(),
+                    )+
                 }
             }
-
-            impl $aggregation {
-                /// Pushes aggregation
-                pub fn aggregate(mut self, aggregation: impl Into<Aggregation>) -> Self {
-                    let a = aggregation.into();
-                    let _ = self.aggs.entry(a.name()).or_insert(a);
-                    self
-                }
-            }
-        )*
+        }
     };
+}
 
-    (Metrics { $($variant:ident($aggregation:ty)),+ $(,)? }) => {
-        impl From<$crate::MetricsAggregation> for $crate::Aggregation {
-            fn from(aggregation: $crate::MetricsAggregation) -> Self {
-                Self::Metrics(aggregation)
-            }
+/// Builds aggregation enum from given variants
+#[doc(hidden)]
+#[macro_export]
+#[cfg(debug_assertions)]
+macro_rules! aggregation {
+    ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
+        /// A container enum for supported Elasticsearch query types
+        #[derive(Debug, Clone, PartialEq, Serialize)]
+        #[serde(untagged)]
+        #[allow(missing_docs)]
+        pub enum $name {
+            $(
+                $variant(Box<$query>),
+            )*
         }
 
         $(
-            impl From<$aggregation> for $crate::MetricsAggregation {
-                fn from(aggregation: $aggregation) -> Self {
-                    Self::$variant(aggregation)
+            impl From<$query> for $name {
+                fn from(q: $query) -> Self {
+                    $name::$variant(Box::new(q))
                 }
             }
+        )+
 
-            impl From<$aggregation> for $crate::Aggregation {
-                fn from(aggregation: $aggregation) -> Self {
-                    Self::Metrics(MetricsAggregation::$variant(aggregation))
+        impl $name {
+            /// Gets aggregation name
+            pub fn name(&self) -> String {
+                match self {
+                    $(
+                        Self::$variant(a) => a.name.clone(),
+                    )+
                 }
-            }
-        )*
-    };
-
-    (Pipeline { $($variant:ident($aggregation:ty)),* $(,)? }) => {
-        impl From<$crate::PipelineAggregation> for $crate::Aggregation {
-            fn from(aggregation: $crate::PipelineAggregation) -> Self {
-                Self::Pipeline(aggregation)
             }
         }
-
-        $(
-            impl From<$aggregation> for $crate::PipelineAggregation {
-                fn from(aggregation: $aggregation) -> Self {
-                    Self::$variant(aggregation)
-                }
-            }
-
-            impl From<$aggregation> for $crate::Aggregation {
-                fn from(aggregation: $aggregation) -> Self {
-                    Self::Pipeline(PipelineAggregation::$variant(aggregation))
-                }
-            }
-        )*
     };
 }
 
@@ -229,6 +223,19 @@ macro_rules! add_boost_and_name {
         /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#named-queries>
         pub fn name(mut self, name: impl Into<String>) -> Self {
             self.inner._name = Some(name.into());
+            self
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! add_aggregate {
+    () => {
+        /// Pushes aggregation
+        pub fn aggregate(mut self, aggregation: impl Into<Aggregation>) -> Self {
+            let a = aggregation.into();
+            let _ = self.aggs.entry(a.name()).or_insert(a);
             self
         }
     };

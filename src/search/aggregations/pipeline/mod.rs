@@ -22,8 +22,3 @@
 //! will be included in the final output.
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline.html>
-
-#[derive(Debug, Clone, Serialize, PartialEq)]
-#[serde(untagged)]
-#[allow(missing_docs)]
-pub enum PipelineAggregation {}

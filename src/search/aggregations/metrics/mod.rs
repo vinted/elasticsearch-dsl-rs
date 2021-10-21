@@ -13,10 +13,3 @@
 mod top_hits_aggregation;
 
 pub use self::top_hits_aggregation::*;
-
-#[derive(Debug, Clone, Serialize, PartialEq)]
-#[serde(untagged)]
-#[allow(missing_docs)]
-pub enum MetricsAggregation {
-    TopHits(TopHitsAggregation),
-}
