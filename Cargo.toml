@@ -7,6 +7,9 @@ description = "Strongly typed Elasticsearch DSL"
 repository = "https://github.com/vinted/elasticsearch-dsl-rs"
 license = "MIT OR Apache-2.0"
 
+[workspace]
+members = ["examples/*"]
+
 [dependencies]
 chrono = { version = "0.4", default-features = false, features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
