@@ -13,21 +13,6 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// FunctionScoreQuery::new(TermQuery::new("test", 1))
-///     .function(RandomScore::new())
-///     .function(Weight::new(2.0))
-///     .max_boost(2.2)
-///     .min_score(2.3)
-///     .score_mode(FunctionScoreMode::Avg)
-///     .boost_mode(FunctionScoreBoostMode::Max)
-///     .boost(1.1)
-///     .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::function_score(Query::term("test", 1))
 ///     .function(RandomScore::new())
 ///     .function(Weight::new(2.0))
@@ -72,16 +57,9 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [FunctionScoreQuery](FunctionScoreQuery)
+    /// Creates an instance of [`FunctionScoreQuery`]
     pub fn function_score(query: impl Into<Query>) -> FunctionScoreQuery {
-        FunctionScoreQuery::new(query)
-    }
-}
-
-impl FunctionScoreQuery {
-    /// Creates an instance of [FunctionScoreQuery](FunctionScoreQuery)
-    pub fn new(query: impl Into<Query>) -> Self {
-        Self {
+        FunctionScoreQuery {
             inner: Inner {
                 query: Box::new(query.into()),
                 functions: Default::default(),
@@ -94,7 +72,9 @@ impl FunctionScoreQuery {
             },
         }
     }
+}
 
+impl FunctionScoreQuery {
     /// Push function to the list
     pub fn function(mut self, function: impl Into<Option<Function>>) -> Self {
         let function = function.into();
@@ -150,7 +130,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            FunctionScoreQuery::new(TermQuery::new("test", 1)).function(RandomScore::new()),
+            Query::function_score(Query::term("test", 1)).function(RandomScore::new()),
             json!({
                 "function_score": {
                     "query": {
@@ -170,7 +150,7 @@ mod tests {
         );
 
         with_all_fields(
-            FunctionScoreQuery::new(TermQuery::new("test", 1))
+            Query::function_score(Query::term("test", 1))
                 .function(RandomScore::new())
                 .function(Weight::new(2.0))
                 .max_boost(2.2)

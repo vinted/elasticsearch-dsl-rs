@@ -11,29 +11,10 @@ use std::collections::BTreeSet;
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// TermsSetQuery::new("test", [123], "required_matches");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::terms_set("test", [123], "required_matches");
 /// ```
 ///
 /// To create a terms_set query with script:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// TermsSetQuery::new(
-///     "test",
-///     [123],
-///     TermsSetScript::new("Math.min(params.num_terms_sets, doc['required_matches'].value)")
-///         .params(serde_json::json!({"num_terms_sets": 2}))
-/// );
-/// ```
-/// or
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -67,7 +48,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [TermsSetQuery](TermsSetQuery)
+    /// Creates an instance of [`TermsSetQuery`]
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - TermsSet you wish to find in the provided field.
@@ -81,26 +62,7 @@ impl Query {
         I: IntoIterator,
         I::Item: Into<Scalar>,
     {
-        TermsSetQuery::new(field, terms, minimum_should_match)
-    }
-}
-
-impl TermsSetQuery {
-    /// Creates an instance of [TermsSetQuery](TermsSetQuery)
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `value` - TermsSet you wish to find in the provided field.
-    /// To return a document, the terms_set must exactly match the field value, including whitespace and capitalization.
-    pub fn new<I>(
-        field: impl Into<String>,
-        terms: I,
-        minimum_should_match: impl Into<TermsSetMinimumShouldMatch>,
-    ) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Into<Scalar>,
-    {
-        Self {
+        TermsSetQuery {
             field: field.into(),
             inner: Inner {
                 terms: terms.into_iter().map(Into::into).collect(),
@@ -110,7 +72,9 @@ impl TermsSetQuery {
             },
         }
     }
+}
 
+impl TermsSetQuery {
     add_boost_and_name!();
 }
 
@@ -140,7 +104,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            TermsSetQuery::new("test", [123], "required_matches"),
+            Query::terms_set("test", [123], "required_matches"),
             json!({
                 "terms_set": {
                     "test": {
@@ -152,7 +116,7 @@ mod tests {
         );
 
         with_all_fields(
-            TermsSetQuery::new(
+            Query::terms_set(
                 "programming_languages",
                 ["c++", "java", "php"],
                 TermsSetScript::new("Math.min(params.num_terms_sets, doc['required_matches'].value)").params(json!({"num_terms_sets": 2}))

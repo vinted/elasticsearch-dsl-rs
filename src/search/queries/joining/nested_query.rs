@@ -13,29 +13,11 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// NestedQuery::new("vehicles", TermQuery::new("vehicles.license", "ABC123"))
-///     .boost(3)
-///     .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::nested("vehicles", Query::term("vehicles.license", "ABC123"))
 ///     .boost(3)
 ///     .name("test");
 /// ```
 /// To create multi-level nested query:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// NestedQuery::new("driver", NestedQuery::new("driver.vehicle", TermQuery::new("driver.vehicle.make", "toyota")))
-///     .boost(3)
-///     .name("test");
-/// ```
-/// or
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -74,7 +56,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [NestedQuery](NestedQuery)
+    /// Creates an instance of [`NestedQuery`]
     ///
     /// - `path` - Path to the nested object you wish to search.
     /// - `query` - Query you wish to run on nested objects in the `path`. If an object
@@ -87,25 +69,7 @@ impl Query {
     /// query.<br>
     /// Multi-level nested queries are also supported.
     pub fn nested(path: impl Into<String>, query: impl Into<Query>) -> NestedQuery {
-        NestedQuery::new(path, query)
-    }
-}
-
-impl NestedQuery {
-    /// Creates an instance of [NestedQuery](NestedQuery)
-    ///
-    /// - `path` - Path to the nested object you wish to search.
-    /// - `query` - Query you wish to run on nested objects in the `path`. If an object
-    /// matches the search, the `nested` query returns the root parent document.<br>
-    /// You can search nested fields using dot notation that includes the
-    /// complete path, such as `obj1.name`.<br>
-    /// Multi-level nesting is automatically supported, and detected,
-    /// resulting in an inner nested query to automatically match the relevant
-    /// nesting level, rather than root, if it exists within another nested
-    /// query.<br>
-    /// Multi-level nested queries are also supported.
-    pub fn new(path: impl Into<String>, query: impl Into<Query>) -> Self {
-        Self {
+        NestedQuery {
             inner: Inner {
                 path: path.into(),
                 query: Box::new(query.into()),
@@ -117,7 +81,9 @@ impl NestedQuery {
             },
         }
     }
+}
 
+impl NestedQuery {
     /// Indicates how scores for matching child objects affect the root parent
     /// document’s
     /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores).
@@ -174,11 +140,10 @@ impl ShouldSkip for NestedQuery {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::queries::TermQuery;
 
     test_serialization! {
         with_required_fields(
-            NestedQuery::new("vehicles", TermQuery::new("vehicles.license", "ABC123")),
+            Query::nested("vehicles", Query::term("vehicles.license", "ABC123")),
             json!({
                 "nested": {
                     "path": "vehicles",
@@ -194,7 +159,7 @@ mod tests {
         );
 
         with_all_fields(
-            NestedQuery::new("vehicles", TermQuery::new("vehicles.license", "ABC123"))
+            Query::nested("vehicles", Query::term("vehicles.license", "ABC123"))
                 .boost(3)
                 .name("test"),
             json!({
@@ -214,11 +179,11 @@ mod tests {
         );
 
         with_multi_level_nested_queries(
-            NestedQuery::new(
+            Query::nested(
                 "driver",
-                NestedQuery::new(
+                Query::nested(
                     "driver.vehicles",
-                    TermQuery::new("driver.vehicles.make.keyword", "toyota"),
+                    Query::term("driver.vehicles.make.keyword", "toyota"),
                 ),
             ),
             json!({

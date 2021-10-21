@@ -10,15 +10,6 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// MatchPhrasePrefixQuery::new("test", "search text")
-///     .boost(2)
-///     .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::match_phrase_prefix("test", "search text")
 ///     .boost(2)
 ///     .name("test");
@@ -65,20 +56,7 @@ impl Query {
         field: impl Into<String>,
         query: impl Into<String>,
     ) -> MatchPhrasePrefixQuery {
-        MatchPhrasePrefixQuery::new(field, query)
-    }
-}
-
-impl MatchPhrasePrefixQuery {
-    /// Creates an instance of [`MatchPhrasePrefixQuery`]
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `query` - Text you wish to find in the provided <field>. <br> The `match_phrase_prefix`
-    /// query analyzes any provided text into tokens before performing a search. The last term of
-    /// this text is treated as a [prefix](crate::PrefixQuery), matching any words that begin with
-    /// that term.
-    pub fn new(field: impl Into<String>, query: impl Into<String>) -> Self {
-        Self {
+        MatchPhrasePrefixQuery {
             field: field.into(),
             inner: Inner {
                 query: query.into(),
@@ -91,7 +69,9 @@ impl MatchPhrasePrefixQuery {
             },
         }
     }
+}
 
+impl MatchPhrasePrefixQuery {
     /// [Analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
     /// used to convert the text in the `query` value into tokens. Defaults to the
     /// [index-time analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/specify-analyzer.html#specify-index-time-analyzer)
@@ -151,7 +131,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            MatchPhrasePrefixQuery::new("test", "search text"),
+            Query::match_phrase_prefix("test", "search text"),
             json!({
                 "match_phrase_prefix": {
                     "test": {
@@ -162,7 +142,7 @@ mod tests {
         );
 
         with_all_fields(
-            MatchPhrasePrefixQuery::new("test", "search text")
+            Query::match_phrase_prefix("test", "search text")
                 .analyzer("search_time_analyzer")
                 .max_expansions(20)
                 .slop(5)

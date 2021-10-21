@@ -9,13 +9,6 @@ use serde::Serialize;
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// RankFeatureQuery::new("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::rank_feature("test");
 /// ```
 /// To apply mathematical functions:
@@ -44,13 +37,6 @@ pub struct RankFeatureQuery {
 /// `rank_features` field.
 ///
 /// To create a rank feature query:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// RankFeatureQuery::new("test");
-/// ```
-/// or
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -87,13 +73,6 @@ pub struct RankFeatureSaturationQuery {
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// RankFeatureQuery::new("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::rank_feature("test");
 /// ```
 /// To apply mathematical functions:
@@ -126,13 +105,6 @@ pub struct RankFeatureLogarithmQuery {
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// RankFeatureQuery::new("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::rank_feature("test");
 /// ```
 /// To apply mathematical functions:
@@ -161,13 +133,6 @@ pub struct RankFeatureSigmoidQuery {
 /// `rank_features` field.
 ///
 /// To create a rank feature query:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// RankFeatureQuery::new("test");
-/// ```
-/// or
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -284,16 +249,7 @@ impl Query {
     ///
     /// - `field` - `rank_feature` or `rank_features` field used to boost relevance scores
     pub fn rank_feature(field: impl Into<String>) -> RankFeatureQuery {
-        RankFeatureQuery::new(field)
-    }
-}
-
-impl RankFeatureQuery {
-    /// Creates an instance of [`RankFeatureQuery`]
-    ///
-    /// - `field` - `rank_feature` or `rank_features` field used to boost relevance scores
-    pub fn new(field: impl Into<String>) -> Self {
-        Self {
+        RankFeatureQuery {
             inner: Inner {
                 field: field.into(),
                 boost: None,
@@ -301,7 +257,9 @@ impl RankFeatureQuery {
             },
         }
     }
+}
 
+impl RankFeatureQuery {
     /// The `saturation` function gives a score equal to `S / (S + pivot)`, where `S` is the value
     /// of the rank feature field and `pivot` is a configurable pivot value so that the result will
     /// be less than `0.5` if `S` is less than pivot and greater than `0.5` otherwise.

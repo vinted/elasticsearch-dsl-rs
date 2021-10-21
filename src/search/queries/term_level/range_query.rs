@@ -8,17 +8,6 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// RangeQuery::new("numeric_field")
-///     .gt(1)
-///     .lt(3)
-///     .boost(2)
-///     .name("range_query");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::range("numeric_field")
 ///     .gt(1)
 ///     .lt(3)
@@ -63,20 +52,11 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [RangeQuery](RangeQuery)
+    /// Creates an instance of [`RangeQuery`]
     ///
     /// - `field` - Field you wish to search.
     pub fn range(field: impl Into<String>) -> RangeQuery {
-        RangeQuery::new(field)
-    }
-}
-
-impl RangeQuery {
-    /// Creates an instance of [RangeQuery](RangeQuery)
-    ///
-    /// - `field` - Field you wish to search.
-    pub fn new(field: impl Into<String>) -> Self {
-        Self {
+        RangeQuery {
             field: field.into(),
             inner: Inner {
                 gt: None,
@@ -91,7 +71,9 @@ impl RangeQuery {
             },
         }
     }
+}
 
+impl RangeQuery {
     /// Greater than.
     pub fn gt(mut self, gt: impl Into<Scalar>) -> Self {
         self.inner.gt = Some(gt.into());
@@ -186,7 +168,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            RangeQuery::new("test_field"),
+            Query::range("test_field"),
             json!({
                 "range": {
                     "test_field": {}
@@ -195,7 +177,7 @@ mod tests {
         );
 
         with_all_numeric_fields(
-            RangeQuery::new("test_numeric_field")
+            Query::range("test_numeric_field")
                 .gt(1)
                 .gte(2)
                 .lt(3)
@@ -219,7 +201,7 @@ mod tests {
         );
 
         with_all_date_fields(
-            RangeQuery::new("test_date_field")
+            Query::range("test_date_field")
                 .gt(Utc.ymd(2014, 11, 28).and_hms(12, 0, 1))
                 .gte(Utc.ymd(2014, 11, 28).and_hms(12, 0, 2))
                 .lt(Utc.ymd(2014, 11, 28).and_hms(12, 0, 3))

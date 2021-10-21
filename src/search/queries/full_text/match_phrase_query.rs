@@ -9,15 +9,6 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// MatchPhraseQuery::new("test", "search text")
-///     .boost(2)
-///     .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::match_phrase("test", "search text")
 ///     .boost(2)
 ///     .name("test");
@@ -47,7 +38,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [MatchPhraseQuery](MatchPhraseQuery)
+    /// Creates an instance of [`MatchPhraseQuery`]
     ///
     /// - `field` - Field you wish to search.
     /// - `query` - Text, number, boolean value or date you wish to find in the provided
@@ -59,24 +50,7 @@ impl Query {
     /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
     /// fields for analyzed tokens rather than an exact term.
     pub fn match_phrase(field: impl Into<String>, query: impl Into<String>) -> MatchPhraseQuery {
-        MatchPhraseQuery::new(field, query)
-    }
-}
-
-impl MatchPhraseQuery {
-    /// Creates an instance of [MatchPhraseQuery](MatchPhraseQuery)
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `query` - Text, number, boolean value or date you wish to find in the provided
-    /// `<field>`.<br>
-    /// The `match_phrase` query
-    /// [analyzes](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
-    /// any provided text before performing a search. This means the
-    /// `match_phrase` query can search
-    /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
-    /// fields for analyzed tokens rather than an exact term.
-    pub fn new(field: impl Into<String>, query: impl Into<String>) -> Self {
-        Self {
+        MatchPhraseQuery {
             field: field.into(),
             inner: Inner {
                 query: query.into(),
@@ -87,7 +61,9 @@ impl MatchPhraseQuery {
             },
         }
     }
+}
 
+impl MatchPhraseQuery {
     /// [Analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
     /// used to convert the text in the `query` value into tokens. Defaults to the
     /// [index-time analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/specify-analyzer.html#specify-index-time-analyzer)
@@ -133,7 +109,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            MatchPhraseQuery::new("test", "search text"),
+            Query::match_phrase("test", "search text"),
             json!({
                 "match_phrase": {
                     "test": {
@@ -144,7 +120,7 @@ mod tests {
         );
 
         with_all_fields(
-            MatchPhraseQuery::new("test", "search text")
+            Query::match_phrase("test", "search text")
                 .analyzer("search_time_analyzer")
                 .slop(1u8)
                 .boost(2)

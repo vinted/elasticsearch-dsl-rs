@@ -10,25 +10,9 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// TermQuery::new("test", 123);
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::term("test", 123);
 /// ```
 /// To create a term query with string values and optional fields:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// TermQuery::new("test", "username")
-///     .boost(2)
-///     .name("test");
-/// ```
-/// or
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -56,24 +40,13 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [TermQuery](TermQuery)
+    /// Creates an instance of [`TermQuery`]
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - Term you wish to find in the provided field.
     /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
     pub fn term(field: impl Into<String>, value: impl Into<OptionalScalar>) -> TermQuery {
-        TermQuery::new(field, value)
-    }
-}
-
-impl TermQuery {
-    /// Creates an instance of [TermQuery](TermQuery)
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `value` - Term you wish to find in the provided field.
-    /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
-    pub fn new(field: impl Into<String>, value: impl Into<OptionalScalar>) -> Self {
-        Self {
+        TermQuery {
             field: field.into(),
             inner: Inner {
                 value: value.into(),
@@ -82,7 +55,9 @@ impl TermQuery {
             },
         }
     }
+}
 
+impl TermQuery {
     add_boost_and_name!();
 }
 
@@ -112,7 +87,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            TermQuery::new("test", 123),
+            Query::term("test", 123),
             json!({
                 "term": {
                     "test": {
@@ -123,7 +98,7 @@ mod tests {
         );
 
         with_all_fields(
-            TermQuery::new("test", 123).boost(2).name("test"),
+            Query::term("test", 123).boost(2).name("test"),
             json!({
                 "term": {
                     "test": {
@@ -136,7 +111,7 @@ mod tests {
         );
 
         with_none(
-            Query::bool().filter(TermQuery::new("test", None::<String>)),
+            Query::bool().filter(Query::term("test", None::<String>)),
             json!({ "bool": {} })
         )
     }

@@ -10,15 +10,6 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// ConstantScoreQuery::new(TermQuery::new("test1", 123))
-///     .boost(3)
-///     .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::constant_score(Query::term("test1", 123))
 ///     .boost(3)
 ///     .name("test");
@@ -42,7 +33,7 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [ConstantScoreQuery](ConstantScoreQuery)
+    /// Creates an instance of [`ConstantScoreQuery`]
     ///
     /// - `filter` - [Filter query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html)
     /// you wish to run. Any returned documents must match this query.<br>
@@ -50,20 +41,7 @@ impl Query {
     /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores).
     /// To speed up performance, Elasticsearch automatically caches frequently used filter queries.
     pub fn constant_score(filter: impl Into<Query>) -> ConstantScoreQuery {
-        ConstantScoreQuery::new(filter)
-    }
-}
-
-impl ConstantScoreQuery {
-    /// Creates an instance of [ConstantScoreQuery](ConstantScoreQuery)
-    ///
-    /// - `filter` - [Filter query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html)
-    /// you wish to run. Any returned documents must match this query.<br>
-    /// Filter queries do not calculate
-    /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores).
-    /// To speed up performance, Elasticsearch automatically caches frequently used filter queries.
-    pub fn new(filter: impl Into<Query>) -> Self {
-        Self {
+        ConstantScoreQuery {
             inner: Inner {
                 filter: Box::new(filter.into()),
                 boost: None,
@@ -71,7 +49,9 @@ impl ConstantScoreQuery {
             },
         }
     }
+}
 
+impl ConstantScoreQuery {
     add_boost_and_name!();
 }
 
@@ -84,11 +64,10 @@ impl ShouldSkip for ConstantScoreQuery {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::queries::TermQuery;
 
     test_serialization! {
         with_required_fields(
-            ConstantScoreQuery::new(TermQuery::new("test1", 123)),
+            Query::constant_score(Query::term("test1", 123)),
             json!({
                 "constant_score": {
                     "filter": {
@@ -103,7 +82,7 @@ mod tests {
         );
 
         with_all_fields(
-            ConstantScoreQuery::new(TermQuery::new("test1", 123)).boost(3).name("test"),
+            Query::constant_score(Query::term("test1", 123)).boost(3).name("test"),
             json!({
                 "constant_score": {
                     "filter": {

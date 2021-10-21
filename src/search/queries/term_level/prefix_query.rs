@@ -1,34 +1,16 @@
 use crate::{search::*, util::*};
 use serde::ser::{Serialize, SerializeMap, Serializer};
 
-/// Returns documents that contain an **exact** term in a provided field.
+/// Returns documents that contain a specific prefix in a provided field.
 ///
-/// You can use the term query to find documents based on a precise value such as a price, a product ID, or a username.
-///
-/// To create a term query with numeric values:
+/// To create a prefix query with numeric values:
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// PrefixQuery::new("test", 123);
+/// Query::prefix("test", 123);
 /// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// Query::term("test", 123);
-/// ```
-/// To create a term query with string values and optional fields:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// PrefixQuery::new("test", "username")
-///     .boost(2)
-///     .name("test");
-/// ```
-/// or
+/// To create a prefix query with string values and optional fields:
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -62,24 +44,13 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [PrefixQuery](PrefixQuery)
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `value` - Term you wish to find in the provided field.
-    /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
-    pub fn prefix(field: impl Into<String>, value: impl Into<OptionalScalar>) -> PrefixQuery {
-        PrefixQuery::new(field, value)
-    }
-}
-
-impl PrefixQuery {
     /// Creates an instance of [`PrefixQuery`]
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - Term you wish to find in the provided field.
     /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
-    pub fn new(field: impl Into<String>, value: impl Into<OptionalScalar>) -> Self {
-        Self {
+    pub fn prefix(field: impl Into<String>, value: impl Into<OptionalScalar>) -> PrefixQuery {
+        PrefixQuery {
             field: field.into(),
             inner: Inner {
                 value: value.into(),
@@ -90,7 +61,9 @@ impl PrefixQuery {
             },
         }
     }
+}
 
+impl PrefixQuery {
     /// Method used to rewrite the query. For valid values and more information, see the
     /// [rewrite](Rewrite) parameter.
     pub fn rewrite(mut self, rewrite: Rewrite) -> Self {
@@ -135,7 +108,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            PrefixQuery::new("test", 123),
+            Query::prefix("test", 123),
             json!({
                 "prefix": {
                     "test": {
@@ -146,7 +119,7 @@ mod tests {
         );
 
         with_all_fields(
-            PrefixQuery::new("test", 123)
+            Query::prefix("test", 123)
                 .rewrite(Rewrite::ConstantScore)
                 .case_insensitive(true)
                 .boost(2)
@@ -165,7 +138,7 @@ mod tests {
         );
 
         with_none(
-            Query::bool().filter(PrefixQuery::new("test", None::<String>)),
+            Query::bool().filter(Query::prefix("test", None::<String>)),
             json!({ "bool": {} })
         )
     }

@@ -12,13 +12,6 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// WildcardQuery::new("test", 123);
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::wildcard("test", 123);
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html>
@@ -46,24 +39,13 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [WildcardQuery](WildcardQuery)
+    /// Creates an instance of [`WildcardQuery`]
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - Wildcard you wish to find in the provided field.
     /// To return a document, the wildcard must exactly match the field value, including whitespace and capitalization.
     pub fn wildcard(field: impl Into<String>, value: impl Into<OptionalScalar>) -> WildcardQuery {
-        WildcardQuery::new(field, value)
-    }
-}
-
-impl WildcardQuery {
-    /// Creates an instance of [WildcardQuery](WildcardQuery)
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `value` - Wildcard you wish to find in the provided field.
-    /// To return a document, the wildcard must exactly match the field value, including whitespace and capitalization.
-    pub fn new(field: impl Into<String>, value: impl Into<OptionalScalar>) -> Self {
-        Self {
+        WildcardQuery {
             field: field.into(),
             inner: Inner {
                 value: value.into(),
@@ -74,7 +56,9 @@ impl WildcardQuery {
             },
         }
     }
+}
 
+impl WildcardQuery {
     /// Method used to rewrite the query. For valid values and more information, see the
     /// [rewrite](Rewrite) parameter.
     pub fn rewrite(mut self, rewrite: Rewrite) -> Self {
@@ -119,7 +103,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            WildcardQuery::new("test", "value*"),
+            Query::wildcard("test", "value*"),
             json!({
                 "wildcard": {
                     "test": {
@@ -130,7 +114,7 @@ mod tests {
         );
 
         with_all_fields(
-            WildcardQuery::new("test", "value*")
+            Query::wildcard("test", "value*")
                 .rewrite(Rewrite::ConstantScore)
                 .case_insensitive(true)
                 .boost(2)
@@ -149,7 +133,7 @@ mod tests {
         );
 
         with_none(
-            Query::bool().filter(WildcardQuery::new("test", None::<String>)),
+            Query::bool().filter(Query::wildcard("test", None::<String>)),
             json!({ "bool": {} })
         )
     }

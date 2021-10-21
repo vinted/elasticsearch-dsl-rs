@@ -11,15 +11,6 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// MatchBoolPrefixQuery::new("test", "search text")
-///     .boost(2)
-///     .name("test");
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
 /// Query::match_bool_prefix("test", "search text")
 ///     .boost(2)
 ///     .name("test");
@@ -60,17 +51,7 @@ impl Query {
         field: impl Into<String>,
         query: impl Into<String>,
     ) -> MatchBoolPrefixQuery {
-        MatchBoolPrefixQuery::new(field, query)
-    }
-}
-
-impl MatchBoolPrefixQuery {
-    /// Creates an instance of [`MatchBoolPrefixQuery`]
-    ///
-    /// - `field` - Field you wish to search.
-    /// - `query` - Text, number, boolean value or date you wish to find in the provided `<field>`
-    pub fn new(field: impl Into<String>, query: impl Into<String>) -> Self {
-        Self {
+        MatchBoolPrefixQuery {
             field: field.into(),
             inner: Inner {
                 query: query.into(),
@@ -82,7 +63,9 @@ impl MatchBoolPrefixQuery {
             },
         }
     }
+}
 
+impl MatchBoolPrefixQuery {
     /// [Analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
     /// used to convert the text in the `query` value into tokens. Defaults to the
     /// [index-time analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/specify-analyzer.html#specify-index-time-analyzer)
@@ -139,7 +122,7 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            MatchBoolPrefixQuery::new("test", "search text"),
+            Query::match_bool_prefix("test", "search text"),
             json!({
                 "match_bool_prefix": {
                     "test": {
@@ -150,7 +133,7 @@ mod tests {
         );
 
         with_all_fields(
-            MatchBoolPrefixQuery::new("test", "search text")
+            Query::match_bool_prefix("test", "search text")
                 .analyzer("search_time_analyzer")
                 .minimum_should_match("12")
                 .operator(Operator::Or)

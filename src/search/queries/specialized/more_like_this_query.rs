@@ -32,31 +32,10 @@ use std::collections::BTreeSet;
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// MoreLikeThisQuery::new(["test"])
-///     .fields(["title"]);
-/// ```
-/// or
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// Query::term("test", 123);
 /// Query::more_like_this(["test"])
 ///     .fields(["title"]);
 /// ```
 /// To create a `more_like_this` query with string and document id fields on title and description with optional fields:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # let query =
-/// MoreLikeThisQuery::new([Like::from(Document::new("123")), Like::from("test")])
-///     .fields(["title", "description"])
-///     .min_term_freq(1)
-///     .max_query_terms(12)
-///     .boost(1.2)
-///     .name("more_like_this");
-/// ```
-/// or
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
@@ -222,7 +201,7 @@ impl Document {
 }
 
 impl Query {
-    /// Creates an instance of [MoreLikeThisQuery](MoreLikeThisQuery)
+    /// Creates an instance of [`MoreLikeThisQuery`]
     ///
     /// - `like` - free form text and/or a single or multiple documents.
     pub fn more_like_this<I>(like: I) -> MoreLikeThisQuery
@@ -230,20 +209,7 @@ impl Query {
         I: IntoIterator,
         I::Item: Into<Like>,
     {
-        MoreLikeThisQuery::new(like)
-    }
-}
-
-impl MoreLikeThisQuery {
-    /// Creates an instance of [MoreLikeThisQuery](MoreLikeThisQuery)
-    ///
-    /// - `like` - free form text and/or a single or multiple documents.
-    pub fn new<I>(like: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Into<Like>,
-    {
-        Self {
+        MoreLikeThisQuery {
             inner: Inner {
                 like: like.into_iter().map(Into::into).collect(),
                 fields: None,
@@ -265,7 +231,9 @@ impl MoreLikeThisQuery {
             },
         }
     }
+}
 
+impl MoreLikeThisQuery {
     /// A list of fields to fetch and analyze the text from.
     /// Defaults to the index.query.default_field index setting, which has a default value of *.
     /// The * value matches all fields eligible for `term-level queries`, excluding metadata fields.
@@ -395,7 +363,7 @@ mod tests {
 
         test_serialization! {
             with_required_fields(
-                MoreLikeThisQuery::new(["test"])
+                Query::more_like_this(["test"])
                     .fields(["title"]),
                 json!({
                     "more_like_this": {
@@ -408,7 +376,7 @@ mod tests {
             );
 
             with_optional_fields(
-                MoreLikeThisQuery::new(["test"])
+                Query::more_like_this(["test"])
                     .fields(["title", "description"])
                     .min_term_freq(1)
                     .max_query_terms(12)
@@ -435,7 +403,7 @@ mod tests {
 
         test_serialization! {
             with_required_fields(
-                MoreLikeThisQuery::new([Document::new("123")])
+                Query::more_like_this([Document::new("123")])
                     .fields(["title"]),
                 json!({
                     "more_like_this": {
@@ -450,7 +418,7 @@ mod tests {
             );
 
             with_optional_fields(
-                MoreLikeThisQuery::new([Document::new("123")])
+                Query::more_like_this([Document::new("123")])
                     .fields(["title", "description"])
                     .min_term_freq(1)
                     .max_query_terms(12)
@@ -479,7 +447,7 @@ mod tests {
 
         test_serialization! {
             with_required_fields(
-                MoreLikeThisQuery::new([Like::from(Document::new("123")), Like::from("test")])
+                Query::more_like_this([Like::from(Document::new("123")), Like::from("test")])
                     .fields(["title"]),
                 json!({
                     "more_like_this": {
@@ -495,7 +463,7 @@ mod tests {
             );
 
             with_optional_fields(
-                MoreLikeThisQuery::new([Like::from(Document::new("123").index("test_index").routing("test_routing").source(false)), Like::from("test")])
+                Query::more_like_this([Like::from(Document::new("123").index("test_index").routing("test_routing").source(false)), Like::from("test")])
                     .fields(["title", "description"])
                     .min_term_freq(1)
                     .max_query_terms(12)
