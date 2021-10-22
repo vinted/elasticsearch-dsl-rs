@@ -24,16 +24,16 @@ pub struct RangeQuery {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    gt: Option<Scalar>,
+    gt: OptionalScalar,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    gte: Option<Scalar>,
+    gte: OptionalScalar,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    lt: Option<Scalar>,
+    lt: OptionalScalar,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    lte: Option<Scalar>,
+    lte: OptionalScalar,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     format: Option<String>,
@@ -59,10 +59,10 @@ impl Query {
         RangeQuery {
             field: field.into(),
             inner: Inner {
-                gt: None,
-                gte: None,
-                lt: None,
-                lte: None,
+                gt: Default::default(),
+                gte: Default::default(),
+                lt: Default::default(),
+                lte: Default::default(),
                 format: None,
                 relation: None,
                 time_zone: None,
@@ -75,26 +75,26 @@ impl Query {
 
 impl RangeQuery {
     /// Greater than.
-    pub fn gt(mut self, gt: impl Into<Scalar>) -> Self {
-        self.inner.gt = Some(gt.into());
+    pub fn gt(mut self, gt: impl Into<OptionalScalar>) -> Self {
+        self.inner.gt = gt.into();
         self
     }
 
     /// Greater than or equal to.
-    pub fn gte(mut self, gte: impl Into<Scalar>) -> Self {
-        self.inner.gte = Some(gte.into());
+    pub fn gte(mut self, gte: impl Into<OptionalScalar>) -> Self {
+        self.inner.gte = gte.into();
         self
     }
 
     /// Less than.
-    pub fn lt(mut self, lt: impl Into<Scalar>) -> Self {
-        self.inner.lt = Some(lt.into());
+    pub fn lt(mut self, lt: impl Into<OptionalScalar>) -> Self {
+        self.inner.lt = lt.into();
         self
     }
 
     /// Less than or equal to.
-    pub fn lte(mut self, lte: impl Into<Scalar>) -> Self {
-        self.inner.lte = Some(lte.into());
+    pub fn lte(mut self, lte: impl Into<OptionalScalar>) -> Self {
+        self.inner.lte = lte.into();
         self
     }
 
@@ -162,6 +162,7 @@ impl Serialize for RangeQuery {
 }
 
 #[cfg(test)]
+#[allow(unused_qualifications)]
 mod tests {
     use super::*;
     use chrono::prelude::*;
@@ -169,6 +170,19 @@ mod tests {
     test_serialization! {
         with_required_fields(
             Query::range("test_field"),
+            json!({
+                "range": {
+                    "test_field": {}
+                }
+            })
+        );
+
+        with_none_fields(
+            Query::range("test_field")
+                .gt(Option::<i32>::None)
+                .lt(Option::<i32>::None)
+                .gte(Option::<i32>::None)
+                .lte(Option::<i32>::None),
             json!({
                 "range": {
                     "test_field": {}
