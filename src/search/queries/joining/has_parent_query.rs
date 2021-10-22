@@ -85,7 +85,11 @@ impl HasParentQuery {
     add_boost_and_name!();
 }
 
-impl ShouldSkip for HasParentQuery {}
+impl ShouldSkip for HasParentQuery {
+    fn should_skip(&self) -> bool {
+        self.inner.parent_type.should_skip() || self.inner.query.should_skip()
+    }
+}
 
 #[cfg(test)]
 mod tests {

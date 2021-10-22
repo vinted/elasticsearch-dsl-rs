@@ -101,7 +101,11 @@ impl HasChildQuery {
     add_boost_and_name!();
 }
 
-impl ShouldSkip for HasChildQuery {}
+impl ShouldSkip for HasChildQuery {
+    fn should_skip(&self) -> bool {
+        self.inner.r#type.should_skip() || self.inner.query.should_skip()
+    }
+}
 
 #[cfg(test)]
 mod tests {

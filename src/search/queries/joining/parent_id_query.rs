@@ -67,7 +67,11 @@ impl ParentIdQuery {
     add_boost_and_name!();
 }
 
-impl ShouldSkip for ParentIdQuery {}
+impl ShouldSkip for ParentIdQuery {
+    fn should_skip(&self) -> bool {
+        self.inner.r#type.should_skip() || self.inner.id.should_skip()
+    }
+}
 
 #[cfg(test)]
 mod tests {
