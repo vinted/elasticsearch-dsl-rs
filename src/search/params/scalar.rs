@@ -31,7 +31,7 @@ pub enum Scalar {
 /// Optional scalar newtype
 ///
 /// Needed for custom From implementations
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct OptionalScalar(Option<Scalar>);
 
 fn try_eq<L, R>(left: &L, right: &R) -> bool
