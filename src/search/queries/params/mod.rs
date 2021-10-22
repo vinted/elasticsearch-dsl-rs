@@ -3,6 +3,7 @@
 // Common parameters
 mod boost;
 mod fuzziness;
+mod has_child_query;
 mod inner_hits;
 mod negative_boost;
 mod operator;
@@ -24,6 +25,7 @@ mod terms_set_query;
 pub use self::boost::*;
 pub use self::function_score_query::*;
 pub use self::fuzziness::*;
+pub use self::has_child_query::*;
 pub use self::inner_hits::*;
 pub use self::multi_match_query::*;
 pub use self::negative_boost::*;
