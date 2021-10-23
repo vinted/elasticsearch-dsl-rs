@@ -84,10 +84,9 @@ impl RegexpQuery {
     /// [Regular expression syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/regexp-syntax.html#regexp-optional-operators).
     pub fn flags<I>(mut self, flags: I) -> Self
     where
-        I: IntoIterator,
-        I::Item: Into<RegexpFlag>,
+        I: IntoIterator<Item = RegexpFlag>,
     {
-        self.inner.flags.extend(flags.into_iter().map(Into::into));
+        self.inner.flags.extend(flags.into_iter());
         self
     }
 
@@ -142,18 +141,6 @@ impl Serialize for RegexpQuery {
         map.serialize_entry("regexp", &hash)?;
         map.end()
     }
-}
-
-fn join_with_pipe<S>(value: &[RegexpFlag], serializer: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    value
-        .iter()
-        .map(|x| x.to_string())
-        .collect::<Vec<String>>()
-        .join("|")
-        .serialize(serializer)
 }
 
 #[cfg(test)]
