@@ -1,33 +1,30 @@
 use serde::ser::{Serialize, SerializeMap, Serializer};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct KeyValuePair<T>
+pub(crate) struct KeyValuePair<K, V>
 where
-    T: Serialize,
+    K: Serialize,
+    V: Serialize,
 {
-    pub(crate) key: String,
-    pub(crate) value: T,
+    pub(crate) key: K,
+    pub(crate) value: V,
 }
 
-impl<T> KeyValuePair<T>
+impl<K, V> KeyValuePair<K, V>
 where
-    T: Serialize,
+    K: Serialize,
+    V: Serialize,
 {
     /// Creates an instance of [`KeyValuePair`]
-    pub(crate) fn new<S>(key: S, value: T) -> Self
-    where
-        S: Into<String>,
-    {
-        Self {
-            key: key.into(),
-            value,
-        }
+    pub(crate) fn new(key: K, value: V) -> Self {
+        Self { key, value }
     }
 }
 
-impl<T> Serialize for KeyValuePair<T>
+impl<K, V> Serialize for KeyValuePair<K, V>
 where
-    T: Serialize,
+    K: Serialize,
+    V: Serialize,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
