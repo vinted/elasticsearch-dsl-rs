@@ -40,7 +40,7 @@ pub struct TermsQuery<T: Terms> {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner<T: Terms> {
     #[serde(flatten)]
-    pair: KeyValuePair<T>,
+    pair: KeyValuePair<String, T>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -69,7 +69,7 @@ impl Query {
     {
         TermsQuery {
             inner: Inner {
-                pair: KeyValuePair::new(field, values.into_iter().map(Into::into).collect()),
+                pair: KeyValuePair::new(field.into(), values.into_iter().map(Into::into).collect()),
                 boost: None,
                 _name: None,
             },
@@ -95,7 +95,7 @@ impl Query {
         TermsQuery {
             inner: Inner {
                 pair: KeyValuePair::new(
-                    field,
+                    field.into(),
                     TermsLookup {
                         index: index.into(),
                         id: id.into(),
