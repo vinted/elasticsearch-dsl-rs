@@ -54,4 +54,5 @@ pub mod analyze;
 pub mod search;
 
 // Public re-exports
+pub use self::analyze::*;
 pub use self::search::*;
