@@ -11,14 +11,14 @@ use crate::{search::*, util::*};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// Query::simple_query_string("\"fried eggs\" +(eggplant | potato) -frittata")
+/// Query::query_string("(new york city) OR (big apple)")
 ///     .boost(2)
 ///     .name("test");
 /// ```
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html>
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize, Default)]
-pub struct SimpleQueryStringQuery {
-    #[serde(rename = "simple_query_string")]
+pub struct QueryStringQuery {
+    #[serde(rename = "query_string")]
     inner: Inner,
 }
 
@@ -28,10 +28,10 @@ struct Inner {
     query: String,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    fields: Vec<String>,
+    default_field: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    default_operator: Option<Operator>,
+    allow_leading_wildcard: Option<bool>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     analyze_wildcard: Option<bool>,
@@ -42,11 +42,17 @@ struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     auto_generate_synonyms_phrase_query: Option<bool>,
 
-    #[serde(
-        skip_serializing_if = "ShouldSkip::should_skip",
-        serialize_with = "join_with_pipe"
-    )]
-    flags: Vec<SimpleQueryStringQueryFlags>,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    default_operator: Option<Operator>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    enable_position_increments: Option<bool>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    fields: Vec<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    fuzziness: Option<Fuzziness>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     fuzzy_max_expansions: Option<u32>,
@@ -61,10 +67,25 @@ struct Inner {
     lenient: Option<bool>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    max_determinized_states: Option<u32>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     minimum_should_match: Option<MinimumShouldMatch>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    quote_analyzer: Option<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    phrase_slop: Option<u32>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     quote_field_suffix: Option<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    rewrite: Option<Rewrite>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    time_zone: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -74,15 +95,15 @@ struct Inner {
 }
 
 impl Query {
-    /// Creates an instance of [`SimpleQueryStringQuery`]
+    /// Creates an instance of [`QueryStringQuery`]
     ///
     /// - `query` - Query string you wish to parse and use for search. See
     /// [Simple query string syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#simple-query-string-syntax).
-    pub fn simple_query_string<S>(query: S) -> SimpleQueryStringQuery
+    pub fn query_string<S>(query: S) -> QueryStringQuery
     where
         S: Into<String>,
     {
-        SimpleQueryStringQuery {
+        QueryStringQuery {
             inner: Inner {
                 query: query.into(),
                 fields: vec![],
@@ -92,11 +113,19 @@ impl Query {
                 auto_generate_synonyms_phrase_query: None,
                 fuzzy_transpositions: None,
                 fuzzy_max_expansions: None,
-                flags: vec![],
                 fuzzy_prefix_length: None,
                 quote_field_suffix: None,
                 lenient: None,
                 minimum_should_match: None,
+                allow_leading_wildcard: None,
+                default_field: None,
+                enable_position_increments: None,
+                fuzziness: None,
+                max_determinized_states: None,
+                phrase_slop: None,
+                quote_analyzer: None,
+                rewrite: None,
+                time_zone: None,
                 boost: None,
                 _name: None,
             },
@@ -104,32 +133,41 @@ impl Query {
     }
 }
 
-impl SimpleQueryStringQuery {
-    /// Array of fields you wish to search.
-    ///
-    /// This field accepts wildcard expressions. You also can boost relevance
-    /// scores for matches to particular fields using a caret (`^`) notation.
-    /// See
-    /// [Wildcards and per-field boosts in the fields parameter](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#simple-query-string-boost)
-    /// for examples.
+impl QueryStringQuery {
+    /// Default field you wish to search if no field is provided in the query
+    /// string.
     ///
     /// Defaults to the `index.query.default_field` index setting, which has a
     /// default value of `*`. The `*` value extracts all fields that are
-    /// eligible to term queries and filters the metadata fields. All extracted
-    /// fields are then combined to build a query if no `prefix` is specified.
-    pub fn fields<I>(mut self, fields: I) -> Self
+    /// eligible for term queries and filters the metadata fields. All
+    /// extracted fields are then combined to build a query if no `prefix`
+    /// is specified.
+    ///
+    /// Searching across all eligible fields does not include
+    /// [nested documents](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html).
+    /// Use a [`nested` query](crate::NestedQuery) to search those documents.
+    ///
+    /// For mappings with a large number of fields, searching across all
+    /// eligible fields could be expensive.
+    ///
+    /// There is a limit on the number of fields that can be queried at once.
+    /// It is defined by the `indices.query.bool.max_clause_count`
+    /// [search setting](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-settings.html),
+    /// which defaults to 1024.
+    pub fn default_field<S>(mut self, default_field: S) -> Self
     where
-        I: IntoIterator,
-        I::Item: ToString,
+        S: ToString,
     {
-        self.inner.fields = fields.into_iter().map(|x| x.to_string()).collect();
+        self.inner.default_field = Some(default_field.to_string());
         self
     }
 
-    /// Default boolean logic used to interpret text in the query string if no
-    /// operators are specified.
-    pub fn default_operator(mut self, default_operator: Operator) -> Self {
-        self.inner.default_operator = Some(default_operator);
+    /// If `true`, the wildcard characters `*` and `?` are allowed as the first
+    /// character of the query string.
+    ///
+    /// Defaults to `true`.
+    pub fn allow_leading_wildcard(mut self, allow_leading_wildcard: bool) -> Self {
+        self.inner.allow_leading_wildcard = Some(allow_leading_wildcard);
         self
     }
 
@@ -167,15 +205,39 @@ impl SimpleQueryStringQuery {
         self
     }
 
-    /// List of enabled operators for the simple query string syntax.
+    /// Default boolean logic used to interpret text in the query string if no
+    /// operators are specified.
+    pub fn default_operator(mut self, default_operator: Operator) -> Self {
+        self.inner.default_operator = Some(default_operator);
+        self
+    }
+
+    /// If `true`, enable position increments in queries constructed from a
+    /// `query_string` search.
     ///
-    /// Defaults to [ALL](SimpleQueryStringQueryFlags::All) (all operators).
-    /// See [Limit operators](SimpleQueryStringQueryFlags) for valid values.
-    pub fn flags<I>(mut self, flags: I) -> Self
+    /// Defaults to `true`.
+    pub fn enable_position_increments(mut self, enable_position_increments: bool) -> Self {
+        self.inner.enable_position_increments = Some(enable_position_increments);
+        self
+    }
+
+    /// Array of fields you wish to search.
+    ///
+    /// You can use this parameter query to search across multiple fields. See
+    /// [Search multiple fields](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-multi-field).
+    pub fn fields<I>(mut self, fields: I) -> Self
     where
-        I: IntoIterator<Item = SimpleQueryStringQueryFlags>,
+        I: IntoIterator,
+        I::Item: ToString,
     {
-        self.inner.flags.extend(flags.into_iter());
+        self.inner.fields = fields.into_iter().map(|x| x.to_string()).collect();
+        self
+    }
+
+    /// Maximum edit distance allowed for fuzzy matching. For fuzzy syntax, see
+    /// [`Fuzziness`].
+    pub fn fuzziness(mut self, fuzziness: Fuzziness) -> Self {
+        self.inner.fuzziness = Some(fuzziness);
         self
     }
 
@@ -215,6 +277,25 @@ impl SimpleQueryStringQuery {
         self
     }
 
+    /// Maximum number of
+    /// [automaton states](https://en.wikipedia.org/wiki/Deterministic_finite_automaton)
+    /// required for the query.
+    ///
+    /// Default is `10000`.
+    ///
+    /// Elasticsearch uses [Apache Lucene](https://lucene.apache.org/core/)
+    /// internally to parse regular expressions. Lucene converts each regular
+    /// expression to a finite automaton containing a number of determinized
+    /// states.
+    ///
+    /// You can use this parameter to prevent that conversion from
+    /// unintentionally consuming too many resources. You may need to increase
+    /// this limit to run complex regular expressions.
+    pub fn max_determinized_states(mut self, max_determinized_states: u32) -> Self {
+        self.inner.max_determinized_states = Some(max_determinized_states);
+        self
+    }
+
     /// Minimum number of clauses that must match for a document to be returned.
     /// See the
     /// [`minimum_should_match` parameter](crate::MinimumShouldMatch)
@@ -224,6 +305,33 @@ impl SimpleQueryStringQuery {
         minimum_should_match: impl Into<MinimumShouldMatch>,
     ) -> Self {
         self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self
+    }
+
+    /// [Analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
+    /// used to convert quoted text in the query string into tokens.
+    ///
+    /// Defaults to the
+    /// [`search_quote_analyzer`](https://www.elastic.co/guide/en/elasticsearch/reference/current/analyzer.html#search-quote-analyzer)
+    /// mapped for the `default_field`.
+    ///
+    /// For quoted text, this parameter overrides the analyzer specified in the
+    /// `analyzer` parameter.
+    pub fn quote_analyzer<S>(mut self, quote_analyzer: S) -> Self
+    where
+        S: ToString,
+    {
+        self.inner.quote_analyzer = Some(quote_analyzer.to_string());
+        self
+    }
+
+    /// Maximum number of positions allowed between matching tokens for
+    /// phrases.
+    ///
+    /// Defaults to `0`. If `0`, exact phrase matches are required. Transposed
+    /// terms have a slop of `2`.
+    pub fn phrase_slop(mut self, phrase_slop: u32) -> Self {
+        self.inner.phrase_slop = Some(phrase_slop);
         self
     }
 
@@ -240,10 +348,31 @@ impl SimpleQueryStringQuery {
         self
     }
 
+    /// Method used to rewrite the query. For valid values and more
+    /// information, see the [`rewrite` parameter](Rewrite).
+    pub fn rewrite(mut self, rewrite: Rewrite) -> Self {
+        self.inner.rewrite = Some(rewrite);
+        self
+    }
+
+    /// [Coordinated Universal Time (UTC) offset](https://en.wikipedia.org/wiki/List_of_UTC_time_offsets)
+    /// or [IANA time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+    /// used to convert `date` values in the query string to UTC.
+    ///
+    /// Valid values are ISO 8601 UTC offsets, such as `+01:00` or `-08:00`,
+    /// and IANA time zone IDs, such as `America/Los_Angeles`.
+    pub fn time_zone<S>(mut self, time_zone: S) -> Self
+    where
+        S: ToString,
+    {
+        self.inner.time_zone = Some(time_zone.to_string());
+        self
+    }
+
     add_boost_and_name!();
 }
 
-impl ShouldSkip for SimpleQueryStringQuery {
+impl ShouldSkip for QueryStringQuery {
     fn should_skip(&self) -> bool {
         self.inner.query.should_skip()
     }
@@ -255,22 +384,21 @@ mod tests {
 
     test_serialization! {
         with_required_fields(
-            Query::simple_query_string("search text"),
+            Query::query_string("search text"),
             json!({
-                "simple_query_string": {
+                "query_string": {
                     "query": "search text",
                 }
             })
         );
 
         with_all_fields(
-            Query::simple_query_string("search text")
+            Query::query_string("search text")
                 .fields(["database"])
                 .default_operator(Operator::And)
                 .analyze_wildcard(true)
                 .analyzer("search_time_analyzer")
                 .auto_generate_synonyms_phrase_query(true)
-                .flags([SimpleQueryStringQueryFlags::And, SimpleQueryStringQueryFlags::Escape])
                 .fuzzy_max_expansions(20)
                 .fuzzy_prefix_length(3)
                 .fuzzy_transpositions(false)
@@ -280,14 +408,13 @@ mod tests {
                 .boost(2)
                 .name("test"),
             json!({
-                "simple_query_string": {
+                "query_string": {
                     "query": "search text",
                     "fields": ["database"],
                     "default_operator": "AND",
                     "analyze_wildcard": true,
                     "analyzer": "search_time_analyzer",
                     "auto_generate_synonyms_phrase_query": true,
-                    "flags": "AND|ESCAPE",
                     "fuzzy_max_expansions": 20,
                     "fuzzy_prefix_length": 3,
                     "fuzzy_transpositions": false,
