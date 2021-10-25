@@ -1,4 +1,13 @@
-//! Module documentation
+//! Search APIs are used to search and aggregate data stored in Elasticsearch
+//! indices and data streams. For an overview and related tutorials, see
+//! [Search your data](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-your-data.html).
+//!
+//! Most search APIs support
+//! [multi-target syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-index.html),
+//! with the exception of the
+//! [explain API](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-explain.html).
+//!
+//! <https://www.elastic.co/guide/en/elasticsearch/reference/current/search.html>
 
 // Private modules
 mod response;
