@@ -18,6 +18,7 @@ mod nested_query;
 mod percolate_query;
 mod range_query;
 mod regexp_query;
+mod simple_query_string_query;
 mod terms_query;
 mod terms_set_query;
 
@@ -35,6 +36,7 @@ pub use self::percolate_query::*;
 pub use self::range_query::*;
 pub use self::regexp_query::*;
 pub use self::rewrite::*;
+pub use self::simple_query_string_query::*;
 pub use self::terms_query::*;
 pub use self::terms_set_query::*;
 pub use self::tie_breaker::*;
