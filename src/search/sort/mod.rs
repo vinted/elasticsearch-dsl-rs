@@ -3,13 +3,14 @@
 //! The sort is defined on a per field level, with special field name for `_score` to sort by score, and `_doc` to sort by index order.
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/master/search-your-data.html>
+use serde::ser::{Serialize, Serializer};
+
 use crate::util::*;
-use serde::ser::{Serialize, SerializeMap, Serializer};
 
 /// The order defaults to `desc` when sorting on the `_score`, and defaults to `asc` when sorting on anything else.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_sort_order>
-#[derive(Debug, Clone, Serialize, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum SortOrder {
     /// Sort in ascending order
@@ -24,7 +25,7 @@ pub enum SortOrder {
 /// The default sort mode in the ascending sort order is `min` — the lowest value is picked. The default sort mode in the descending order is `max` — the highest value is picked.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_sort_mode_option>
-#[derive(Serialize, Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum SortMode {
     /// Pick the lowest value.
@@ -51,19 +52,29 @@ pub enum SortMode {
 /// The `missing` value can be set to `_last`, `_first`, or a custom value (that will be used for missing docs as the sort value). The default is `_last`.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_missing_values>
-#[derive(Serialize, Clone, Debug, PartialEq, PartialOrd)]
-#[serde(untagged)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SortMissing {
     /// Sorts missing fields first
-    #[serde(rename = "_first")]
     First,
 
     /// Sorts missing field last
-    #[serde(rename = "_last")]
     Last,
 
     /// Provide a custom scalar value for missing fields
     Custom(String),
+}
+
+impl Serialize for SortMissing {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            Self::First => "_first".serialize(serializer),
+            Self::Last => "_last".serialize(serializer),
+            Self::Custom(field) => field.as_str().serialize(serializer),
+        }
+    }
 }
 
 impl From<String> for SortMissing {
@@ -81,8 +92,7 @@ impl From<&str> for SortMissing {
 /// Allows you to add one or more sorts on specific fields. Each sort can be reversed as well. The sort is defined on a per field level.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#sort-search-results>
-#[derive(Serialize, Clone, Debug, PartialEq, PartialOrd)]
-#[serde(untagged)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SortField {
     /// Sort by `_id` field
     Id,
@@ -103,6 +113,22 @@ pub enum SortField {
     Field(String),
 }
 
+impl Serialize for SortField {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            Self::Id => "_id".serialize(serializer),
+            Self::Score => "_score".serialize(serializer),
+            Self::Key => "_key".serialize(serializer),
+            Self::Count => "_count".serialize(serializer),
+            Self::Doc => "_doc".serialize(serializer),
+            Self::Field(field) => field.as_str().serialize(serializer),
+        }
+    }
+}
+
 impl From<String> for SortField {
     fn from(field: String) -> Self {
         SortField::Field(field)
@@ -118,106 +144,59 @@ impl From<&str> for SortField {
 /// Sorts search hits by other field values
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#sort-search-results>
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
-pub struct Sort {
-    /// Field to sort by
-    pub field: SortField,
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+pub struct Sort(KeyValuePair<SortField, SortInner>);
+
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize)]
+struct SortInner {
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    order: Option<SortOrder>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    mode: Option<SortMode>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    unmapped_type: Option<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    missing: Option<SortMissing>,
+}
+
+impl Sort {
+    /// Creates an instance of [`Sort`]
+    pub fn new(field: impl Into<SortField>) -> Self {
+        Self(KeyValuePair::new(field.into(), Default::default()))
+    }
 
     /// Explicit order
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_sort_order>
-    pub order: Option<SortOrder>,
+    pub fn order(mut self, order: SortOrder) -> Self {
+        self.0.value.order = Some(order);
+        self
+    }
 
     /// Sort mode for numeric fields
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_sort_mode_option>
-    pub mode: Option<SortMode>,
+    pub fn mode(mut self, mode: SortMode) -> Self {
+        self.0.value.mode = Some(mode);
+        self
+    }
 
     /// Fallback type if mapping is not defined
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_ignoring_unmapped_fields>
-    pub unmapped_type: Option<String>,
+    pub fn unmapped_type(mut self, unmapped_type: impl Into<String>) -> Self {
+        self.0.value.unmapped_type = Some(unmapped_type.into());
+        self
+    }
 
     /// The missing parameter specifies how docs which are missing the sort field should be treated
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_missing_values>
-    pub missing: Option<SortMissing>,
-}
-
-impl Serialize for Sort {
-    #[inline]
-    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        #[derive(Serialize)]
-        struct InnerSort {
-            #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-            order: Option<SortOrder>,
-
-            #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-            mode: Option<SortMode>,
-
-            #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-            unmapped_type: Option<String>,
-
-            #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-            missing: Option<SortMissing>,
-        }
-
-        let mut map = serializer.serialize_map(Some(1))?;
-
-        let field = match &self.field {
-            SortField::Id => "_id",
-            SortField::Score => "_score",
-            SortField::Key => "_key",
-            SortField::Count => "_count",
-            SortField::Doc => "_doc",
-            SortField::Field(field) => field.as_str(),
-        };
-
-        let value = InnerSort {
-            order: self.order.clone(),
-            mode: self.mode.clone(),
-            unmapped_type: self.unmapped_type.clone(),
-            missing: self.missing.clone(),
-        };
-
-        map.serialize_entry(&field, &value)?;
-        map.end()
-    }
-}
-
-impl Sort {
-    /// Creates a new sort instance
-    pub fn new(field: impl Into<SortField>) -> Self {
-        Self {
-            field: field.into(),
-            order: None,
-            mode: None,
-            unmapped_type: None,
-            missing: None,
-        }
-    }
-
-    /// Sets sort order
-    pub fn order(mut self, order: SortOrder) -> Self {
-        self.order = Some(order);
-        self
-    }
-
-    /// Sets sort mode
-    pub fn mode(mut self, mode: SortMode) -> Self {
-        self.mode = Some(mode);
-        self
-    }
-
-    /// Sets unmapped type
-    pub fn unmapped_type(mut self, unmapped_type: impl Into<String>) -> Self {
-        self.unmapped_type = Some(unmapped_type.into());
-        self
-    }
-
-    /// Sets missing value
     pub fn missing(mut self, missing: impl Into<SortMissing>) -> Self {
-        self.missing = Some(missing.into());
+        self.0.value.missing = Some(missing.into());
         self
     }
 }
@@ -232,30 +211,31 @@ impl From<Sort> for Vec<Sort> {
 mod tests {
     use super::*;
 
-    #[test]
-    fn sort_with_field_only_serializes_successfully() {
-        let sort = Sort::new("test");
+    test_serialization! {
+        with_field_only(
+            Sort::new("test"),
+            json!({"test": {}})
+        );
 
-        let result = serde_json::to_string(&sort).unwrap();
+        with_predefined_sort_field(
+            Sort::new(SortField::Id),
+            json!({"_id": {}})
+        );
 
-        let expectation = r#"{"test":{}}"#;
-
-        assert_eq!(result, expectation);
-    }
-
-    #[test]
-    fn sort_with_all_attributes_serializes_successfully() {
-        let sort = Sort::new("test")
-            .order(SortOrder::Asc)
-            .mode(SortMode::Max)
-            .unmapped_type("long")
-            .missing("miss");
-
-        let result = serde_json::to_string(&sort).unwrap();
-
-        let expectation =
-            r#"{"test":{"order":"asc","mode":"max","unmapped_type":"long","missing":"miss"}}"#;
-
-        assert_eq!(result, expectation);
+        with_all_attributes(
+            Sort::new("test")
+                .order(SortOrder::Asc)
+                .mode(SortMode::Max)
+                .unmapped_type("long")
+                .missing("miss"),
+            json!({
+                "test": {
+                    "order": "asc",
+                    "mode": "max",
+                    "unmapped_type": "long",
+                    "missing": "miss",
+                }
+            })
+        );
     }
 }
