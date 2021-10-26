@@ -42,7 +42,6 @@ pub use self::match_none_query::*;
 
 use crate::util::*;
 
-#[cfg(not(debug_assertions))]
 macro_rules! query {
     ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
         /// A container enum for supported Elasticsearch query types
@@ -70,51 +69,6 @@ macro_rules! query {
                         None
                     } else {
                         Some($name::$variant(q))
-                    }
-                }
-            }
-        )+
-
-        impl ShouldSkip for $name {
-            fn should_skip(&self) -> bool {
-                match self {
-                    $(
-                        $name::$variant(q) => q.should_skip(),
-                    )+
-                }
-            }
-        }
-    };
-}
-
-#[cfg(debug_assertions)]
-macro_rules! query {
-    ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
-        /// A container enum for supported Elasticsearch query types
-        #[derive(Debug, Clone, PartialEq, Serialize)]
-        #[serde(untagged)]
-        #[allow(missing_docs)]
-        pub enum $name {
-            $(
-                $variant(Box<$query>),
-            )*
-        }
-
-        $(
-            impl From<$query> for $name {
-                fn from(q: $query) -> Self {
-                    $name::$variant(Box::new(q))
-                }
-            }
-        )+
-
-        $(
-            impl From<$query> for Option<$name> {
-                fn from(q: $query) -> Self {
-                    if q.should_skip() {
-                        None
-                    } else {
-                        Some($name::$variant(Box::new(q)))
                     }
                 }
             }
