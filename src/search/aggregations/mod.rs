@@ -21,7 +21,6 @@ pub use self::bucket::*;
 pub use self::metrics::*;
 pub use self::pipeline::*;
 
-#[cfg(not(debug_assertions))]
 macro_rules! aggregation {
     ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
         /// A container enum for supported Elasticsearch query types
@@ -38,40 +37,6 @@ macro_rules! aggregation {
             impl From<$query> for $name {
                 fn from(q: $query) -> Self {
                     $name::$variant(q)
-                }
-            }
-        )+
-
-        impl $name {
-            /// Gets aggregation name
-            pub fn name(&self) -> String {
-                match self {
-                    $(
-                        Self::$variant(a) => a.name.clone(),
-                    )+
-                }
-            }
-        }
-    };
-}
-
-#[cfg(debug_assertions)]
-macro_rules! aggregation {
-    ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
-        /// A container enum for supported Elasticsearch query types
-        #[derive(Debug, Clone, PartialEq, Serialize)]
-        #[serde(untagged)]
-        #[allow(missing_docs)]
-        pub enum $name {
-            $(
-                $variant(Box<$query>),
-            )*
-        }
-
-        $(
-            impl From<$query> for $name {
-                fn from(q: $query) -> Self {
-                    $name::$variant(Box::new(q))
                 }
             }
         )+
