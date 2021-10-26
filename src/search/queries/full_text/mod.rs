@@ -11,7 +11,7 @@ mod match_phrase_query;
 mod match_query;
 mod multi_match_query;
 mod query_string_query;
-mod simple_query_string;
+mod simple_query_string_query;
 
 pub use self::combined_fields_query::*;
 pub use self::match_bool_prefix_query::*;
@@ -20,4 +20,4 @@ pub use self::match_phrase_query::*;
 pub use self::match_query::*;
 pub use self::multi_match_query::*;
 pub use self::query_string_query::*;
-pub use self::simple_query_string::*;
+pub use self::simple_query_string_query::*;
