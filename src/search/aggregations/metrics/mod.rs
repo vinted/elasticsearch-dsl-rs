@@ -10,8 +10,10 @@
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics.html>
 
+mod avg_aggregation;
 mod cardinality_aggregation;
 mod top_hits_aggregation;
 
+pub use self::avg_aggregation::*;
 pub use self::cardinality_aggregation::*;
 pub use self::top_hits_aggregation::*;
