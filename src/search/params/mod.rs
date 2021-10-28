@@ -2,10 +2,12 @@
 
 mod geo_point;
 mod scalar;
+mod numeric;
 mod search;
 mod units;
 
 pub use self::geo_point::*;
 pub use self::scalar::*;
+pub use self::numeric::*;
 pub use self::search::*;
 pub use self::units::*;
