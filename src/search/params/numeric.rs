@@ -1,5 +1,3 @@
-use crate::util::ShouldSkip;
-
 /// Numeric enum
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, PartialOrd)]
 #[serde(untagged)]
