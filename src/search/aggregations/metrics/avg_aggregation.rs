@@ -1,5 +1,5 @@
 use crate::util::*;
-use crate::{Aggregation, Scalar};
+use crate::{Aggregation, Numeric};
 
 /// A single-value metrics aggregation that computes the average of numeric values that are extracted
 /// from the aggregated documents. These values can be extracted either from specific numeric fields
@@ -18,7 +18,7 @@ struct AvgAggregationInner {
     field: String,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    missing: Option<Scalar>,
+    missing: Option<Numeric>,
 }
 
 impl Aggregation {
@@ -39,11 +39,8 @@ impl Aggregation {
 impl AvgAggregation {
     /// The missing parameter defines how documents that are missing a value should be treated. By
     /// default they will be ignored but it is also possible to treat them as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Scalar>) -> Self {
-        match missing.into() {
-            Scalar::Bool(_) | Scalar::String(_) | Scalar::DateTime(_) => {}
-            missing => self.avg.missing = Some(missing),
-        };
+    pub fn missing(mut self, missing: impl Into<Numeric>) -> Self {
+        self.avg.missing = Some(missing.into());
         self
     }
 }
