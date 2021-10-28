@@ -58,7 +58,10 @@ aggregation!(Aggregation {
     Terms(TermsAggregation),
     TopHits(TopHitsAggregation),
     Cardinality(CardinalityAggregation),
-    Avg(AvgAggregation)
+    Avg(AvgAggregation),
+    Max(MaxAggregation),
+    Min(MinAggregation),
+    Sum(SumAggregation),
 });
 
 /// Type alias for a collection of aggregations

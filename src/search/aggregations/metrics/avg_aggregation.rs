@@ -1,7 +1,7 @@
 use crate::util::*;
 use crate::{Aggregation, Numeric};
 
-/// A single-value metrics aggregation that computes the average of numeric values that are extracted
+/// A `single-value` metrics aggregation that computes the average of numeric values that are extracted
 /// from the aggregated documents. These values can be extracted either from specific numeric fields
 /// in the documents.
 ///
