@@ -40,11 +40,10 @@ impl AvgAggregation {
     /// The missing parameter defines how documents that are missing a value should be treated. By
     /// default they will be ignored but it is also possible to treat them as if they had a value.
     pub fn missing(mut self, missing: impl Into<Scalar>) -> Self {
-        let missing = match missing.into() {
-            Scalar::Bool(_) | Scalar::String(_) | Scalar::DateTime(_) => None,
-            missing => Some(missing),
+        match missing.into() {
+            Scalar::Bool(_) | Scalar::String(_) | Scalar::DateTime(_) => {}
+            missing => self.avg.missing = Some(missing),
         };
-        self.avg.missing = missing;
         self
     }
 }
