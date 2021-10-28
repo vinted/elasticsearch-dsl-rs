@@ -57,6 +57,7 @@ macro_rules! aggregation {
 aggregation!(Aggregation {
     Terms(TermsAggregation),
     TopHits(TopHitsAggregation),
+    Cardinality(CardinalityAggregation)
 });
 
 /// Type alias for a collection of aggregations
