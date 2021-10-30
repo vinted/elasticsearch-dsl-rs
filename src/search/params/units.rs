@@ -34,6 +34,45 @@ impl Serialize for Time {
     }
 }
 
+/// Calendar-aware intervals are configured with the `calendar_interval` parameter. You can specify
+/// calendar intervals using the unit name, such as `month`, or as a single unit quantity, such as
+/// `1M`. For example,`day` and `1d` are equivalent. Multiple quantities, such as `2d`, are not supported.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-datehistogram-aggregation.html#calendar_intervals>
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum CalendarInterval {
+    /// All minutes begin at 00 seconds. One minute is the interval between 00 seconds of the first
+    /// minute and 00 seconds of the following minute in the specified time zone, compensating for
+    /// any intervening leap seconds, so that the number of minutes and seconds past the hour is the
+    /// same at the start and end.
+    Minute,
+    /// All hours begin at 00 minutes and 00 seconds. One hour (1h) is the interval between 00:00
+    /// minutes of the first hour and 00:00 minutes of the following hour in the specified time zone,
+    /// compensating for any intervening leap seconds, so that the number of minutes and seconds past
+    /// the hour is the same at the start and end.
+    Hour,
+    /// All days begin at the earliest possible time, which is usually 00:00:00 (midnight). One day
+    /// (1d) is the interval between the start of the day and the start of the following day in the
+    /// specified time zone, compensating for any intervening time changes.
+    Day,
+    /// One week is the interval between the start day_of_week:hour:minute:second and the same day
+    /// of the week and time of the following week in the specified time zone.
+    Week,
+    /// One month is the interval between the start day of the month and time of day and the same
+    /// day of the month and time of the following month in the specified time zone, so that the day
+    /// of the month and time of day are the same at the start and end.
+    Month,
+    /// One quarter is the interval between the start day of the month and time of day and the same
+    /// day of the month and time of day three months later, so that the day of the month and time
+    /// of day are the same at the start and end.
+    Quarter,
+    /// One year is the interval between the start day of the month and time of day and the same day
+    /// of the month and time of day the following year in the specified time zone, so that the date
+    /// and time are the same at the start and end.
+    Year,
+}
+
 /// Whenever the byte size of data needs to be specified, e.g. when setting a
 /// buffer size parameter, the value must specify the unit,
 /// like `10kb` for 10 kilobytes.

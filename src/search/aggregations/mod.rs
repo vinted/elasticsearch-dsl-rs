@@ -15,10 +15,12 @@
 
 pub mod bucket;
 pub mod metrics;
+pub mod params;
 pub mod pipeline;
 
 pub use self::bucket::*;
 pub use self::metrics::*;
+pub use self::params::*;
 pub use self::pipeline::*;
 
 macro_rules! aggregation {
@@ -62,6 +64,7 @@ aggregation!(Aggregation {
     Max(MaxAggregation),
     Min(MinAggregation),
     Sum(SumAggregation),
+    Rate(RateAggregation),
 });
 
 /// Type alias for a collection of aggregations
