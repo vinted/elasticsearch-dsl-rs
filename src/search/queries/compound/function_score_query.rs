@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 
 /// The `function_score` allows you to modify the score of documents that are retrieved by a query.
 ///

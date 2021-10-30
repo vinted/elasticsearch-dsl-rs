@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use std::marker::PhantomData;
 
 /// The `percolate` query can be used to match queries stored in an index. The percolate query

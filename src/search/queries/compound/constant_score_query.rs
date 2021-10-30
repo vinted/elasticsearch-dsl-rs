@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 
 /// Wraps a [filter query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html)
 /// and returns every matching document with a

@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// Returns documents that contain the words of a provided text, in the **same order** as provided.

@@ -1,8 +1,5 @@
-use super::{
-    Encoder, Fragmenter, FvhBoundaryScanner, MatchedFields, Order, Tags, UnifiedBoundaryScanner,
-};
+use crate::search::*;
 use crate::util::*;
-use crate::Query;
 
 /// Highlighter settings
 #[derive(Debug, Clone, PartialEq, Serialize)]

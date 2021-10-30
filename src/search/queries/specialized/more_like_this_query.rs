@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use std::collections::BTreeSet;
 
 /// The More Like This Query finds documents that are "like" a given set of documents.

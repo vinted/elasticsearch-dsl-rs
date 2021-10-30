@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 /// Returns documents matching one or more wrapped queries, called query clauses or clauses.
 ///
 /// If a returned document matches multiple query clauses, the `dis_max` query assigns the document

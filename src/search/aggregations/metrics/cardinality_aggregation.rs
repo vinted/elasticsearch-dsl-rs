@@ -1,5 +1,5 @@
+use crate::search::*;
 use crate::util::*;
-use crate::Aggregation;
 
 /// A `single-value` metrics aggregation that calculates an approximate count of distinct values.
 ///

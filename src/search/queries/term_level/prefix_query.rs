@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use serde::ser::{Serialize, SerializeMap, Serializer};
 
 /// Returns documents that contain a specific prefix in a provided field.

@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 
 /// Wraps another query to search
 /// [nested](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html)

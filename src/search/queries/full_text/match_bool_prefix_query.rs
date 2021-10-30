@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// A `match_bool_prefix` query analyzes its input and constructs a

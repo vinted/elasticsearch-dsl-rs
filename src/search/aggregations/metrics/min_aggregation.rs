@@ -1,5 +1,5 @@
+use crate::search::*;
 use crate::util::*;
-use crate::{Aggregation, Numeric};
 
 /// A `single-value` metrics aggregation that keeps track and returns the minimum value among numeric
 /// values extracted from the aggregated documents.

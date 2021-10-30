@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 
 /// The combined_fields query supports searching multiple text fields as if
 /// their contents had been indexed into one combined field. The query takes a
