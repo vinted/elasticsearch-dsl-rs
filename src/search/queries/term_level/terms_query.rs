@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use std::collections::BTreeSet;
 
 /// Returns documents that contain one or more **exact** terms in a provided field.

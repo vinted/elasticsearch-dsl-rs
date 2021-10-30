@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use std::collections::BTreeSet;
 
 /// Returns documents based on their IDs. This query uses document IDs stored in the

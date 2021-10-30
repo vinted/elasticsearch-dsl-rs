@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// Returns documents that match a provided text, number, date or boolean value.

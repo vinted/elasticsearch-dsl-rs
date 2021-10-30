@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 
 /// Returns documents that match a provided text, number, date or boolean value.
 /// The provided text is analyzed before matching.

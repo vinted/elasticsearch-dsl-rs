@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use serde::Serialize;
 
 /// Boosts the relevance score of documents based on the numeric value of a `rank_feature` or

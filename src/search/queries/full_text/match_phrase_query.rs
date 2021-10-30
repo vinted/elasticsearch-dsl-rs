@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// The `match_phrase` query analyzes the text and creates a phrase query out

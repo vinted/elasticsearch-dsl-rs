@@ -1,5 +1,5 @@
+use crate::search::*;
 use crate::util::*;
-use crate::{Aggregation, Sort, SourceFilter};
 
 /// A `top_hits` metric aggregation keeps track of the most relevant document being aggregated.
 /// This aggregation is intended to be used as a sub aggregation,
@@ -85,7 +85,6 @@ impl TopHitsAggregation {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::SortOrder;
 
     test_serialization! {
         with_required_fields(

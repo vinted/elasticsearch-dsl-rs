@@ -1,5 +1,5 @@
+use crate::search::*;
 use crate::util::*;
-use crate::{Aggregation, Numeric};
 
 /// A `single-value` metrics aggregation that sums up numeric values that are extracted from the
 /// aggregated documents. These values can be extracted either from specific numeric or histogram fields.

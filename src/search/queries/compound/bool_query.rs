@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 
 /// A query that matches documents matching boolean combinations of other queries.
 /// The bool query maps to Lucene BooleanQuery.

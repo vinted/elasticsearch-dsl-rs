@@ -1,4 +1,5 @@
-use crate::{search::*, util::*};
+use crate::search::*;
+use crate::util::*;
 
 /// Returns parent documents whose joined child documents match a provided query. You can create
 /// parent-child relationships between documents in the same index using a join field mapping.

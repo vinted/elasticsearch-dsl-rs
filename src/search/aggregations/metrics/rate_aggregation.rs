@@ -1,5 +1,5 @@
+use crate::search::*;
 use crate::util::*;
-use crate::{Aggregation, CalendarInterval, RateMode};
 
 /// A `rate` metrics aggregation can be used only inside a `date_histogram` and calculates a rate of
 /// documents or a field in each `date_histogram` bucket. The field values can be generated extracted
