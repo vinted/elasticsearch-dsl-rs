@@ -13,6 +13,7 @@ mod zero_terms_query;
 
 // Query specific parameters
 mod function_score_query;
+mod geo_query;
 mod multi_match_query;
 mod nested_query;
 mod percolate_query;
@@ -26,6 +27,7 @@ mod terms_set_query;
 pub use self::boost::*;
 pub use self::function_score_query::*;
 pub use self::fuzziness::*;
+pub use self::geo_query::*;
 pub use self::has_child_query::*;
 pub use self::inner_hits::*;
 pub use self::multi_match_query::*;
