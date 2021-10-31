@@ -1,5 +1,5 @@
+use crate::search::*;
 use crate::util::*;
-use crate::Scalar;
 use serde::ser::Serialize;
 use std::{collections::BTreeSet, fmt::Debug};
 

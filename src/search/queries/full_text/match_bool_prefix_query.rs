@@ -147,7 +147,7 @@ mod tests {
                         "analyzer": "search_time_analyzer",
                         "minimum_should_match": "12",
                         "operator": "OR",
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test"
                     }
                 }

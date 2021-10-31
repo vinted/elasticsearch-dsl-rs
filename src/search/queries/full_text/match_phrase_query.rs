@@ -132,7 +132,7 @@ mod tests {
                         "query": "search text",
                         "analyzer": "search_time_analyzer",
                         "slop": 1,
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test"
                     }
                 }

@@ -158,7 +158,7 @@ mod tests {
                         "max_expansions": 20,
                         "slop": 5,
                         "zero_terms_query": "none",
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test"
                     }
                 }

@@ -134,7 +134,7 @@ mod tests {
                                 "num_terms_sets": 2
                             }
                         },
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test"
                     }
                 }

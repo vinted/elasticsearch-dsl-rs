@@ -208,7 +208,7 @@ mod tests {
                         "lt": 3,
                         "lte": 4,
                         "relation": "WITHIN",
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "range_query_test"
                     }
                 }
@@ -236,7 +236,7 @@ mod tests {
                         "format": "yyyy-MM-dd",
                         "time_zone": "UTC",
                         "relation": "CONTAINS",
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "range_query_test"
                     }
                 }

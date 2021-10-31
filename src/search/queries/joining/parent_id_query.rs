@@ -96,7 +96,7 @@ mod tests {
                     "type": "my-child",
                     "id": "1",
                     "ignore_unmapped": true,
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "test"
                 }
             })

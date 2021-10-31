@@ -152,7 +152,7 @@ mod tests {
                 json!({
                     "terms": {
                         "test": [123],
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test",
                     }
                 })
@@ -205,7 +205,7 @@ mod tests {
                             "path": "path_value",
                             "routing": "routing_value"
                         },
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test",
                     }
                 })

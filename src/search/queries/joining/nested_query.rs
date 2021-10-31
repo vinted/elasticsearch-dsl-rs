@@ -173,7 +173,7 @@ mod tests {
                             }
                         }
                     },
-                    "boost": 3.0,
+                    "boost": 3,
                     "_name": "test",
                 }
             })

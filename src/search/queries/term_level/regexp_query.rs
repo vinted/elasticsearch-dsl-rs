@@ -176,7 +176,7 @@ mod tests {
                         "case_insensitive": false,
                         "max_determinized_states": 2,
                         "rewrite": "constant_score",
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test"
                     }
                 }
