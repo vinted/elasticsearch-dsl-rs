@@ -88,8 +88,10 @@ impl FunctionScoreQuery {
     }
 
     /// Maximum score value after applying all the functions
-    pub fn max_boost(mut self, max_boost: impl Into<Boost>) -> Self {
-        self.inner.max_boost = Some(max_boost.into());
+    pub fn max_boost(mut self, max_boost: impl std::convert::TryInto<Boost>) -> Self {
+        if let Ok(max_boost) = max_boost.try_into() {
+            self.inner.max_boost = Some(max_boost);
+        }
         self
     }
 

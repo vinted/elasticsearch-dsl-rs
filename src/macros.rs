@@ -37,8 +37,10 @@ macro_rules! add_boost_and_name {
         /// Boost values are relative to the default value of `1.0`.
         /// A boost value between 0 and `1.0` decreases the relevance score.
         /// A value greater than `1.0` increases the relevance score.
-        pub fn boost(mut self, boost: impl Into<Boost>) -> Self {
-            self.inner.boost = Some(boost.into());
+        pub fn boost(mut self, boost: impl std::convert::TryInto<Boost>) -> Self {
+            if let Ok(boost) = boost.try_into() {
+                self.inner.boost = Some(boost);
+            }
             self
         }
 
