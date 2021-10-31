@@ -13,6 +13,8 @@ use crate::{Aggregation, Numeric};
 ///
 /// > Boxplot as other percentile aggregations are also [non-deterministic](https://en.wikipedia.org/wiki/Nondeterministic_algorithm).
 /// This means you can get slightly different results using the same data.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-boxplot-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct BoxplotAggregation {
     #[serde(skip_serializing)]
