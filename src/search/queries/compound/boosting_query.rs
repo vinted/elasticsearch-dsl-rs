@@ -126,7 +126,7 @@ mod tests {
                         }
                     },
                     "negative_boost": 0.2,
-                    "boost": 3.0,
+                    "boost": 3,
                     "_name": "test"
                 }
             })

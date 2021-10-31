@@ -104,7 +104,7 @@ mod tests {
                 "term": {
                     "test": {
                         "value": 123,
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test"
                     }
                 }

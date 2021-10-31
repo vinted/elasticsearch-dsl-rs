@@ -181,7 +181,7 @@ mod tests {
                         "prefix_length": 4,
                         "transpositions": false,
                         "rewrite": "scoring_boolean",
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test"
                     }
                 }

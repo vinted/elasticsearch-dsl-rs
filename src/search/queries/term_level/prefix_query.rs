@@ -131,7 +131,7 @@ mod tests {
                         "value": 123,
                         "rewrite": "constant_score",
                         "case_insensitive": true,
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test"
                     }
                 }

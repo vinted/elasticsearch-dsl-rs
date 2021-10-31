@@ -199,7 +199,7 @@ mod tests {
                         }
                     ],
                     "tie_breaker": 0.5,
-                    "boost": 3.0,
+                    "boost": 3,
                     "_name": "test"
                 }
             })

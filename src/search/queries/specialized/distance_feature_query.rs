@@ -229,7 +229,7 @@ mod tests {
                         "field": "test",
                         "origin": [13.0, 12.0],
                         "pivot": "15km",
-                        "boost": 2.0,
+                        "boost": 2,
                         "_name": "test",
                     }
                 })

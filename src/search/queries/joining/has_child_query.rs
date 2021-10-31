@@ -151,7 +151,7 @@ mod tests {
                             }
                         }
                     },
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "test"
                 }
             })

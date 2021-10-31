@@ -52,7 +52,7 @@ mod tests {
 
         with_all_fields(
             Query::match_all().boost(2).name("test"),
-            json!({ "match_all": { "boost": 2.0, "_name": "test" } })
+            json!({ "match_all": { "boost": 2, "_name": "test" } })
         );
     }
 }

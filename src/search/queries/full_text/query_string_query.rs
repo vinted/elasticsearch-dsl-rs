@@ -422,7 +422,7 @@ mod tests {
                     "lenient": true,
                     "minimum_should_match": "22",
                     "quote_field_suffix": "s",
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "test",
                 }
             })

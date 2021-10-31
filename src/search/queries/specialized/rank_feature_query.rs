@@ -384,7 +384,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "query",
                 }
             })
@@ -395,7 +395,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "query",
                     "saturation": {},
                 }
@@ -407,7 +407,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "query",
                     "saturation": {
                         "pivot": 2.2,
@@ -421,7 +421,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "query",
                     "log": {
                         "scaling_factor": 2.2
@@ -435,7 +435,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "query",
                     "sigmoid": {
                         "pivot": 2.2,
@@ -450,7 +450,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2.0,
+                    "boost": 2,
                     "_name": "query",
                     "linear": {},
                 }
