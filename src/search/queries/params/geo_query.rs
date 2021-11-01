@@ -77,7 +77,7 @@ impl Serialize for GeoBoundingBox {
                 bottom,
                 right,
             } => {
-                let mut map = serializer.serialize_map(Some(2))?;
+                let mut map = serializer.serialize_map(Some(4))?;
                 map.serialize_entry("top", top)?;
                 map.serialize_entry("left", left)?;
                 map.serialize_entry("bottom", bottom)?;

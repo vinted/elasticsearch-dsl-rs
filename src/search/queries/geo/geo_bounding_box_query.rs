@@ -1,4 +1,3 @@
-use crate::util::KeyValuePair;
 use crate::util::*;
 use crate::{GeoBoundingBox, Query, ValidationMethod};
 use serde::Serialize;
