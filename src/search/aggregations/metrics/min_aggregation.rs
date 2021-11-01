@@ -28,6 +28,7 @@ impl Aggregation {
     /// Creates an instance of [`MinAggregation`]
     ///
     /// - `name` - name of the aggregation
+    /// - `field` - field to aggregate
     pub fn min(name: impl Into<String>, field: impl Into<String>) -> MinAggregation {
         MinAggregation {
             name: name.into(),

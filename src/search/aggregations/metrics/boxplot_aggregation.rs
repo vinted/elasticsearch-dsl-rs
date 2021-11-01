@@ -35,6 +35,7 @@ impl Aggregation {
     /// Creates an instance of [`BoxplotAggregation`]
     ///
     /// - `name` - name of the aggregation
+    /// - `field` - field to aggregate
     pub fn boxplot(name: impl Into<String>, field: impl Into<String>) -> BoxplotAggregation {
         BoxplotAggregation {
             name: name.into(),
