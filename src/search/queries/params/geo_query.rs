@@ -16,12 +16,14 @@ pub enum ValidationMethod {
 
 /// Different representations of geo bounding box
 #[derive(Debug, PartialEq, Clone)]
+#[allow(missing_docs)]
 pub enum GeoBoundingBox {
-    /// Diagonal vertices of geo bounding box
+    /// MainDiagonal vertices of geo bounding box
     MainDiagonal {
         top_left: GeoPoint,
         bottom_right: GeoPoint,
     },
+    /// SubDiagonal vertices of geo bounding box
     SubDiagonal {
         top_right: GeoPoint,
         bottom_left: GeoPoint,
