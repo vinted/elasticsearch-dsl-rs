@@ -1,6 +1,5 @@
 use crate::GeoPoint;
-use serde::ser::SerializeMap;
-use serde::{Serialize, Serializer};
+use serde::Serialize;
 
 /// Strategies to verify the correctness of coordinates
 #[derive(Debug, PartialEq, Clone, Serialize)]
@@ -15,82 +14,48 @@ pub enum ValidationMethod {
 }
 
 /// Different representations of geo bounding box
-#[derive(Debug, PartialEq, Clone)]
-#[allow(missing_docs)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
+#[serde(untagged)]
 pub enum GeoBoundingBox {
     /// MainDiagonal vertices of geo bounding box
     MainDiagonal {
+        /// The coordinates of the upper left vertex
         top_left: GeoPoint,
+        /// The coordinates of the lower right vertex
         bottom_right: GeoPoint,
     },
     /// SubDiagonal vertices of geo bounding box
     SubDiagonal {
+        /// The coordinates of the upper right vertex
         top_right: GeoPoint,
+        /// The coordinates of the lower left vertex
         bottom_left: GeoPoint,
     },
-    /// Well-Known Text (WKT). e.g. `BBOX (-74.1, -71.12, 40.73, 40.01)`
-    Wkt(String),
+    /// Well-Known Text (WKT).
+    WellKnownText {
+        /// e.g. `BBOX (-74.1, -71.12, 40.73, 40.01)`
+        wkt: String
+    },
     /// The vertices of the bounding box can either be set by `top_left` and `bottom_right` or by
     /// `top_right` and `bottom_left` parameters. More over the names `topLeft`, `bottomRight`, `topRight`
     /// and `bottomLeft` are supported. Instead of setting the values pairwise, one can use the simple
     /// names `top`, `left`, `bottom` and `right` to set the values separately.
     Vertices {
+        /// Set top separately
         top: f32,
+        /// Set left separately
         left: f32,
+        /// Set bottom separately
         bottom: f32,
+        /// Set right separately
         right: f32,
     },
-}
-
-impl Serialize for GeoBoundingBox {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match self {
-            Self::MainDiagonal {
-                top_left,
-                bottom_right,
-            } => {
-                let mut map = serializer.serialize_map(Some(2))?;
-                map.serialize_entry("top_left", top_left)?;
-                map.serialize_entry("bottom_right", bottom_right)?;
-                map.end()
-            }
-            Self::SubDiagonal {
-                top_right,
-                bottom_left,
-            } => {
-                let mut map = serializer.serialize_map(Some(2))?;
-                map.serialize_entry("top_right", top_right)?;
-                map.serialize_entry("bottom_left", bottom_left)?;
-                map.end()
-            }
-            Self::Wkt(wkt) => {
-                let mut map = serializer.serialize_map(Some(1))?;
-                map.serialize_entry("wkt", wkt)?;
-                map.end()
-            }
-            Self::Vertices {
-                top,
-                left,
-                bottom,
-                right,
-            } => {
-                let mut map = serializer.serialize_map(Some(4))?;
-                map.serialize_entry("top", top)?;
-                map.serialize_entry("left", left)?;
-                map.serialize_entry("bottom", bottom)?;
-                map.serialize_entry("right", right)?;
-                map.end()
-            }
-        }
-    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::{GeoBoundingBox, GeoPoint};
+
     test_serialization! {
         serializes_as_geo_bounding_box_geopoint(GeoBoundingBox::MainDiagonal {
             top_left: GeoPoint::Coordinates {longitude: -74.1, latitude: 40.73},
@@ -106,8 +71,9 @@ mod tests {
             "top_right": "dr5r9ydj2y73",
             "bottom_left": "drj7teegpus6"
         }));
-        serializes_as_geo_bounding_box_wkt(GeoBoundingBox::Wkt("BBOX (-74.1, -71.12, 40.73, 40.01)".into()),
-           json!({
+        serializes_as_geo_bounding_box_wkt(GeoBoundingBox::WellKnownText {
+            wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into()
+        }, json!({
             "wkt": "BBOX (-74.1, -71.12, 40.73, 40.01)"
         }));
         serializes_as_geo_bounding_box_vertices(GeoBoundingBox::Vertices {

@@ -1,5 +1,5 @@
+use crate::search::*;
 use crate::util::*;
-use crate::{GeoBoundingBox, Query, ValidationMethod};
 use serde::Serialize;
 
 /// Matches [geo_point](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html)
@@ -45,16 +45,13 @@ impl Query {
 impl GeoBoundingBoxQuery {
     /// Set to `IGNORE_MALFORMED` to accept geo points with invalid latitude or longitude, set to
     /// `COERCE` to also try to infer correct latitude or longitude. (default is `STRICT`).
-    pub fn validation_method(
-        mut self,
-        validation_method: impl Into<ValidationMethod>,
-    ) -> GeoBoundingBoxQuery {
+    pub fn validation_method(mut self, validation_method: impl Into<ValidationMethod>) -> Self {
         self.inner.validation_method = Some(validation_method.into());
         self
     }
 
     /// Optional name field to identify the filter
-    pub fn name(mut self, name: impl Into<String>) -> GeoBoundingBoxQuery {
+    pub fn name(mut self, name: impl Into<String>) -> Self {
         self.inner._name = Some(name.into());
         self
     }
@@ -67,8 +64,9 @@ mod tests {
 
     test_serialization! {
         geo_bounding_box_wkt(
-            Query::geo_bounding_box("pin.location", GeoBoundingBox::Wkt("BBOX (-74.1, -71.12, 40.73, 40.01)".into())),
-            json!({
+            Query::geo_bounding_box("pin.location", GeoBoundingBox::WellKnownText {
+                wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into()
+            }), json!({
                 "geo_bounding_box": {
                     "pin.location": {
                         "wkt": "BBOX (-74.1, -71.12, 40.73, 40.01)"
