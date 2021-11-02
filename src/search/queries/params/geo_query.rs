@@ -34,7 +34,7 @@ pub enum GeoBoundingBox {
     /// Well-Known Text (WKT).
     WellKnownText {
         /// e.g. `BBOX (-74.1, -71.12, 40.73, 40.01)`
-        wkt: String
+        wkt: String,
     },
     /// The vertices of the bounding box can either be set by `top_left` and `bottom_right` or by
     /// `top_right` and `bottom_left` parameters. More over the names `topLeft`, `bottomRight`, `topRight`

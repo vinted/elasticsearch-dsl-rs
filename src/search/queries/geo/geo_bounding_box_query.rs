@@ -20,6 +20,8 @@ struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     validation_method: Option<ValidationMethod>,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    boost: Option<Boost>,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
 }
 
@@ -36,6 +38,7 @@ impl Query {
             inner: Inner {
                 pair: KeyValuePair::new(field.into(), value.into()),
                 validation_method: None,
+                boost: None,
                 _name: None,
             },
         }
@@ -50,11 +53,7 @@ impl GeoBoundingBoxQuery {
         self
     }
 
-    /// Optional name field to identify the filter
-    pub fn name(mut self, name: impl Into<String>) -> Self {
-        self.inner._name = Some(name.into());
-        self
-    }
+    add_boost_and_name!();
 }
 
 #[cfg(test)]
@@ -98,11 +97,14 @@ mod tests {
                 left: -74.1,
                 bottom: 40.01,
                 right: -71.12
-            }).validation_method(ValidationMethod::Strict).name("test_name"),
+            }).validation_method(ValidationMethod::Strict)
+            .name("test_name")
+            .boost(1),
             json!({
                 "geo_bounding_box": {
                     "validation_method": "STRICT",
                     "_name": "test_name",
+                    "boost": 1.0,
                     "pin.location": {
                         "top": 40.73,
                         "left": -74.1,
