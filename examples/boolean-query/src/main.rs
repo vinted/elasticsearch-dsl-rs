@@ -1,9 +1,10 @@
-use elasticsearch_dsl::search::*;
+use elasticsearch_dsl::*;
 
 fn main() {
     let search = Search::new()
-        .from(0u64)
-        .size(10u64)
+        .source(false)
+        .from(0)
+        .size(10)
         .stats("boolean-query")
         .query(
             Query::bool()
