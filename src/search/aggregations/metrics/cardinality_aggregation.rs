@@ -26,6 +26,7 @@ impl Aggregation {
     /// Creates an instance of [`CardinalityAggregation`]
     ///
     /// - `name` - name of the aggregation
+    /// - `field` - field to aggregate
     pub fn cardinality(
         name: impl Into<String>,
         field: impl Into<String>,

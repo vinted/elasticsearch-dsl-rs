@@ -24,6 +24,7 @@ impl Aggregation {
     /// Creates an instance of [`SumAggregation`]
     ///
     /// - `name` - name of the aggregation
+    /// - `field` - field to aggregate
     pub fn sum(name: impl Into<String>, field: impl Into<String>) -> SumAggregation {
         SumAggregation {
             name: name.into(),

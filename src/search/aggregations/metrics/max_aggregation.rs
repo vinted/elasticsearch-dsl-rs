@@ -28,6 +28,7 @@ impl Aggregation {
     /// Creates an instance of [`MaxAggregation`]
     ///
     /// - `name` - name of the aggregation
+    /// - `field` - field to aggregate
     pub fn max(name: impl Into<String>, field: impl Into<String>) -> MaxAggregation {
         MaxAggregation {
             name: name.into(),

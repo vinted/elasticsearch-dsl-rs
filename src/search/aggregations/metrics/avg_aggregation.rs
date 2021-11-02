@@ -25,6 +25,7 @@ impl Aggregation {
     /// Creates an instance of [`AvgAggregation`]
     ///
     /// - `name` - name of the aggregation
+    /// - `field` - field to aggregate
     pub fn avg(name: impl Into<String>, field: impl Into<String>) -> AvgAggregation {
         AvgAggregation {
             name: name.into(),
