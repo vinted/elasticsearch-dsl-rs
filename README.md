@@ -25,18 +25,16 @@ Documentation for the library is available on [docs.rs](https://docs.rs/elastics
 ## Quick start
 
 ```rust
-use elasticsearch_dsl::search::*;
+use elasticsearch_dsl::*;
 
 let query = Search::new()
+    .source(false)
     .stats("statistics")
-    .from(0u64)
-    .size(30u64)
+    .from(0)
+    .size(30)
     .query(
         Query::bool()
-            .must(Query::multi_match(
-                ["title", "description"],
-                "you know, for search",
-            ))
+            .must(Query::multi_match(["title", "description"], "you know, for search"))
             .filter(Query::terms("tags", ["elasticsearch"]))
             .should(Query::term("verified", true).boost(10)),
     );
