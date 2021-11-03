@@ -59,7 +59,6 @@ impl GeoBoundingBoxQuery {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::GeoPoint;
 
     test_serialization! {
         geo_bounding_box_wkt(
@@ -104,7 +103,7 @@ mod tests {
                 "geo_bounding_box": {
                     "validation_method": "STRICT",
                     "_name": "test_name",
-                    "boost": 1.0,
+                    "boost": 1,
                     "pin.location": {
                         "top": 40.73,
                         "left": -74.1,
