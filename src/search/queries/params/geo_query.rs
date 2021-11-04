@@ -52,9 +52,19 @@ pub enum GeoBoundingBox {
     },
 }
 
+/// Strategies to compute the distance
+#[derive(Debug, PartialEq, Clone, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum DistanceType {
+    /// Accurate (default)
+    Arc,
+    /// Faster, but inaccurate on long distances and close to the poles
+    Plane,
+}
+
 #[cfg(test)]
 mod tests {
-    use crate::{GeoBoundingBox, GeoPoint};
+    use crate::{DistanceType, GeoBoundingBox, GeoPoint};
 
     test_serialization! {
         serializes_as_geo_bounding_box_geopoint(GeoBoundingBox::MainDiagonal {
@@ -64,6 +74,7 @@ mod tests {
             "top_left": [-74.1, 40.73],
             "bottom_right": [-71.12, 40.01]
         }));
+
         serializes_as_geo_bounding_box_geohash(GeoBoundingBox::SubDiagonal {
             top_right: GeoPoint::Geohash("dr5r9ydj2y73".into()),
             bottom_left: GeoPoint::Geohash("drj7teegpus6".into())
@@ -71,11 +82,13 @@ mod tests {
             "top_right": "dr5r9ydj2y73",
             "bottom_left": "drj7teegpus6"
         }));
+
         serializes_as_geo_bounding_box_wkt(GeoBoundingBox::WellKnownText {
             wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into()
         }, json!({
             "wkt": "BBOX (-74.1, -71.12, 40.73, 40.01)"
         }));
+
         serializes_as_geo_bounding_box_vertices(GeoBoundingBox::Vertices {
             top: 40.73,
             left: -74.1,
@@ -87,5 +100,15 @@ mod tests {
             "bottom": 40.01,
             "right": -71.12
         }));
+
+        serializes_as_distance_type_arc(
+            DistanceType::Arc,
+            json!("arc")
+        );
+
+        serializes_as_distance_type_plane(
+            DistanceType::Plane,
+            json!("plane")
+        );
     }
 }
