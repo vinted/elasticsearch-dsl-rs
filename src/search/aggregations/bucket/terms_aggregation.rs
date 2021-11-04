@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeMap, Serializer};
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 /// A multi-bucket value source based aggregation where buckets are dynamically built - one per unique value.
@@ -33,11 +32,8 @@ struct TermsAggregationInner {
 }
 
 /// Terms Aggregation sorting struct
-#[derive(Debug, Clone, PartialEq)]
-pub struct TermsAggregationOrder {
-    field: SortField,
-    order: SortOrder,
-}
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct TermsAggregationOrder(KeyValuePair<SortField, SortOrder>);
 
 impl TermsAggregationOrder {
     /// Creates an instance of [TermsAggregationOrder](TermsAggregationOrder)
@@ -45,22 +41,16 @@ impl TermsAggregationOrder {
     /// - `field` - Field to sort by
     /// - `order` - Ordering direction
     pub fn new(field: impl Into<SortField>, order: SortOrder) -> Self {
-        Self {
-            field: field.into(),
-            order,
-        }
+        Self(KeyValuePair::new(field.into(), order))
     }
 }
 
-impl Serialize for TermsAggregationOrder {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut map = serializer.serialize_map(Some(1))?;
-
-        map.serialize_entry(&self.field, &self.order)?;
-        map.end()
+impl<K> From<(K, SortOrder)> for TermsAggregationOrder
+where
+    K: Into<SortField>,
+{
+    fn from((key, value): (K, SortOrder)) -> Self {
+        Self::new(key, value)
     }
 }
 
@@ -118,8 +108,8 @@ impl TermsAggregation {
     /// [min](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html) or
     /// [max](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html)
     /// aggregation: counts will not be accurate but at least the top buckets will be correctly picked.
-    pub fn order(mut self, order: TermsAggregationOrder) -> Self {
-        self.terms.order.push(order);
+    pub fn order(mut self, order: impl Into<TermsAggregationOrder>) -> Self {
+        self.terms.order.push(order.into());
         self
     }
 
@@ -166,13 +156,17 @@ mod tests {
         with_sub_aggregations(
             Aggregation::terms("test_agg", "test_field")
                 .size(0u16)
+                .order(("test_order", SortOrder::Asc))
                 .aggregate(
                     Aggregation::terms("test_sub_agg", "test_field2").size(3u16)
                 ),
             json!({
                 "terms": {
                     "field": "test_field",
-                    "size": 0
+                    "size": 0,
+                    "order": [
+                        { "test_order": "asc" }
+                    ]
                 },
                 "aggs": {
                     "test_sub_agg": {
