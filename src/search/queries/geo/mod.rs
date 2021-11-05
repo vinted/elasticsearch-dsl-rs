@@ -2,5 +2,7 @@
 //! geo_shape fields, which support points, lines, circles, polygons, multi-polygons, etc.
 
 mod geo_bounding_box_query;
+mod geo_distance_query;
 
 pub use self::geo_bounding_box_query::*;
+pub use self::geo_distance_query::*;
