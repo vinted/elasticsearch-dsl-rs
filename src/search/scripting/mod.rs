@@ -107,7 +107,7 @@ pub enum ScriptLang {
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-expression.html>
     Expression,
-    /// A template language to search by templates
+    /// A template language to search with templates
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>
     Mustache,
