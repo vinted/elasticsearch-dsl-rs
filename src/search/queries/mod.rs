@@ -122,4 +122,6 @@ query!(Query {
     RankFeatureLinear(RankFeatureLinearQuery),
     MoreLikeThis(MoreLikeThisQuery),
     Fuzzy(FuzzyQuery),
+    GeoDistance(GeoDistanceQuery),
+    GeoBoundingBox(GeoBoundingBoxQuery),
 });
