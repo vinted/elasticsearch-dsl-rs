@@ -18,12 +18,44 @@ impl fmt::Display for Boost {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize)]
+#[derive(Debug, Clone, Copy, Serialize)]
 #[serde(untagged)]
 enum Inner {
     U64(u64),
     F32(f32),
     F64(f64),
+}
+
+impl PartialEq for Inner {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::U64(value), Self::U64(other)) => value.eq(other),
+            (Self::U64(value), Self::F32(other)) => (*value as f32).eq(other),
+            (Self::U64(value), Self::F64(other)) => (*value as f64).eq(other),
+            (Self::F32(value), Self::U64(other)) => value.eq(&(*other as f32)),
+            (Self::F32(value), Self::F32(other)) => value.eq(other),
+            (Self::F32(value), Self::F64(other)) => value.eq(&(*other as f32)),
+            (Self::F64(value), Self::U64(other)) => value.eq(&(*other as f64)),
+            (Self::F64(value), Self::F32(other)) => (*value as f32).eq(other),
+            (Self::F64(value), Self::F64(other)) => value.eq(other),
+        }
+    }
+}
+
+impl PartialOrd for Inner {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        match (self, other) {
+            (Self::U64(value), Self::U64(other)) => value.partial_cmp(other),
+            (Self::U64(value), Self::F32(other)) => (*value as f32).partial_cmp(other),
+            (Self::U64(value), Self::F64(other)) => (*value as f64).partial_cmp(other),
+            (Self::F32(value), Self::U64(other)) => value.partial_cmp(&(*other as f32)),
+            (Self::F32(value), Self::F32(other)) => value.partial_cmp(other),
+            (Self::F32(value), Self::F64(other)) => value.partial_cmp(&(*other as f32)),
+            (Self::F64(value), Self::U64(other)) => value.partial_cmp(&(*other as f64)),
+            (Self::F64(value), Self::F32(other)) => (*value as f32).partial_cmp(other),
+            (Self::F64(value), Self::F64(other)) => value.partial_cmp(other),
+        }
+    }
 }
 
 // i8
@@ -392,6 +424,13 @@ mod tests {
         assert!(Boost::try_from(1_u64).unwrap() == 1);
         assert!(Boost::try_from(1_f32).unwrap() == 1);
         assert!(Boost::try_from(1_f64).unwrap() == 1);
+    }
+
+    #[test]
+    fn partial_eq() {
+        assert_eq!(Boost::try_from(2f32).unwrap(), Boost::try_from(2).unwrap());
+        assert_eq!(Boost::try_from(2f64).unwrap(), Boost::try_from(2).unwrap());
+        assert_eq!(Boost::try_from(2u64).unwrap(), Boost::try_from(2).unwrap());
     }
 
     #[test]
