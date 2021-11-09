@@ -1,6 +1,11 @@
+//! With scripting, you can evaluate custom expressions in Elasticsearch. For example, you can use
+//! a script to return a computed value as a field or evaluate a custom score for a query.
+//!
 //! The default scripting language is [Painless](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-painless.html).
 //! Additional `lang` plugins are available to run scripts written in other languages. You can
 //! specify the language of the script anywhere that scripts run.
+//!
+//! <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>
 
 use crate::util::*;
 use crate::{Query, Scalar};
