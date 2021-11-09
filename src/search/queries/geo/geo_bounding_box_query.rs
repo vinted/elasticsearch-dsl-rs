@@ -56,6 +56,12 @@ impl GeoBoundingBoxQuery {
     add_boost_and_name!();
 }
 
+impl ShouldSkip for GeoBoundingBoxQuery {
+    fn should_skip(&self) -> bool {
+        self.inner.pair.key.should_skip()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
