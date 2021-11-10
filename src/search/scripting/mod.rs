@@ -10,6 +10,7 @@
 use crate::util::*;
 use crate::Query;
 use serde::{Serialize, Serializer};
+use std::collections::BTreeMap;
 
 /// Wherever scripting is supported in the Elasticsearch APIs, the syntax follows the same pattern;
 /// you specify the language of your script, provide the script logic (or source, and add parameters
@@ -34,7 +35,7 @@ struct Inner {
     id: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    params: Params,
+    params: BTreeMap<String, serde_json::Value>,
 }
 
 impl Query {
@@ -76,10 +77,6 @@ impl Script {
         self
     }
 }
-
-/// Type alias for a collection of parameter
-type Params = std::collections::BTreeMap<String, serde_json::Value>;
-
 /// Available scripting language
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ScriptLang {
