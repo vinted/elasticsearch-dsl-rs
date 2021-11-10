@@ -8,7 +8,7 @@
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>
 
 use crate::util::*;
-use crate::{Query, Scalar};
+use crate::Query;
 use serde::{Serialize, Serializer};
 
 /// Wherever scripting is supported in the Elasticsearch APIs, the syntax follows the same pattern;
@@ -66,15 +66,19 @@ impl Script {
 
     /// Specifies any named parameters that are passed into the script as variables. [Use parameters](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-using.html#prefer-params)
     /// instead of hard-coded values to decrease compile time.
-    pub fn param(mut self, name: impl Into<String>, param: impl Into<Scalar>) -> Self {
-        let param = param.into();
-        let _ = self.inner.params.entry(name.into()).or_insert(param);
+    pub fn param<T>(mut self, name: impl Into<String>, param: T) -> Self
+    where
+        T: Serialize,
+    {
+        if let Ok(param) = serde_json::to_value(param) {
+            let _ = self.inner.params.entry(name.into()).or_insert(param);
+        }
         self
     }
 }
 
 /// Type alias for a collection of parameter
-pub type Params = std::collections::BTreeMap<String, Scalar>;
+type Params = std::collections::BTreeMap<String, serde_json::Value>;
 
 /// Available scripting language
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -138,14 +142,14 @@ mod tests {
 
         with_all_fields(
             Query::script()
-            .source("Math.log(_score * 2) * params['multiplier']")
-            .param("multiplier", Scalar::SignedInteger(1))
+            .source("Math.log(_score * 2) * params['multiplier'].len()")
+            .param("multiplier", vec![ 1, 2, 3])
             .lang(ScriptLang::Painless),
             json!({ "script": {
-                "source": "Math.log(_score * 2) * params['multiplier']",
+                "source": "Math.log(_score * 2) * params['multiplier'].len()",
                 "lang": "painless",
                 "params": {
-                    "multiplier": 1
+                    "multiplier": [ 1, 2, 3]
                 }
             }})
         );
@@ -153,7 +157,7 @@ mod tests {
         with_all_fields_custom_script_lang(
             Query::script()
             .source("doc['my_field'].value * params['multiplier']")
-            .param("multiplier", Scalar::SignedInteger(1))
+            .param("multiplier", 1)
             .lang(ScriptLang::Custom("my_lang".into())),
             json!({ "script": {
                 "source": "doc['my_field'].value * params['multiplier']",
