@@ -135,7 +135,7 @@ mod tests {
         with_required_fields(Script::default(), json!({ "script": {}}));
 
         with_all_fields(
-            Script::default()
+            Script::new()
             .source("Math.log(_score * 2) * params['multiplier'].len()")
             .param("multiplier", vec![ 1, 2, 3])
             .lang(ScriptLang::Painless),
@@ -149,7 +149,7 @@ mod tests {
         );
 
         with_all_fields_custom_script_lang(
-            Script::default()
+            Script::new()
             .source("doc['my_field'].value * params['multiplier']")
             .param("multiplier", 1)
             .lang(ScriptLang::Custom("my_lang".into())),
