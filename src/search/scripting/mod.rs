@@ -8,7 +8,6 @@
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>
 
 use crate::util::*;
-use crate::Query;
 use serde::{Serialize, Serializer};
 use std::collections::BTreeMap;
 
@@ -36,13 +35,6 @@ struct Inner {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     params: BTreeMap<String, serde_json::Value>,
-}
-
-impl Query {
-    /// Creates an instance of [`Script`]
-    pub fn script() -> Script {
-        Script::default()
-    }
 }
 
 impl Script {
@@ -135,10 +127,10 @@ mod tests {
     use super::*;
 
     test_serialization! {
-        with_required_fields(Query::script(), json!({ "script": {}}));
+        with_required_fields(Script::default(), json!({ "script": {}}));
 
         with_all_fields(
-            Query::script()
+            Script::default()
             .source("Math.log(_score * 2) * params['multiplier'].len()")
             .param("multiplier", vec![ 1, 2, 3])
             .lang(ScriptLang::Painless),
@@ -152,7 +144,7 @@ mod tests {
         );
 
         with_all_fields_custom_script_lang(
-            Query::script()
+            Script::default()
             .source("doc['my_field'].value * params['multiplier']")
             .param("multiplier", 1)
             .lang(ScriptLang::Custom("my_lang".into())),
