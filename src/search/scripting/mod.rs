@@ -38,6 +38,11 @@ struct Inner {
 }
 
 impl Script {
+    /// Creates an instance of a [`Script`]
+    pub fn new() -> Self {
+        Self::default()
+    }
+
     /// Specifies the language the script is written in. Defaults to `painless`.
     pub fn lang(mut self, lang: impl Into<ScriptLang>) -> Self {
         self.inner.lang = Some(lang.into());
