@@ -19,6 +19,7 @@ pub mod params;
 pub mod queries;
 pub mod request;
 pub mod rescoring;
+pub mod scripting;
 pub mod sort;
 
 // Public re-exports
@@ -30,4 +31,5 @@ pub use self::queries::*;
 pub use self::request::*;
 pub use self::rescoring::*;
 pub use self::response::*;
+pub use self::scripting::*;
 pub use self::sort::*;
