@@ -95,6 +95,10 @@ pub struct Hit<H, IH> {
     /// Values document was sorted by
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
     pub sort: Vec<Value>,
+
+    /// Field values for the documents. Need to be specified in the request
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
+    pub fields: std::collections::BTreeMap<String, Value>,
 }
 
 /// Represents inner hits
@@ -207,6 +211,8 @@ pub enum Relation {
 
 #[cfg(test)]
 mod tests {
+    use std::fmt::Debug;
+
     use super::*;
 
     #[test]
@@ -264,6 +270,7 @@ mod tests {
                     inner_hits: None,
                     matched_queries: Default::default(),
                     sort: Default::default(),
+                    fields: Default::default(),
                 }],
             },
             aggregations: None,
