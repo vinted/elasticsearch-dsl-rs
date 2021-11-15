@@ -211,8 +211,6 @@ pub enum Relation {
 
 #[cfg(test)]
 mod tests {
-    use std::fmt::Debug;
-
     use super::*;
 
     #[test]
