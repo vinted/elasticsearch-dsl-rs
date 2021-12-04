@@ -16,6 +16,7 @@
 pub mod params;
 
 pub mod compound;
+pub mod custom;
 pub mod full_text;
 pub mod geo;
 pub mod joining;
@@ -25,6 +26,7 @@ pub mod specialized;
 pub mod term_level;
 
 pub use self::compound::*;
+pub use self::custom::*;
 pub use self::full_text::*;
 pub use self::geo::*;
 pub use self::joining::*;
@@ -124,4 +126,5 @@ query!(Query {
     Fuzzy(FuzzyQuery),
     GeoDistance(GeoDistanceQuery),
     GeoBoundingBox(GeoBoundingBoxQuery),
+    Json(JsonQuery),
 });
