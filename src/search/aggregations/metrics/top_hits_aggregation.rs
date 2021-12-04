@@ -1,5 +1,6 @@
 use crate::search::*;
 use crate::util::*;
+use std::convert::TryInto;
 
 /// A `top_hits` metric aggregation keeps track of the most relevant document being aggregated.
 /// This aggregation is intended to be used as a sub aggregation,
@@ -28,10 +29,10 @@ struct TopHitsAggregationInner {
     _source: Option<SourceFilter>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    from: Option<u16>,
+    from: Option<u64>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    size: Option<u16>,
+    size: Option<u64>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     sort: Vec<Sort>,
@@ -62,16 +63,20 @@ impl TopHitsAggregation {
     }
 
     /// The offset from the first result you want to fetch.
-    pub fn from(mut self, from: impl Into<u16>) -> Self {
-        self.top_hits.from = Some(from.into());
+    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
+        if let Ok(from) = from.try_into() {
+            self.top_hits.from = Some(from);
+        }
         self
     }
 
     /// The maximum number of top matching hits to return per bucket.
     ///
     /// By default the top three matching hits are returned.
-    pub fn size(mut self, size: impl Into<u16>) -> Self {
-        self.top_hits.size = Some(size.into());
+    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
+        if let Ok(size) = size.try_into() {
+            self.top_hits.size = Some(size);
+        }
         self
     }
 

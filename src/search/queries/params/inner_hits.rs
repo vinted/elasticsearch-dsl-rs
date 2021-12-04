@@ -1,5 +1,6 @@
 use crate::search::*;
 use crate::util::*;
+use std::convert::TryInto;
 
 /// The [parent-join](https://www.elastic.co/guide/en/elasticsearch/reference/current/parent-join.html)
 /// and [nested](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html)
@@ -52,16 +53,20 @@ impl InnerHits {
     /// Starting document offset.
     ///
     /// Defaults to `0`.
-    pub fn from(mut self, from: impl Into<u64>) -> Self {
-        self.from = Some(from.into());
+    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
+        if let Ok(from) = from.try_into() {
+            self.from = Some(from);
+        }
         self
     }
 
     /// The number of hits to return.
     ///
     /// Defaults to `10`.
-    pub fn size(mut self, size: impl Into<u64>) -> Self {
-        self.size = Some(size.into());
+    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
+        if let Ok(size) = size.try_into() {
+            self.size = Some(size);
+        }
         self
     }
 

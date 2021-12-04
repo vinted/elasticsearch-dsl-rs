@@ -1,5 +1,6 @@
 use crate::search::*;
 use crate::util::*;
+use std::convert::TryInto;
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 /// A multi-bucket value source based aggregation where buckets are dynamically built - one per unique value.
@@ -19,7 +20,7 @@ struct TermsAggregationInner {
     field: String,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    size: Option<u16>,
+    size: Option<u64>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     show_term_doc_count_error: Option<bool>,
@@ -82,8 +83,10 @@ impl TermsAggregation {
     ///
     /// This means that if the number of unique terms is greater than `size`, the returned list is slightly off and not accurate
     /// (it could be that the term counts are slightly off and it could even be that a term that should have been in the top `size` buckets was not returned).
-    pub fn size(mut self, size: impl Into<u16>) -> Self {
-        self.terms.size = Some(size.into());
+    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
+        if let Ok(size) = size.try_into() {
+            self.terms.size = Some(size);
+        }
         self
     }
 
