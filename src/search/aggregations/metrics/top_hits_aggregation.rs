@@ -29,7 +29,7 @@ struct TopHitsAggregationInner {
     _source: Option<SourceFilter>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    from: Option<u16>,
+    from: Option<u64>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     size: Option<u64>,
@@ -63,8 +63,10 @@ impl TopHitsAggregation {
     }
 
     /// The offset from the first result you want to fetch.
-    pub fn from(mut self, from: impl Into<u16>) -> Self {
-        self.top_hits.from = Some(from.into());
+    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
+        if let Ok(from) = from.try_into() {
+            self.top_hits.from = Some(from);
+        }
         self
     }
 

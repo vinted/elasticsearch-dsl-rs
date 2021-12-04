@@ -53,8 +53,10 @@ impl InnerHits {
     /// Starting document offset.
     ///
     /// Defaults to `0`.
-    pub fn from(mut self, from: impl Into<u64>) -> Self {
-        self.from = Some(from.into());
+    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
+        if let Ok(from) = from.try_into() {
+            self.from = Some(from);
+        }
         self
     }
 
