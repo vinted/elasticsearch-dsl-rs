@@ -69,7 +69,7 @@ impl Rescore {
     }
 
     /// The number of docs which will be examined on each shard can be controlled by the `window_size` parameter, which defaults to 10.
-    pub fn window_size(mut self, window_size: impl TryInto<u64>) -> Self {
+    pub fn window_size(mut self, window_size: impl TryInto<Size>) -> Self {
         if let Ok(window_size) = window_size.try_into() {
             self.window_size = Some(window_size);
         }

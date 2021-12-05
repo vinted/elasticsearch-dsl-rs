@@ -11,3 +11,9 @@ pub use self::numeric::*;
 pub use self::scalar::*;
 pub use self::search::*;
 pub use self::units::*;
+
+/// Size type alias
+pub type Size = u64;
+
+/// From type alias
+pub type From = u64;

@@ -53,7 +53,7 @@ impl InnerHits {
     /// Starting document offset.
     ///
     /// Defaults to `0`.
-    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
+    pub fn from(mut self, from: impl TryInto<From>) -> Self {
         if let Ok(from) = from.try_into() {
             self.from = Some(from);
         }
@@ -63,7 +63,7 @@ impl InnerHits {
     /// The number of hits to return.
     ///
     /// Defaults to `10`.
-    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
+    pub fn size(mut self, size: impl TryInto<Size>) -> Self {
         if let Ok(size) = size.try_into() {
             self.size = Some(size);
         }

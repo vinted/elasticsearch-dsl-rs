@@ -63,7 +63,7 @@ impl TopHitsAggregation {
     }
 
     /// The offset from the first result you want to fetch.
-    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
+    pub fn from(mut self, from: impl TryInto<From>) -> Self {
         if let Ok(from) = from.try_into() {
             self.top_hits.from = Some(from);
         }
@@ -73,7 +73,7 @@ impl TopHitsAggregation {
     /// The maximum number of top matching hits to return per bucket.
     ///
     /// By default the top three matching hits are returned.
-    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
+    pub fn size(mut self, size: impl TryInto<Size>) -> Self {
         if let Ok(size) = size.try_into() {
             self.top_hits.size = Some(size);
         }

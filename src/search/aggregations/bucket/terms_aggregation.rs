@@ -83,7 +83,7 @@ impl TermsAggregation {
     ///
     /// This means that if the number of unique terms is greater than `size`, the returned list is slightly off and not accurate
     /// (it could be that the term counts are slightly off and it could even be that a term that should have been in the top `size` buckets was not returned).
-    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
+    pub fn size(mut self, size: impl TryInto<Size>) -> Self {
         if let Ok(size) = size.try_into() {
             self.terms.size = Some(size);
         }
