@@ -17,7 +17,7 @@ struct SumAggregationInner {
     field: String,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    missing: Option<Numeric>,
+    missing: Option<Number>,
 }
 
 impl Aggregation {
@@ -40,7 +40,7 @@ impl SumAggregation {
     /// The `missing` parameter defines how documents that are missing a value should be treated. By
     /// default documents missing the value will be ignored but it is also possible to treat them
     /// as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Numeric>) -> Self {
+    pub fn missing(mut self, missing: impl Into<Number>) -> Self {
         self.sum.missing = Some(missing.into());
         self
     }

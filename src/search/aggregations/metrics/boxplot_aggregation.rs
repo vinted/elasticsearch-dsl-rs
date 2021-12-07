@@ -1,5 +1,5 @@
 use crate::util::*;
-use crate::{Aggregation, Numeric};
+use crate::{Aggregation, Number};
 
 /// A `boxplot` metrics aggregation that computes boxplot of numeric values extracted from the
 /// aggregated documents. These values can be generated from specific numeric or [histogram fields](https://www.elastic.co/guide/en/elasticsearch/reference/current/histogram.html)
@@ -26,9 +26,9 @@ pub struct BoxplotAggregation {
 struct BoxplotAggregationInner {
     field: String,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    compression: Option<Numeric>,
+    compression: Option<Number>,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    missing: Option<Numeric>,
+    missing: Option<Number>,
 }
 
 impl Aggregation {
@@ -63,14 +63,14 @@ impl BoxplotAggregation {
     /// A "node" uses roughly 32 bytes of memory, so under worst-case scenarios (large amount of
     /// data which arrives sorted and in-order) the default settings will produce a TDigest roughly
     /// 64KB in size. In practice data tends to be more random and the TDigest will use less memory.
-    pub fn compression(mut self, compression: impl Into<Numeric>) -> Self {
+    pub fn compression(mut self, compression: impl Into<Number>) -> Self {
         self.boxplot.compression = Some(compression.into());
         self
     }
 
     /// The `missing` parameter defines how documents that are missing a value should be treated.
     /// By default they will be ignored but it is also possible to treat them as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Numeric>) -> Self {
+    pub fn missing(mut self, missing: impl Into<Number>) -> Self {
         self.boxplot.missing = Some(missing.into());
         self
     }
