@@ -61,7 +61,7 @@ pub struct Hits<H, IH> {
 }
 
 /// Represents a single matched document
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Hit<H, IH> {
     /// Document index
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_index")]
@@ -99,6 +99,13 @@ pub struct Hit<H, IH> {
     /// Field values for the documents. Need to be specified in the request
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
     pub fields: std::collections::BTreeMap<String, Value>,
+}
+
+/// Hit can be considered equal to another hit when index and id are equal
+impl<H, IH> PartialEq for Hit<H, IH> {
+    fn eq(&self, other: &Self) -> bool {
+        self.index == other.index && self.id == other.id
+    }
 }
 
 /// Represents inner hits
