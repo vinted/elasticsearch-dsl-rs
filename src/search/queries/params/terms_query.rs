@@ -6,7 +6,7 @@ use std::{collections::BTreeSet, fmt::Debug};
 /// Marker trait for [terms query](crate::TermsQuery) values
 pub trait Terms: Debug + Serialize + Clone {}
 
-impl<T: Into<Scalar> + Debug + Serialize + Clone + PartialOrd + Ord> Terms for BTreeSet<T> {}
+impl<T: Into<Term> + Debug + Serialize + Clone + PartialOrd + Ord> Terms for BTreeSet<T> {}
 
 impl Terms for TermsLookup {}
 

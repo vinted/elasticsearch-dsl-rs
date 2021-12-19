@@ -29,7 +29,7 @@ pub struct PrefixQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    value: OptionalScalar,
+    value: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     rewrite: Option<Rewrite>,
@@ -50,7 +50,7 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `value` - Term you wish to find in the provided field.
     /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
-    pub fn prefix(field: impl Into<String>, value: impl Into<OptionalScalar>) -> PrefixQuery {
+    pub fn prefix(field: impl Into<String>, value: impl Into<Term>) -> PrefixQuery {
         PrefixQuery {
             field: field.into(),
             inner: Inner {

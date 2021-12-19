@@ -25,16 +25,16 @@ pub struct RangeQuery {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    gt: OptionalScalar,
+    gt: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    gte: OptionalScalar,
+    gte: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    lt: OptionalScalar,
+    lt: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    lte: OptionalScalar,
+    lte: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     format: Option<String>,
@@ -76,25 +76,25 @@ impl Query {
 
 impl RangeQuery {
     /// Greater than.
-    pub fn gt(mut self, gt: impl Into<OptionalScalar>) -> Self {
+    pub fn gt(mut self, gt: impl Into<Term>) -> Self {
         self.inner.gt = gt.into();
         self
     }
 
     /// Greater than or equal to.
-    pub fn gte(mut self, gte: impl Into<OptionalScalar>) -> Self {
+    pub fn gte(mut self, gte: impl Into<Term>) -> Self {
         self.inner.gte = gte.into();
         self
     }
 
     /// Less than.
-    pub fn lt(mut self, lt: impl Into<OptionalScalar>) -> Self {
+    pub fn lt(mut self, lt: impl Into<Term>) -> Self {
         self.inner.lt = lt.into();
         self
     }
 
     /// Less than or equal to.
-    pub fn lte(mut self, lte: impl Into<OptionalScalar>) -> Self {
+    pub fn lte(mut self, lte: impl Into<Term>) -> Self {
         self.inner.lte = lte.into();
         self
     }

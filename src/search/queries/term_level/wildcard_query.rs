@@ -24,7 +24,7 @@ pub struct WildcardQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    value: OptionalScalar,
+    value: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     rewrite: Option<Rewrite>,
@@ -45,7 +45,7 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `value` - Wildcard you wish to find in the provided field.
     /// To return a document, the wildcard must exactly match the field value, including whitespace and capitalization.
-    pub fn wildcard(field: impl Into<String>, value: impl Into<OptionalScalar>) -> WildcardQuery {
+    pub fn wildcard(field: impl Into<String>, value: impl Into<Term>) -> WildcardQuery {
         WildcardQuery {
             field: field.into(),
             inner: Inner {
