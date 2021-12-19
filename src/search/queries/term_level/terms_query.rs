@@ -62,11 +62,11 @@ impl Query {
     /// [`index.max_terms_count setting`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-terms-count).<br>
     /// > To use the field values of an existing document as search terms,
     /// use the [terms lookup](crate::TermsLookup) parameters.
-    pub fn terms<S, I>(field: S, values: I) -> TermsQuery<BTreeSet<Scalar>>
+    pub fn terms<S, I>(field: S, values: I) -> TermsQuery<BTreeSet<Term>>
     where
         S: Into<String>,
         I: IntoIterator,
-        I::Item: Into<Scalar>,
+        I::Item: Into<Term>,
     {
         TermsQuery {
             inner: Inner {
@@ -126,7 +126,7 @@ impl TermsQuery<TermsLookup> {
     }
 }
 
-impl ShouldSkip for TermsQuery<BTreeSet<Scalar>> {
+impl ShouldSkip for TermsQuery<BTreeSet<Term>> {
     fn should_skip(&self) -> bool {
         self.inner.pair.value.should_skip()
     }
@@ -138,7 +138,7 @@ impl ShouldSkip for TermsQuery<TermsLookup> {}
 mod tests {
     use super::*;
 
-    mod scalar {
+    mod term {
         use super::*;
 
         test_serialization! {
@@ -161,7 +161,7 @@ mod tests {
 
         #[test]
         fn should_skip_when_there_are_no_values() {
-            let values: Vec<Scalar> = Vec::new();
+            let values: Vec<Term> = Vec::new();
             let query = Query::terms("test", values);
 
             assert!(query.should_skip())

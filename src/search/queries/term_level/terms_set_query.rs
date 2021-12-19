@@ -36,7 +36,7 @@ pub struct TermsSetQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    terms: BTreeSet<Scalar>,
+    terms: BTreeSet<Term>,
 
     #[serde(flatten)]
     minimum_should_match: TermsSetMinimumShouldMatch,
@@ -61,7 +61,7 @@ impl Query {
     ) -> TermsSetQuery
     where
         I: IntoIterator,
-        I::Item: Into<Scalar>,
+        I::Item: Into<Term>,
     {
         TermsSetQuery {
             field: field.into(),

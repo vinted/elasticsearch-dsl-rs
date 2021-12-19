@@ -60,7 +60,7 @@ pub enum SortMissing {
     /// Sorts missing field last
     Last,
 
-    /// Provide a custom scalar value for missing fields
+    /// Provide a custom term for missing fields
     Custom(String),
 }
 

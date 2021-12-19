@@ -197,7 +197,7 @@ pub struct RandomScore {
 #[derive(Debug, Default, Clone, PartialEq, Serialize)]
 struct RandomScoreInner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    seed: Option<Scalar>,
+    seed: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     field: Option<String>,
@@ -210,8 +210,8 @@ impl RandomScore {
     }
 
     /// Sets seed value
-    pub fn seed(mut self, seed: impl Into<Scalar>) -> Self {
-        self.random_score.seed = Some(seed.into());
+    pub fn seed(mut self, seed: impl Into<Term>) -> Self {
+        self.random_score.seed = seed.into();
         self
     }
 

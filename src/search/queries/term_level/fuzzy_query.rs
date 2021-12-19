@@ -39,7 +39,7 @@ pub struct FuzzyQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    value: OptionalScalar,
+    value: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     fuzziness: Option<Fuzziness>,
@@ -68,7 +68,7 @@ impl Query {
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - Fuzzy you wish to find in the provided field.
-    pub fn fuzzy(field: impl Into<String>, value: impl Into<OptionalScalar>) -> FuzzyQuery {
+    pub fn fuzzy(field: impl Into<String>, value: impl Into<Term>) -> FuzzyQuery {
         FuzzyQuery {
             field: field.into(),
             inner: Inner {

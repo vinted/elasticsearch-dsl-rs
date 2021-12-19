@@ -95,7 +95,7 @@ query!(Query {
     Wildcard(WildcardQuery),
     TermsSet(TermsSetQuery),
     Term(TermQuery),
-    TermsValues(TermsQuery<std::collections::BTreeSet<crate::Scalar>>),
+    TermsValues(TermsQuery<std::collections::BTreeSet<crate::Term>>),
     TermsLookup(TermsQuery<self::params::TermsLookup>),
     Exists(ExistsQuery),
     Range(RangeQuery),

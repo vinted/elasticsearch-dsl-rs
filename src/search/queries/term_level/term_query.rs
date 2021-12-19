@@ -31,7 +31,7 @@ pub struct TermQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    value: OptionalScalar,
+    value: Term,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -46,7 +46,7 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `value` - Term you wish to find in the provided field.
     /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
-    pub fn term(field: impl Into<String>, value: impl Into<OptionalScalar>) -> TermQuery {
+    pub fn term(field: impl Into<String>, value: impl Into<Term>) -> TermQuery {
         TermQuery {
             field: field.into(),
             inner: Inner {
