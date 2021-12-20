@@ -29,7 +29,7 @@ struct Inner {
     fields: Vec<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    query: String,
+    query: Text,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     auto_generate_synonyms_phrase_query: Option<bool>,
@@ -62,7 +62,7 @@ impl Query {
     where
         F: IntoIterator,
         F::Item: ToString,
-        S: Into<String>,
+        S: Into<Text>,
     {
         CombinedFieldsQuery {
             inner: Inner {

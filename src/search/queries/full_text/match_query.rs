@@ -26,7 +26,8 @@ pub struct MatchQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    query: String,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    query: Text,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     analyzer: Option<String>,
@@ -80,7 +81,7 @@ impl Query {
     /// query can search
     /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
     /// fields for analyzed tokens rather than an exact term.
-    pub fn r#match(field: impl Into<String>, query: impl Into<String>) -> MatchQuery {
+    pub fn r#match(field: impl Into<String>, query: impl Into<Text>) -> MatchQuery {
         MatchQuery {
             field: field.into(),
             inner: Inner {

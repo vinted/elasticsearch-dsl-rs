@@ -34,7 +34,7 @@ struct Inner {
     tie_breaker: Option<TieBreaker>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    query: String,
+    query: Text,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     analyzer: Option<String>,
@@ -91,7 +91,7 @@ impl Query {
     where
         F: IntoIterator,
         F::Item: ToString,
-        S: Into<String>,
+        S: Into<Text>,
     {
         MultiMatchQuery {
             inner: Inner {

@@ -2,7 +2,7 @@ use crate::util::*;
 use std::borrow::Cow;
 
 /// Search text
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct Text(Option<String>);
 
 impl ShouldSkip for Text {

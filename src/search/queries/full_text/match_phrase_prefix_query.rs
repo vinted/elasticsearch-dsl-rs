@@ -24,7 +24,8 @@ pub struct MatchPhrasePrefixQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    query: String,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    query: Text,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     analyzer: Option<String>,
@@ -55,7 +56,7 @@ impl Query {
     /// that term.
     pub fn match_phrase_prefix(
         field: impl Into<String>,
-        query: impl Into<String>,
+        query: impl Into<Text>,
     ) -> MatchPhrasePrefixQuery {
         MatchPhrasePrefixQuery {
             field: field.into(),

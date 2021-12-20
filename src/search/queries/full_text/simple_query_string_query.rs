@@ -26,7 +26,7 @@ pub struct SimpleQueryStringQuery {
 #[derive(Debug, Clone, PartialEq, Serialize, Default)]
 struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    query: String,
+    query: Text,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     fields: Vec<String>,
@@ -81,7 +81,7 @@ impl Query {
     /// [Simple query string syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#simple-query-string-syntax).
     pub fn simple_query_string<S>(query: S) -> SimpleQueryStringQuery
     where
-        S: Into<String>,
+        S: Into<Text>,
     {
         SimpleQueryStringQuery {
             inner: Inner {
