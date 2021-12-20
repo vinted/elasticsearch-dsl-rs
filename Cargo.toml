@@ -1,6 +1,6 @@
 [package]
 name = "elasticsearch-dsl"
-version = "0.1.8"
+version = "0.1.9"
 authors = ["Boost <boost@vinted.com>"]
 edition = "2018"
 description = "Strongly typed Elasticsearch DSL"
