@@ -25,7 +25,8 @@ pub struct MatchBoolPrefixQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    query: String,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    query: Text,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     analyzer: Option<String>,
@@ -50,7 +51,7 @@ impl Query {
     /// - `query` - Text, number, boolean value or date you wish to find in the provided `<field>`
     pub fn match_bool_prefix(
         field: impl Into<String>,
-        query: impl Into<String>,
+        query: impl Into<Text>,
     ) -> MatchBoolPrefixQuery {
         MatchBoolPrefixQuery {
             field: field.into(),

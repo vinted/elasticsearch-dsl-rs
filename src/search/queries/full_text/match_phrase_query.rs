@@ -23,7 +23,8 @@ pub struct MatchPhraseQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    query: String,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    query: Text,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     analyzer: Option<String>,
@@ -50,7 +51,7 @@ impl Query {
     /// `match_phrase` query can search
     /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
     /// fields for analyzed tokens rather than an exact term.
-    pub fn match_phrase(field: impl Into<String>, query: impl Into<String>) -> MatchPhraseQuery {
+    pub fn match_phrase(field: impl Into<String>, query: impl Into<Text>) -> MatchPhraseQuery {
         MatchPhraseQuery {
             field: field.into(),
             inner: Inner {
