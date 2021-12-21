@@ -1,84 +1,213 @@
+use std::cmp::Ordering;
+
 /// Numeric enum
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, PartialOrd)]
+pub struct Number(N);
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[serde(untagged)]
-pub enum Number {
-    /// Represents the type of u8, u16, u32, u64
-    U64(u64),
-    /// Represents the type of i8, i16, i32, i64
-    I64(i64),
-    /// Represents the type of f32
+enum N {
+    /// Non-negative integers
+    Pos(u64),
+    /// Negative integers
+    Neg(i64),
+    /// 32-bit floats
     F32(f32),
-    /// Represents the type of f64
+    /// 64-bit floats
     F64(f64),
 }
 
 impl std::fmt::Display for Number {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Number::U64(value) => value.fmt(f),
-            Number::I64(value) => value.fmt(f),
-            Number::F32(value) => value.fmt(f),
-            Number::F64(value) => value.fmt(f),
+        match self.0 {
+            N::Pos(value) => value.fmt(f),
+            N::Neg(value) => value.fmt(f),
+            N::F32(value) => value.fmt(f),
+            N::F64(value) => value.fmt(f),
         }
     }
 }
 
 impl From<u8> for Number {
     fn from(value: u8) -> Self {
-        Self::U64(value as u64)
+        Self(N::Pos(value as u64))
     }
 }
 
 impl From<u16> for Number {
     fn from(value: u16) -> Self {
-        Self::U64(value as u64)
+        Self(N::Pos(value as u64))
     }
 }
 
 impl From<u32> for Number {
     fn from(value: u32) -> Self {
-        Self::U64(value as u64)
+        Self(N::Pos(value as u64))
     }
 }
 
 impl From<u64> for Number {
     fn from(value: u64) -> Self {
-        Self::U64(value)
+        Self(N::Pos(value))
     }
 }
 
 impl From<i8> for Number {
     fn from(value: i8) -> Self {
-        Self::I64(value as i64)
+        if value < 0 {
+            Self(N::Neg(value as i64))
+        } else {
+            Self(N::Pos(value as u64))
+        }
     }
 }
 
 impl From<i16> for Number {
     fn from(value: i16) -> Self {
-        Self::I64(value as i64)
+        if value < 0 {
+            Self(N::Neg(value as i64))
+        } else {
+            Self(N::Pos(value as u64))
+        }
     }
 }
 
 impl From<i32> for Number {
     fn from(value: i32) -> Self {
-        Self::I64(value as i64)
+        if value < 0 {
+            Self(N::Neg(value as i64))
+        } else {
+            Self(N::Pos(value as u64))
+        }
     }
 }
 
 impl From<i64> for Number {
     fn from(value: i64) -> Self {
-        Self::I64(value)
+        if value < 0 {
+            Self(N::Neg(value))
+        } else {
+            Self(N::Pos(value as u64))
+        }
     }
 }
 
 impl From<f32> for Number {
     fn from(value: f32) -> Self {
-        Self::F32(value)
+        Self(N::F32(value))
     }
 }
 
 impl From<f64> for Number {
     fn from(value: f64) -> Self {
-        Self::F64(value)
+        Self(N::F64(value))
+    }
+}
+
+impl PartialEq for N {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            // Positive
+            (N::Pos(value), N::Pos(other)) => value.eq(other),
+            (N::Pos(_), N::Neg(_)) => false,
+            (N::Pos(value), N::F32(other)) => (*value as f32).eq(other),
+            (N::Pos(value), N::F64(other)) => (*value as f64).eq(other),
+
+            // Negative
+            (N::Neg(_), N::Pos(_)) => false,
+            (N::Neg(value), N::Neg(other)) => value.eq(other),
+            (N::Neg(value), N::F32(other)) => (*value as f32).eq(other),
+            (N::Neg(value), N::F64(other)) => (*value as f64).eq(other),
+
+            // 32-bit floats
+            (N::F32(value), N::Pos(other)) => value.eq(&(*other as f32)),
+            (N::F32(value), N::Neg(other)) => value.eq(&(*other as f32)),
+            (N::F32(value), N::F32(other)) => value.eq(other),
+            (N::F32(value), N::F64(other)) => value.eq(&(*other as f32)),
+
+            // 64-bit floats
+            (N::F64(value), N::Pos(other)) => value.eq(&(*other as f64)),
+            (N::F64(value), N::Neg(other)) => value.eq(&(*other as f64)),
+            (N::F64(value), N::F32(other)) => (*value as f32).eq(other),
+            (N::F64(value), N::F64(other)) => value.eq(other),
+        }
+    }
+}
+
+impl PartialOrd for N {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        match (self, other) {
+            // Positive
+            (N::Pos(value), N::Pos(other)) => value.partial_cmp(other),
+            (N::Pos(_), N::Neg(_)) => Some(Ordering::Greater),
+            (N::Pos(value), N::F32(other)) => (*value as f32).partial_cmp(other),
+            (N::Pos(value), N::F64(other)) => (*value as f64).partial_cmp(other),
+
+            // Negative
+            (N::Neg(_), N::Pos(_)) => Some(Ordering::Less),
+            (N::Neg(value), N::Neg(other)) => value.partial_cmp(other),
+            (N::Neg(value), N::F32(other)) => (*value as f32).partial_cmp(other),
+            (N::Neg(value), N::F64(other)) => (*value as f64).partial_cmp(other),
+
+            // 32-bit floats
+            (N::F32(value), N::Pos(other)) => value.partial_cmp(&(*other as f32)),
+            (N::F32(value), N::Neg(other)) => value.partial_cmp(&(*other as f32)),
+            (N::F32(value), N::F32(other)) => value.partial_cmp(other),
+            (N::F32(value), N::F64(other)) => value.partial_cmp(&(*other as f32)),
+
+            // 64-bit floats
+            (N::F64(value), N::Pos(other)) => value.partial_cmp(&(*other as f64)),
+            (N::F64(value), N::Neg(other)) => value.partial_cmp(&(*other as f64)),
+            (N::F64(value), N::F32(other)) => (*value as f32).partial_cmp(other),
+            (N::F64(value), N::F64(other)) => value.partial_cmp(other),
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    test_serialization! {
+        serializes_number_correctly(
+            [
+                Number::from(2),
+                Number::from(-2),
+                Number::from(2.2f32),
+                Number::from(2.2f64),
+            ],
+            json!([2, -2, 2.2, 2.2])
+        )
+    }
+
+    #[test]
+    fn partial_eq() {
+        assert_eq!(Number::from(2f32), Number::from(2));
+        assert_eq!(Number::from(2f64), Number::from(2));
+        assert_eq!(Number::from(2), Number::from(2));
+        assert_eq!(Number::from(-2), Number::from(-2));
+    }
+
+    #[test]
+    fn partial_ord() {
+        assert!(Number::from(2) > Number::from(1));
+        assert!(Number::from(2) > Number::from(-1));
+        assert!(Number::from(2) > Number::from(1f32));
+        assert!(Number::from(2) > Number::from(1f64));
+
+        assert!(Number::from(-2) < Number::from(1));
+        assert!(Number::from(-2) < Number::from(-1));
+        assert!(Number::from(-2) < Number::from(1f32));
+        assert!(Number::from(-2) < Number::from(1f64));
+
+        assert!(Number::from(2f32) > Number::from(1));
+        assert!(Number::from(2f32) > Number::from(-1));
+        assert!(Number::from(2f32) > Number::from(1f32));
+        assert!(Number::from(2f32) > Number::from(1f64));
+
+        assert!(Number::from(2f64) > Number::from(1));
+        assert!(Number::from(2f64) > Number::from(-1));
+        assert!(Number::from(2f64) > Number::from(1f32));
+        assert!(Number::from(2f64) > Number::from(1f64));
     }
 }
