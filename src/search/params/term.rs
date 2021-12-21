@@ -139,6 +139,66 @@ impl From<f64> for Term {
     }
 }
 
+impl From<&i8> for Term {
+    fn from(value: &i8) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&i16> for Term {
+    fn from(value: &i16) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&i32> for Term {
+    fn from(value: &i32) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&i64> for Term {
+    fn from(value: &i64) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&u8> for Term {
+    fn from(value: &u8) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&u16> for Term {
+    fn from(value: &u16) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&u32> for Term {
+    fn from(value: &u32) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&u64> for Term {
+    fn from(value: &u64) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&f32> for Term {
+    fn from(value: &f32) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
+impl From<&f64> for Term {
+    fn from(value: &f64) -> Self {
+        Self(Some(Inner::Number(Number::from(value))))
+    }
+}
+
 impl From<DateTime<Utc>> for Term {
     fn from(value: DateTime<Utc>) -> Self {
         Self(Some(Inner::DateTime(value)))
@@ -218,6 +278,66 @@ impl From<Option<f32>> for Term {
 
 impl From<Option<f64>> for Term {
     fn from(value: Option<f64>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&i8>> for Term {
+    fn from(value: Option<&i8>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&i16>> for Term {
+    fn from(value: Option<&i16>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&i32>> for Term {
+    fn from(value: Option<&i32>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&i64>> for Term {
+    fn from(value: Option<&i64>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&u8>> for Term {
+    fn from(value: Option<&u8>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&u16>> for Term {
+    fn from(value: Option<&u16>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&u32>> for Term {
+    fn from(value: Option<&u32>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&u64>> for Term {
+    fn from(value: Option<&u64>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&f32>> for Term {
+    fn from(value: Option<&f32>) -> Self {
+        Self(value.map(Number::from).map(Inner::Number))
+    }
+}
+
+impl From<Option<&f64>> for Term {
+    fn from(value: Option<&f64>) -> Self {
         Self(value.map(Number::from).map(Inner::Number))
     }
 }
