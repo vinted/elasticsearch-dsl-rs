@@ -5,20 +5,14 @@ fn main() {
         category_id: 1,
         company_id: 2,
         brand_ids: vec![1, 2],
-        user: User {
-            id: 1,
-            name: String::from("kimchy"),
-        },
-        country: Country {
-            id: 1,
-            name: String::from("Gondor"),
-        },
+        user: User { id: 1 },
+        country: Country { id: 1 },
     };
 
-    let query = RequestQuery::new(request)
+    let query = RequestQuery::new(&request)
         .category_id(|x| x.category_id)
         .company_id(|x| x.company_id)
-        .brand_ids(|x| x.brand_ids.clone())
+        .brand_ids(|x| &x.brand_ids)
         .my_country_documents_only()
         .exclude_user_items()
         .finish();
@@ -28,13 +22,13 @@ fn main() {
     println!("{}", serde_json::to_string_pretty(&search).unwrap());
 }
 
-struct RequestQuery {
-    request: Request,
+struct RequestQuery<'a> {
+    request: &'a Request,
     query: BoolQuery,
 }
 
-impl RequestQuery {
-    fn new(request: Request) -> Self {
+impl<'a> RequestQuery<'a> {
+    fn new(request: &'a Request) -> Self {
         Self {
             request,
             query: Query::bool(),
@@ -59,37 +53,40 @@ impl RequestQuery {
 
     fn category_id<F, T>(mut self, func: F) -> Self
     where
-        F: Fn(&Request) -> T,
+        F: 'a,
+        F: Fn(&'a Request) -> T,
         T: Into<Term>,
     {
         self.query = self
             .query
-            .filter(Query::term("category_id", func(&self.request)));
+            .filter(Query::term("category_id", func(self.request)));
 
         self
     }
 
     fn brand_ids<F, T>(mut self, func: F) -> Self
     where
-        F: Fn(&Request) -> T,
+        F: 'a,
+        F: Fn(&'a Request) -> T,
         T: IntoIterator,
         T::Item: Into<Term>,
     {
         self.query = self
             .query
-            .filter(Query::terms("brand_id", func(&self.request)));
+            .filter(Query::terms("brand_id", func(self.request)));
 
         self
     }
 
     fn company_id<F, T>(mut self, func: F) -> Self
     where
-        F: Fn(&Request) -> T,
+        F: 'a,
+        F: Fn(&'a Request) -> T,
         T: Into<Term>,
     {
         self.query = self
             .query
-            .filter(Query::term("company_id", func(&self.request)));
+            .filter(Query::term("company_id", func(self.request)));
 
         self
     }
@@ -101,12 +98,10 @@ impl RequestQuery {
 
 struct User {
     id: i32,
-    name: String,
 }
 
 struct Country {
     id: i32,
-    name: String,
 }
 
 struct Request {
