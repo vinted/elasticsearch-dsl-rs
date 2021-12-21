@@ -113,6 +113,7 @@ query!(Query {
     Nested(NestedQuery),
     Boosting(BoostingQuery),
     DisMax(DisMaxQuery),
+    Pinned(PinnedQuery),
     PercolateDocument(PercolateQuery<serde_json::Value>),
     PercolateDocuments(PercolateQuery<Vec<serde_json::Value>>),
     PercolateLookup(PercolateQuery<self::params::PercolateLookup>),
