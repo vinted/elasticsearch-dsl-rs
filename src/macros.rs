@@ -37,7 +37,10 @@ macro_rules! add_boost_and_name {
         /// Boost values are relative to the default value of `1.0`.
         /// A boost value between 0 and `1.0` decreases the relevance score.
         /// A value greater than `1.0` increases the relevance score.
-        pub fn boost(mut self, boost: impl std::convert::TryInto<Boost>) -> Self {
+        pub fn boost<B>(mut self, boost: B) -> Self
+        where
+            B: std::convert::TryInto<Boost>,
+        {
             if let Ok(boost) = boost.try_into() {
                 self.inner.boost = Some(boost);
             }
@@ -49,8 +52,11 @@ macro_rules! add_boost_and_name {
         /// includes a `matched_queries` property for each hit.
         ///
         /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html#named-queries>
-        pub fn name(mut self, name: impl Into<String>) -> Self {
-            self.inner._name = Some(name.into());
+        pub fn name<S>(mut self, name: S) -> Self
+        where
+            S: ToString,
+        {
+            self.inner._name = Some(name.to_string());
             self
         }
     };
@@ -61,7 +67,10 @@ macro_rules! add_boost_and_name {
 macro_rules! add_aggregate {
     () => {
         /// Pushes aggregation
-        pub fn aggregate(mut self, aggregation: impl Into<Aggregation>) -> Self {
+        pub fn aggregate<A>(mut self, aggregation: A) -> Self
+        where
+            A: Into<Aggregation>,
+        {
             let a = aggregation.into();
             let _ = self.aggs.entry(a.name()).or_insert(a);
             self
