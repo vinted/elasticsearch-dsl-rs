@@ -127,7 +127,10 @@ impl Analyze {
     /// Creates an instance of [Analyze]
     ///
     /// - `text` - Text to analyze. If an array of strings is provided, it is analyzed as a multi-value field.
-    pub fn new(text: impl Into<StringOrVecString>) -> Self {
+    pub fn new<S>(text: S) -> Self
+    where
+        S: Into<StringOrVecString>,
+    {
         Self {
             text: text.into(),
             analysis: None,
@@ -138,9 +141,11 @@ impl Analyze {
 
     /// Specify an analyzer, either it's built-in analyzer, custom analyzer, built-in normalizer,
     /// custom normalizer or field
-    pub fn analyzer(mut self, analyzer: impl Into<Analysis>) -> Self {
+    pub fn analyzer<S>(mut self, analyzer: S) -> Self
+    where
+        S: Into<Analysis>,
+    {
         self.analysis = Some(analyzer.into());
-
         self
     }
 
@@ -150,15 +155,14 @@ impl Analyze {
         I: IntoIterator,
         I::Item: Into<String>,
     {
-        self.attributes = attributes.into_iter().map(Into::into).collect();
-
+        self.attributes
+            .extend(attributes.into_iter().map(Into::into));
         self
     }
 
     /// If `true`, the response includes token attributes and additional details. Defaults to `false`. `experimental`
     pub fn explain(mut self, explain: bool) -> Self {
         self.explain = Some(explain);
-
         self
     }
 }
@@ -180,7 +184,6 @@ impl CustomNormalizer {
     {
         self.char_filter
             .extend(char_filter.into_iter().map(Into::into));
-
         self
     }
 
@@ -194,7 +197,6 @@ impl CustomNormalizer {
         I::Item: Into<StringOrObject>,
     {
         self.filter.extend(filter.into_iter().map(Into::into));
-
         self
     }
 }
@@ -204,7 +206,10 @@ impl CustomAnalyzer {
     /// Tokenizer to use to convert text into tokens. See `Tokenizer reference` for a list of tokenizers.
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-tokenizers.html>
-    pub fn new(tokenizer: impl Into<String>) -> Self {
+    pub fn new<S>(tokenizer: S) -> Self
+    where
+        S: Into<String>,
+    {
         Self {
             tokenizer: tokenizer.into(),
             char_filter: vec![],
@@ -223,7 +228,6 @@ impl CustomAnalyzer {
     {
         self.char_filter
             .extend(char_filter.into_iter().map(Into::into));
-
         self
     }
 
@@ -237,24 +241,32 @@ impl CustomAnalyzer {
         I::Item: Into<StringOrObject>,
     {
         self.filter.extend(filter.into_iter().map(Into::into));
-
         self
     }
 }
 
 impl Analysis {
     /// Creates an instance of [`Analysis::Field`]
-    pub fn field(value: impl Into<String>) -> Self {
+    pub fn field<S>(value: S) -> Self
+    where
+        S: Into<String>,
+    {
         Self::Field(value.into())
     }
 
     /// Creates an instance of [`Analysis::BuiltInAnalyzer`]
-    pub fn analyzer(value: impl Into<String>) -> Self {
+    pub fn analyzer<S>(value: S) -> Self
+    where
+        S: Into<String>,
+    {
         Self::BuiltInAnalyzer(value.into())
     }
 
     /// Creates an instance of [`Analysis::BuiltInNormalizer`]
-    pub fn normalizer(value: impl Into<String>) -> Self {
+    pub fn normalizer<S>(value: S) -> Self
+    where
+        S: Into<String>,
+    {
         Self::BuiltInNormalizer(value.into())
     }
 }
