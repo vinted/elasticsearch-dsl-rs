@@ -1,85 +1,41 @@
 use crate::util::*;
 
-/// Marker trait for [percolate query](crate::PercolateQuery) values
-pub trait PercolateMarker: Into<PercolateSource> {}
-
-impl PercolateMarker for serde_json::Value {}
-impl PercolateMarker for Vec<serde_json::Value> {}
-impl PercolateMarker for PercolateLookup {}
-
-/// A document to percolate
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct PercolateDocument {
-    document: serde_json::Value,
-}
-
-/// A collection of documents to percolate
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct PercolateDocuments {
-    documents: Vec<serde_json::Value>,
-}
-
-/// Percolate document from another index
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct PercolateLookup {
-    pub(crate) index: String,
-
-    pub(crate) id: String,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    pub(crate) routing: Option<String>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    pub(crate) preference: Option<String>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    pub(crate) version: Option<i64>,
-}
-
-impl PercolateLookup {
-    /// Constructs percolate lookup instance
-    pub fn new<S>(index: S, id: S) -> Self
-    where
-        S: Into<String>,
-    {
-        Self {
-            index: index.into(),
-            id: id.into(),
-            routing: None,
-            preference: None,
-            version: None,
-        }
-    }
-}
-
 /// Values that can be percolated
 #[derive(Debug, Clone, PartialEq, Serialize)]
-#[serde(untagged)]
+#[serde(rename_all = "snake_case")]
 pub enum PercolateSource {
     /// A document
-    Document(PercolateDocument),
+    Document(serde_json::Value),
 
     /// A collection of documents
-    Documents(PercolateDocuments),
-
-    /// An indexed document
-    Lookup(PercolateLookup),
+    Documents(Vec<serde_json::Value>),
 }
 
 impl From<serde_json::Value> for PercolateSource {
     fn from(document: serde_json::Value) -> Self {
-        Self::Document(PercolateDocument { document })
+        Self::Document(document)
     }
 }
 
 impl From<Vec<serde_json::Value>> for PercolateSource {
     fn from(documents: Vec<serde_json::Value>) -> Self {
-        Self::Documents(PercolateDocuments { documents })
+        Self::Documents(documents)
     }
 }
 
-impl From<PercolateLookup> for PercolateSource {
-    fn from(lookup: PercolateLookup) -> Self {
-        Self::Lookup(lookup)
+impl<const N: usize> From<[serde_json::Value; N]> for PercolateSource {
+    fn from(value: [serde_json::Value; N]) -> Self {
+        Self::Documents(value.to_vec())
+    }
+}
+
+impl ShouldSkip for PercolateSource {
+    fn should_skip(&self) -> bool {
+        match self {
+            PercolateSource::Document(document) => !document.is_object(),
+            PercolateSource::Documents(documents) => {
+                documents.is_empty() || documents.iter().any(|document| !document.is_object())
+            }
+        }
     }
 }
