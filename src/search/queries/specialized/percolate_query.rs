@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use std::marker::PhantomData;
 
 /// The `percolate` query can be used to match queries stored in an index. The percolate query
 /// itself contains the document that will be used as query to match with the stored queries.
@@ -21,21 +20,9 @@ use std::marker::PhantomData;
 /// # let query =
 /// Query::percolate("field", vec![json!({ "message": "search text" }), json!({ "message": "another search text" })]);
 /// ```
-/// To percolate indexed document:
-/// ```
-/// # use elasticsearch_dsl::queries::*;
-/// # use elasticsearch_dsl::queries::params::*;
-/// # use serde_json::json;
-/// # let query1 =
-/// Query::percolate("field", PercolateLookup::new("index_name", "document_id"));
-/// # let query2 =
-/// Query::percolate_lookup("field", "index_name", "document_id");
-/// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-percolate-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct PercolateQuery<T: PercolateMarker> {
-    #[serde(skip)]
-    phantom: PhantomData<T>,
+pub struct PercolateQuery {
     #[serde(rename = "percolate")]
     inner: Inner,
 }
@@ -56,71 +43,36 @@ impl Query {
     ///
     /// - `field` - The field of type `percolator` that holds the indexed queries
     /// - `source` - [Source](PercolateSource) to percolate
-    pub fn percolate<T: PercolateMarker>(field: impl Into<String>, source: T) -> PercolateQuery<T> {
+    pub fn percolate<S, T>(field: S, source: T) -> PercolateQuery
+    where
+        S: ToString,
+        T: Into<PercolateSource>,
+    {
         PercolateQuery {
-            phantom: PhantomData,
             inner: Inner {
-                field: field.into(),
+                field: field.to_string(),
                 source: source.into(),
                 name: None,
             },
         }
     }
-
-    /// Creates an instance of [`PercolateQuery`]
-    ///
-    /// - `field` - The field of type `percolator` that holds the indexed queries
-    /// - `index` - The index the document resides in
-    /// - `id` - The id of the document to fetch
-    pub fn percolate_lookup<S>(field: S, index: S, id: S) -> PercolateQuery<PercolateLookup>
-    where
-        S: Into<String>,
-    {
-        PercolateQuery {
-            phantom: PhantomData,
-            inner: Inner {
-                field: field.into(),
-                name: None,
-                source: PercolateSource::Lookup(PercolateLookup::new(index, id)),
-            },
-        }
-    }
 }
 
-impl<T: PercolateMarker> PercolateQuery<T> {
+impl PercolateQuery {
     /// The suffix to be used for the `_percolator_document_slot` field in case multiple `percolate`
     /// queries have been specified. This is an optional parameter
-    pub fn name(mut self, name: impl Into<String>) -> Self {
-        self.inner.name = Some(name.into());
+    pub fn name<S>(mut self, name: S) -> Self
+    where
+        S: ToString,
+    {
+        self.inner.name = Some(name.to_string());
         self
     }
 }
 
-impl<T: PercolateMarker> ShouldSkip for PercolateQuery<T> {}
-
-impl PercolateQuery<PercolateLookup> {
-    /// Routing to be used to fetch document to percolate
-    pub fn routing(mut self, routing: impl Into<String>) -> Self {
-        if let PercolateSource::Lookup(ref mut source) = self.inner.source {
-            source.routing = Some(routing.into());
-        }
-        self
-    }
-
-    /// Preference to be used to fetch document to percolate
-    pub fn preference(mut self, preference: impl Into<String>) -> Self {
-        if let PercolateSource::Lookup(ref mut source) = self.inner.source {
-            source.preference = Some(preference.into());
-        }
-        self
-    }
-
-    /// The expected version of the document to be fetched
-    pub fn version(mut self, version: impl Into<i64>) -> Self {
-        if let PercolateSource::Lookup(ref mut source) = self.inner.source {
-            source.version = Some(version.into());
-        }
-        self
+impl ShouldSkip for PercolateQuery {
+    fn should_skip(&self) -> bool {
+        self.inner.source.should_skip()
     }
 }
 
@@ -129,7 +81,7 @@ mod tests {
     use super::*;
 
     test_serialization! {
-        new_with_required_fields(
+        single_with_required_fields(
             Query::percolate("field_name", json!({"message": "lol"})),
             json!({
                 "percolate": {
@@ -141,7 +93,7 @@ mod tests {
             })
         );
 
-        new_with_all_fields(
+        single_with_all_fields(
             Query::percolate("field_name", json!({"message": "lol"})).name("toast"),
             json!({
                 "percolate": {
@@ -154,8 +106,8 @@ mod tests {
             })
         );
 
-        new_multiple_with_required_fields(
-            Query::percolate("field_name", vec![json!({"message": "lol"})]),
+        multiple_with_required_fields(
+            Query::percolate("field_name", [json!({"message": "lol"})]),
             json!({
                 "percolate": {
                     "field": "field_name",
@@ -168,8 +120,8 @@ mod tests {
             })
         );
 
-        new_multiple_with_all_fields(
-            Query::percolate("field_name", vec![json!({"message": "lol"})]).name("toast"),
+        multiple_with_all_fields(
+            Query::percolate("field_name", [json!({"message": "lol"})]).name("toast"),
             json!({
                 "percolate": {
                     "field": "field_name",
@@ -179,36 +131,6 @@ mod tests {
                             "message": "lol"
                         }
                     ]
-                }
-            })
-        );
-
-        new_lookup_with_required_fields(
-            Query::percolate_lookup("field_name", "index_name", "document_id"),
-            json!({
-                "percolate": {
-                    "field": "field_name",
-                    "index": "index_name",
-                    "id": "document_id"
-                }
-            })
-        );
-
-        new_lookup_with_all_fields(
-            Query::percolate_lookup("field_name", "index_name", "document_id")
-                .name("toast")
-                .routing("routing_value")
-                .preference("preference_value")
-                .version(123),
-            json!({
-                "percolate": {
-                    "field": "field_name",
-                    "name": "toast",
-                    "index": "index_name",
-                    "id": "document_id",
-                    "routing": "routing_value",
-                    "preference": "preference_value",
-                    "version": 123,
                 }
             })
         );
