@@ -1,5 +1,3 @@
-use std::marker::PhantomData;
-
 use serde::{de, Deserialize, Serialize, Serializer};
 
 /// Elasticsearch analyze API response
@@ -137,20 +135,20 @@ impl Serialize for TokenType {
         S: Serializer,
     {
         match self {
-            TokenType::Alphanum => "<ALPHANUM>",
-            TokenType::Synonym => "SYNONYM",
-            TokenType::Word => "word",
-            TokenType::Hangul => "<HANGUL>",
-            TokenType::Num => "<NUM>",
-            TokenType::Email => "<EMAIL>",
-            TokenType::Apostrophe => "<APOSTROPHE>",
-            TokenType::Double => "<DOUBLE>",
-            TokenType::Katakana => "<KATAKANA>",
-            TokenType::Acronym => "<ACRONYM>",
-            TokenType::Gram => "gram",
-            TokenType::Fingerprint => "fingerprint",
-            TokenType::Shingle => "shingle",
-            TokenType::Other(other) => other,
+            Self::Alphanum => "<ALPHANUM>",
+            Self::Synonym => "SYNONYM",
+            Self::Word => "word",
+            Self::Hangul => "<HANGUL>",
+            Self::Num => "<NUM>",
+            Self::Email => "<EMAIL>",
+            Self::Apostrophe => "<APOSTROPHE>",
+            Self::Double => "<DOUBLE>",
+            Self::Katakana => "<KATAKANA>",
+            Self::Acronym => "<ACRONYM>",
+            Self::Gram => "gram",
+            Self::Fingerprint => "fingerprint",
+            Self::Shingle => "shingle",
+            Self::Other(other) => other,
         }
         .serialize(serializer)
     }
@@ -161,41 +159,22 @@ impl<'de> Deserialize<'de> for TokenType {
     where
         D: de::Deserializer<'de>,
     {
-        struct TokenTypeVisitor(PhantomData<TokenType>);
-
-        impl<'de> de::Visitor<'de> for TokenTypeVisitor {
-            type Value = TokenType;
-
-            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                formatter.write_str(r#"expected one of `<ALPHANUM>`, `SYNONYM`, `word`, `<HANGUL>`, `<NUM>`, `<EMAIL>`, `<APOSTROPHE>`, `<DOUBLE>`, `<KATAKANA>`, `<ACRONYM>`, `gram`, `fingerprint`, `shingle` and all other values goes under `Other`"#)
-            }
-
-            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
-            where
-                E: de::Error,
-            {
-                let result = match value {
-                    "<ALPHANUM>" => TokenType::Alphanum,
-                    "SYNONYM" => TokenType::Synonym,
-                    "word" => TokenType::Word,
-                    "<HANGUL>" => TokenType::Hangul,
-                    "<NUM>" => TokenType::Num,
-                    "<EMAIL>" => TokenType::Email,
-                    "<APOSTROPHE>" => TokenType::Apostrophe,
-                    "<DOUBLE>" => TokenType::Double,
-                    "<KATAKANA>" => TokenType::Katakana,
-                    "<ACRONYM>" => TokenType::Acronym,
-                    "gram" => TokenType::Gram,
-                    "fingerprint" => TokenType::Fingerprint,
-                    "shingle" => TokenType::Shingle,
-                    other => TokenType::Other(other.to_string()),
-                };
-
-                Ok(result)
-            }
-        }
-
-        deserializer.deserialize_any(TokenTypeVisitor(PhantomData))
+        Ok(match String::deserialize(deserializer)?.as_str() {
+            "<ALPHANUM>" => Self::Alphanum,
+            "SYNONYM" => Self::Synonym,
+            "word" => Self::Word,
+            "<HANGUL>" => Self::Hangul,
+            "<NUM>" => Self::Num,
+            "<EMAIL>" => Self::Email,
+            "<APOSTROPHE>" => Self::Apostrophe,
+            "<DOUBLE>" => Self::Double,
+            "<KATAKANA>" => Self::Katakana,
+            "<ACRONYM>" => Self::Acronym,
+            "gram" => Self::Gram,
+            "fingerprint" => Self::Fingerprint,
+            "shingle" => Self::Shingle,
+            other => Self::Other(other.to_string()),
+        })
     }
 }
 
@@ -210,14 +189,14 @@ mod tests {
         let json_response = json!({
             "tokens": [
                 {
-                    "token": "bębras",
+                    "token": "test1",
                     "start_offset": 0,
                     "end_offset": 6,
                     "type": "<ALPHANUM>",
                     "position": 0
                 },
                 {
-                    "token": "yesy",
+                    "token": "test2",
                     "start_offset": 7,
                     "end_offset": 11,
                     "type": "<ALPHANUM>",
@@ -227,7 +206,7 @@ mod tests {
         });
 
         let token_1 = Token {
-            token: "bębras".to_string(),
+            token: "test1".to_string(),
             start_offset: 0,
             end_offset: 6,
             ty: TokenType::Alphanum,
@@ -238,7 +217,7 @@ mod tests {
             term_frequency: None,
         };
         let token_2 = Token {
-            token: "yesy".to_string(),
+            token: "test2".to_string(),
             start_offset: 7,
             end_offset: 11,
             ty: TokenType::Alphanum,
@@ -264,7 +243,7 @@ mod tests {
                     {
                         "name": "html_strip",
                         "filtered_text": [
-                            "berazz"
+                            "test"
                         ]
                     }
                 ],
@@ -272,7 +251,7 @@ mod tests {
                     "name": "lowercase",
                     "tokens": [
                         {
-                            "token": "berazz",
+                            "token": "test",
                             "start_offset": 0,
                             "end_offset": 6,
                             "type": "SYNONYM",
@@ -285,7 +264,7 @@ mod tests {
                         "name": "__anonymous__stop",
                         "tokens": [
                             {
-                                "token": "berazz",
+                                "token": "test",
                                 "start_offset": 0,
                                 "end_offset": 6,
                                 "type": "SYNONYM",
@@ -298,7 +277,7 @@ mod tests {
         });
 
         let token = Token {
-            token: "berazz".to_string(),
+            token: "test".to_string(),
             start_offset: 0,
             end_offset: 6,
             ty: TokenType::Synonym,
@@ -314,7 +293,7 @@ mod tests {
             analyzer: None,
             char_filters: vec![CharFilter {
                 name: "html_strip".to_string(),
-                filtered_text: vec!["berazz".to_string()],
+                filtered_text: vec!["test".to_string()],
             }],
             tokenizer: Some(AnalysisObject {
                 name: "lowercase".to_string(),
