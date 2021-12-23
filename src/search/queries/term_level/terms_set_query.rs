@@ -1,7 +1,6 @@
 use crate::search::*;
 use crate::util::*;
 use serde::ser::{Serialize, SerializeMap, Serializer};
-use std::collections::BTreeSet;
 
 /// Returns documents that contain an **exact** terms_set in a provided field.
 ///
@@ -36,7 +35,7 @@ pub struct TermsSetQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    terms: BTreeSet<Term>,
+    terms: Terms,
 
     #[serde(flatten)]
     minimum_should_match: TermsSetMinimumShouldMatch,
@@ -54,19 +53,16 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `value` - TermsSet you wish to find in the provided field.
     /// To return a document, the terms_set must exactly match the field value, including whitespace and capitalization.
-    pub fn terms_set<I>(
-        field: impl Into<String>,
-        terms: I,
-        minimum_should_match: impl Into<TermsSetMinimumShouldMatch>,
-    ) -> TermsSetQuery
+    pub fn terms_set<S, T, U>(field: S, terms: T, minimum_should_match: U) -> TermsSetQuery
     where
-        I: IntoIterator,
-        I::Item: Into<Term>,
+        S: ToString,
+        T: Into<Terms>,
+        U: Into<TermsSetMinimumShouldMatch>,
     {
         TermsSetQuery {
-            field: field.into(),
+            field: field.to_string(),
             inner: Inner {
-                terms: terms.into_iter().map(Into::into).collect(),
+                terms: terms.into(),
                 minimum_should_match: minimum_should_match.into(),
                 boost: None,
                 _name: None,
@@ -81,7 +77,7 @@ impl TermsSetQuery {
 
 impl ShouldSkip for TermsSetQuery {
     fn should_skip(&self) -> bool {
-        self.inner.terms.is_empty()
+        self.inner.terms.should_skip()
     }
 }
 

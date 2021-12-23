@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use std::collections::BTreeSet;
 
 /// Returns documents that contain one or more **exact** terms in a provided field.
 /// The terms query is the same as the term query, except you can search for multiple values.
@@ -31,7 +30,7 @@ pub struct TermsQuery {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
     #[serde(flatten)]
-    pair: KeyValuePair<String, BTreeSet<Term>>,
+    pair: KeyValuePair<String, Terms>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -55,12 +54,11 @@ impl Query {
     pub fn terms<S, I>(field: S, values: I) -> TermsQuery
     where
         S: Into<String>,
-        I: IntoIterator,
-        I::Item: Into<Term>,
+        I: Into<Terms>,
     {
         TermsQuery {
             inner: Inner {
-                pair: KeyValuePair::new(field.into(), values.into_iter().map(Into::into).collect()),
+                pair: KeyValuePair::new(field.into(), values.into()),
                 boost: None,
                 _name: None,
             },
