@@ -128,3 +128,43 @@ query!(Query {
     GeoBoundingBox(GeoBoundingBoxQuery),
     Json(JsonQuery),
 });
+
+/// A collection of queries
+#[derive(Debug, Default, Clone, PartialEq, Serialize)]
+pub struct Queries(Vec<Query>);
+
+impl IntoIterator for Queries {
+    type Item = Query;
+    type IntoIter = std::vec::IntoIter<Query>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
+    }
+}
+
+impl ShouldSkip for Queries {
+    fn should_skip(&self) -> bool {
+        self.0.should_skip()
+    }
+}
+
+impl Queries {
+    /// Pushes a query to the collection
+    pub fn push<Q>(&mut self, query: Q)
+    where
+        Q: Into<Option<Query>>,
+    {
+        if let Some(query) = query.into() {
+            self.0.push(query);
+        }
+    }
+
+    /// Pushes multiple queries to the collection
+    pub fn extend<Q>(&mut self, queries: Q)
+    where
+        Q: IntoIterator,
+        Q::Item: Into<Query>,
+    {
+        self.0.extend(queries.into_iter().map(Into::into))
+    }
+}
