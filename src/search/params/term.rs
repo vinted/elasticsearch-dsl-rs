@@ -2,6 +2,7 @@ use crate::params::*;
 use crate::util::*;
 use chrono::{DateTime, Utc};
 use std::cmp::Ordering;
+use std::time::SystemTime;
 
 /// Leaf term value
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
@@ -19,8 +20,8 @@ enum Inner {
     /// Number value
     Number(Number),
 
-    /// DateTime
-    DateTime(DateTime<Utc>),
+    /// Date
+    Date(Date),
 }
 
 impl PartialEq for Inner {
@@ -29,7 +30,7 @@ impl PartialEq for Inner {
             (Inner::Bool(s), Inner::Bool(o)) => s.eq(o),
             (Inner::String(s), Inner::String(o)) => s.eq(o),
             (Inner::Number(s), Inner::Number(o)) => s.eq(o),
-            (Inner::DateTime(s), Inner::DateTime(o)) => s.eq(o),
+            (Inner::Date(s), Inner::Date(o)) => s.eq(o),
             _ => false,
         }
     }
@@ -43,7 +44,7 @@ impl PartialOrd for Inner {
             (Self::Bool(s), Self::Bool(o)) => s.partial_cmp(o),
             (Self::String(s), Self::String(o)) => s.partial_cmp(o),
             (Self::Number(s), Self::Number(o)) => s.partial_cmp(o),
-            (Self::DateTime(s), Self::DateTime(o)) => s.partial_cmp(o),
+            (Self::Date(s), Self::Date(o)) => s.partial_cmp(o),
             _ => Some(Ordering::Less),
         }
     }
@@ -55,7 +56,7 @@ impl Ord for Inner {
             (Self::Bool(s), Self::Bool(o)) => s.cmp(o),
             (Self::String(s), Self::String(o)) => s.cmp(o),
             (Self::Number(s), Self::Number(o)) => s.partial_cmp(o).unwrap_or(Ordering::Less),
-            (Self::DateTime(s), Self::DateTime(o)) => s.cmp(o),
+            (Self::Date(s), Self::Date(o)) => s.cmp(o),
             _ => Ordering::Less,
         }
     }
@@ -139,6 +140,18 @@ impl From<f64> for Term {
     }
 }
 
+impl From<SystemTime> for Term {
+    fn from(value: SystemTime) -> Self {
+        Self(Some(Inner::Date(Date::from(value))))
+    }
+}
+
+impl From<DateTime<Utc>> for Term {
+    fn from(value: DateTime<Utc>) -> Self {
+        Self(Some(Inner::Date(Date::from(value))))
+    }
+}
+
 impl From<&i8> for Term {
     fn from(value: &i8) -> Self {
         Self(Some(Inner::Number(Number::from(value))))
@@ -199,11 +212,18 @@ impl From<&f64> for Term {
     }
 }
 
-impl From<DateTime<Utc>> for Term {
-    fn from(value: DateTime<Utc>) -> Self {
-        Self(Some(Inner::DateTime(value)))
+impl From<&SystemTime> for Term {
+    fn from(value: &SystemTime) -> Self {
+        Self(Some(Inner::Date(Date::from(value))))
     }
 }
+
+impl From<&DateTime<Utc>> for Term {
+    fn from(value: &DateTime<Utc>) -> Self {
+        Self(Some(Inner::Date(Date::from(value))))
+    }
+}
+
 impl From<Option<bool>> for Term {
     fn from(value: Option<bool>) -> Self {
         Self(value.map(Inner::Bool))
@@ -282,6 +302,18 @@ impl From<Option<f64>> for Term {
     }
 }
 
+impl From<Option<SystemTime>> for Term {
+    fn from(value: Option<SystemTime>) -> Self {
+        Self(value.map(Date::from).map(Inner::Date))
+    }
+}
+
+impl From<Option<DateTime<Utc>>> for Term {
+    fn from(value: Option<DateTime<Utc>>) -> Self {
+        Self(value.map(Date::from).map(Inner::Date))
+    }
+}
+
 impl From<Option<&i8>> for Term {
     fn from(value: Option<&i8>) -> Self {
         Self(value.map(Number::from).map(Inner::Number))
@@ -342,9 +374,15 @@ impl From<Option<&f64>> for Term {
     }
 }
 
-impl From<Option<DateTime<Utc>>> for Term {
-    fn from(value: Option<DateTime<Utc>>) -> Self {
-        Self(value.map(Inner::DateTime))
+impl From<Option<&SystemTime>> for Term {
+    fn from(value: Option<&SystemTime>) -> Self {
+        Self(value.map(Date::from).map(Inner::Date))
+    }
+}
+
+impl From<Option<&DateTime<Utc>>> for Term {
+    fn from(value: Option<&DateTime<Utc>>) -> Self {
+        Self(value.map(Date::from).map(Inner::Date))
     }
 }
 
