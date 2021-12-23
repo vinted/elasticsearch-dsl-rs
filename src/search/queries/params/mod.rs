@@ -22,7 +22,6 @@ mod range_query;
 mod regexp_query;
 mod shape_query;
 mod simple_query_string_query;
-mod terms_query;
 mod terms_set_query;
 
 // Public re-exports
@@ -43,7 +42,6 @@ pub use self::regexp_query::*;
 pub use self::rewrite::*;
 pub use self::shape_query::*;
 pub use self::simple_query_string_query::*;
-pub use self::terms_query::*;
 pub use self::terms_set_query::*;
 pub use self::tie_breaker::*;
 pub use self::zero_terms_query::*;
