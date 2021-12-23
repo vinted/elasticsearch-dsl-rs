@@ -35,13 +35,13 @@ pub struct BoolQuery {
 #[derive(Debug, Clone, PartialEq, Serialize, Default)]
 struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    must: Vec<Query>,
+    must: Queries,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    filter: Vec<Query>,
+    filter: Queries,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    should: Vec<Query>,
+    should: Queries,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    must_not: Vec<Query>,
+    must_not: Queries,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     minimum_should_match: Option<MinimumShouldMatch>,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -59,15 +59,11 @@ impl Query {
 
 impl BoolQuery {
     /// The clause (query) must appear in matching documents and will contribute to the score.
-    pub fn must(mut self, query: impl Into<Option<Query>>) -> Self {
-        let query = query.into();
-
-        if let Some(query) = query {
-            if !query.should_skip() {
-                self.inner.must.push(query);
-            }
-        }
-
+    pub fn must<Q>(mut self, query: Q) -> Self
+    where
+        Q: Into<Option<Query>>,
+    {
+        self.inner.must.push(query);
         self
     }
 
@@ -77,25 +73,16 @@ impl BoolQuery {
         I: IntoIterator,
         I::Item: Into<Query>,
     {
-        for query in queries.into_iter().map(Into::into) {
-            if !query.should_skip() {
-                self.inner.must.push(query);
-            }
-        }
-
+        self.inner.must.extend(queries);
         self
     }
 
     /// The clause (query) should appear in the matching document.
-    pub fn should(mut self, query: impl Into<Option<Query>>) -> Self {
-        let query = query.into();
-
-        if let Some(query) = query {
-            if !query.should_skip() {
-                self.inner.should.push(query);
-            }
-        }
-
+    pub fn should<Q>(mut self, query: Q) -> Self
+    where
+        Q: Into<Option<Query>>,
+    {
+        self.inner.should.push(query);
         self
     }
 
@@ -105,12 +92,7 @@ impl BoolQuery {
         I: IntoIterator,
         I::Item: Into<Query>,
     {
-        for query in queries.into_iter().map(Into::into) {
-            if !query.should_skip() {
-                self.inner.should.push(query);
-            }
-        }
-
+        self.inner.should.extend(queries);
         self
     }
 
@@ -118,15 +100,11 @@ impl BoolQuery {
     /// However unlike must the score of the query will be ignored.
     /// Filter clauses are executed in [filter context](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html),
     /// meaning that scoring is ignored and clauses are considered for caching.
-    pub fn filter(mut self, query: impl Into<Option<Query>>) -> Self {
-        let query = query.into();
-
-        if let Some(query) = query {
-            if !query.should_skip() {
-                self.inner.filter.push(query);
-            }
-        }
-
+    pub fn filter<Q>(mut self, query: Q) -> Self
+    where
+        Q: Into<Option<Query>>,
+    {
+        self.inner.filter.push(query);
         self
     }
 
@@ -139,12 +117,7 @@ impl BoolQuery {
         I: IntoIterator,
         I::Item: Into<Query>,
     {
-        for query in queries.into_iter().map(Into::into) {
-            if !query.should_skip() {
-                self.inner.filter.push(query);
-            }
-        }
-
+        self.inner.filter.extend(queries);
         self
     }
 
@@ -152,15 +125,11 @@ impl BoolQuery {
     /// Clauses are executed in [filter context](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
     /// meaning that scoring is ignored and clauses are considered for caching.
     /// Because scoring is ignored, a score of `0` for all documents is returned.
-    pub fn must_not(mut self, query: impl Into<Option<Query>>) -> Self {
-        let query = query.into();
-
-        if let Some(query) = query {
-            if !query.should_skip() {
-                self.inner.must_not.push(query);
-            }
-        }
-
+    pub fn must_not<Q>(mut self, query: Q) -> Self
+    where
+        Q: Into<Option<Query>>,
+    {
+        self.inner.must_not.push(query);
         self
     }
 
@@ -173,12 +142,7 @@ impl BoolQuery {
         I: IntoIterator,
         I::Item: Into<Query>,
     {
-        for query in queries.into_iter().map(Into::into) {
-            if !query.should_skip() {
-                self.inner.must_not.push(query);
-            }
-        }
-
+        self.inner.must_not.extend(queries);
         self
     }
 
@@ -191,8 +155,11 @@ impl BoolQuery {
     ///
     /// For other valid values, see the
     /// [minimum_should_match parameter](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html).
-    pub fn minimum_should_match(mut self, minimum_should_match: impl Into<String>) -> Self {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+    pub fn minimum_should_match<S>(mut self, minimum_should_match: S) -> Self
+    where
+        S: ToString,
+    {
+        self.inner.minimum_should_match = Some(minimum_should_match.to_string());
         self
     }
 

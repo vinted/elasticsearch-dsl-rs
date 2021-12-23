@@ -31,7 +31,7 @@ pub struct DisMaxQuery {
 
 #[derive(Debug, Clone, Default, PartialEq, Serialize)]
 struct Inner {
-    queries: Vec<Query>,
+    queries: Queries,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     tie_breaker: Option<TieBreaker>,
@@ -55,15 +55,11 @@ impl DisMaxQuery {
     /// **must match one or more** of these queries. If a document matches multiple queries,
     /// Elasticsearch uses the highest
     /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
-    pub fn query(mut self, query: impl Into<Option<Query>>) -> Self {
-        let query = query.into();
-
-        if let Some(query) = query {
-            if !query.should_skip() {
-                self.inner.queries.push(query);
-            }
-        }
-
+    pub fn query<Q>(mut self, query: Q) -> Self
+    where
+        Q: Into<Option<Query>>,
+    {
+        self.inner.queries.push(query);
         self
     }
 
@@ -76,12 +72,7 @@ impl DisMaxQuery {
         I: IntoIterator,
         I::Item: Into<Query>,
     {
-        for query in queries.into_iter().map(Into::into) {
-            if !query.should_skip() {
-                self.inner.queries.push(query);
-            }
-        }
-
+        self.inner.queries.extend(queries);
         self
     }
 
@@ -103,7 +94,10 @@ impl DisMaxQuery {
     ///
     /// If the `tie_breaker` value is greater than `0.0`, all matching clauses
     /// count, but the clause with the highest score counts most.
-    pub fn tie_breaker(mut self, tie_breaker: impl Into<TieBreaker>) -> Self {
+    pub fn tie_breaker<T>(mut self, tie_breaker: T) -> Self
+    where
+        T: Into<TieBreaker>,
+    {
         self.inner.tie_breaker = Some(tie_breaker.into());
         self
     }
