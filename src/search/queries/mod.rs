@@ -126,6 +126,7 @@ query!(Query {
     Fuzzy(FuzzyQuery),
     GeoDistance(GeoDistanceQuery),
     GeoBoundingBox(GeoBoundingBoxQuery),
+    GeoShapeLookup(GeoShapeLookupQuery),
     Json(JsonQuery),
 });
 
