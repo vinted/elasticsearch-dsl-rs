@@ -1,4 +1,4 @@
-use crate::GeoPoint;
+use crate::search::*;
 use serde::Serialize;
 
 /// Strategies to verify the correctness of coordinates
@@ -7,8 +7,10 @@ use serde::Serialize;
 pub enum ValidationMethod {
     /// accept geo points with invalid latitude or longitude
     IgnoreMalformed,
+
     /// try to infer correct latitude or longitude
     Coerce,
+
     /// strict mode
     Strict,
 }
@@ -24,6 +26,7 @@ pub enum GeoBoundingBox {
         /// The coordinates of the lower right vertex
         bottom_right: GeoPoint,
     },
+
     /// SubDiagonal vertices of geo bounding box
     SubDiagonal {
         /// The coordinates of the upper right vertex
@@ -31,11 +34,13 @@ pub enum GeoBoundingBox {
         /// The coordinates of the lower left vertex
         bottom_left: GeoPoint,
     },
+
     /// Well-Known Text (WKT).
     WellKnownText {
         /// e.g. `BBOX (-74.1, -71.12, 40.73, 40.01)`
         wkt: String,
     },
+
     /// The vertices of the bounding box can either be set by `top_left` and `bottom_right` or by
     /// `top_right` and `bottom_left` parameters. More over the names `topLeft`, `bottomRight`, `topRight`
     /// and `bottomLeft` are supported. Instead of setting the values pairwise, one can use the simple
@@ -67,39 +72,51 @@ mod tests {
     use crate::{DistanceType, GeoBoundingBox, GeoPoint};
 
     test_serialization! {
-        serializes_as_geo_bounding_box_geopoint(GeoBoundingBox::MainDiagonal {
+        serializes_as_geo_bounding_box_geo_point(
+            GeoBoundingBox::MainDiagonal {
             top_left: GeoPoint::Coordinates {longitude: -74.1, latitude: 40.73},
             bottom_right: GeoPoint::Coordinates {longitude: -71.12, latitude: 40.01}
-        }, json!({
-            "top_left": [-74.1, 40.73],
-            "bottom_right": [-71.12, 40.01]
-        }));
+            },
+            json!({
+                "top_left": [-74.1, 40.73],
+                "bottom_right": [-71.12, 40.01]
+            })
+        );
 
-        serializes_as_geo_bounding_box_geohash(GeoBoundingBox::SubDiagonal {
-            top_right: GeoPoint::Geohash("dr5r9ydj2y73".into()),
-            bottom_left: GeoPoint::Geohash("drj7teegpus6".into())
-        }, json!({
-            "top_right": "dr5r9ydj2y73",
+        serializes_as_geo_bounding_box_geohash(
+            GeoBoundingBox::SubDiagonal {
+                top_right: GeoPoint::Geohash("dr5r9ydj2y73".into()),
+                bottom_left: GeoPoint::Geohash("drj7teegpus6".into())
+            },
+            json!({
+                "top_right": "dr5r9ydj2y73",
             "bottom_left": "drj7teegpus6"
-        }));
+            })
+        );
 
-        serializes_as_geo_bounding_box_wkt(GeoBoundingBox::WellKnownText {
-            wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into()
-        }, json!({
-            "wkt": "BBOX (-74.1, -71.12, 40.73, 40.01)"
-        }));
+        serializes_as_geo_bounding_box_wkt(
+            GeoBoundingBox::WellKnownText {
+                wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into()
+            },
+            json!({
+                "wkt": "BBOX (-74.1, -71.12, 40.73, 40.01)"
+            })
+        );
 
-        serializes_as_geo_bounding_box_vertices(GeoBoundingBox::Vertices {
-            top: 40.73,
-            left: -74.1,
-            bottom: 40.01,
-            right: -71.12,
-        }, json!({
-            "top": 40.73,
-            "left": -74.1,
-            "bottom": 40.01,
-            "right": -71.12
-        }));
+        serializes_as_geo_bounding_box_vertices(
+            GeoBoundingBox::Vertices {
+                top: 40.73,
+                left: -74.1,
+                bottom: 40.01,
+                right: -71.12,
+            },
+            json!({
+                "top": 40.73,
+                "left": -74.1,
+                "bottom": 40.01,
+                "right": -71.12
+            })
+        );
 
         serializes_as_distance_type_arc(
             DistanceType::Arc,
