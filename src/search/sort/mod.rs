@@ -3,9 +3,9 @@
 //! The sort is defined on a per field level, with special field name for `_score` to sort by score, and `_doc` to sort by index order.
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/master/search-your-data.html>
-use serde::ser::{Serialize, Serializer};
-
+use crate::search::*;
 use crate::util::*;
+use serde::ser::{Serialize, Serializer};
 
 /// The order defaults to `desc` when sorting on the `_score`, and defaults to `asc` when sorting on anything else.
 ///
@@ -61,7 +61,7 @@ pub enum SortMissing {
     Last,
 
     /// Provide a custom term for missing fields
-    Custom(String),
+    Custom(Term),
 }
 
 impl Serialize for SortMissing {
@@ -77,15 +77,12 @@ impl Serialize for SortMissing {
     }
 }
 
-impl From<String> for SortMissing {
-    fn from(value: String) -> Self {
-        SortMissing::Custom(value)
-    }
-}
-
-impl From<&str> for SortMissing {
-    fn from(value: &str) -> Self {
-        SortMissing::Custom(value.into())
+impl<T> From<T> for SortMissing
+where
+    T: Into<Term>,
+{
+    fn from(value: T) -> Self {
+        Self::Custom(value.into())
     }
 }
 
@@ -129,15 +126,12 @@ impl Serialize for SortField {
     }
 }
 
-impl From<String> for SortField {
-    fn from(field: String) -> Self {
-        SortField::Field(field)
-    }
-}
-
-impl From<&str> for SortField {
-    fn from(field: &str) -> Self {
-        SortField::Field(field.into())
+impl<T> From<T> for SortField
+where
+    T: ToString,
+{
+    fn from(value: T) -> Self {
+        Self::Field(value.to_string())
     }
 }
 
