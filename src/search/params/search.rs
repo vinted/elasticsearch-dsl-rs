@@ -80,7 +80,7 @@ impl From<Vec<String>> for SourceFilter {
 
 impl<'a> From<Vec<&'a str>> for SourceFilter {
     fn from(includes: Vec<&'a str>) -> Self {
-        SourceFilter::Includes(includes.iter().map(|s| (*s).to_string()).collect())
+        SourceFilter::Includes(includes.iter().map(ToString::to_string).collect())
     }
 }
 
@@ -92,7 +92,7 @@ impl<const N: usize> From<[String; N]> for SourceFilter {
 
 impl<'a, const N: usize> From<[&'a str; N]> for SourceFilter {
     fn from(includes: [&'a str; N]) -> Self {
-        SourceFilter::Includes(includes.iter().map(|s| (*s).to_string()).collect())
+        SourceFilter::Includes(includes.iter().map(ToString::to_string).collect())
     }
 }
 
@@ -111,12 +111,12 @@ impl<'a> From<(Vec<&'a str>, Vec<&'a str>)> for SourceFilter {
             includes: includes_excludes
                 .0
                 .iter()
-                .map(|s| (*s).to_string())
+                .map(ToString::to_string)
                 .collect(),
             excludes: includes_excludes
                 .1
                 .iter()
-                .map(|s| (*s).to_string())
+                .map(ToString::to_string)
                 .collect(),
         }
     }
@@ -125,16 +125,19 @@ impl<'a> From<(Vec<&'a str>, Vec<&'a str>)> for SourceFilter {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::to_string;
 
-    mod track_total_hits {
-        use super::*;
-
-        #[test]
-        fn serializes_bool_successfully() {
-            assert_eq!(to_string(&TrackTotalHits::Track(false)).unwrap(), "false");
-            assert_eq!(to_string(&TrackTotalHits::Track(true)).unwrap(), "true");
-            assert_eq!(to_string(&TrackTotalHits::Count(10)).unwrap(), "10");
-        }
+    test_serialization! {
+        serializes_track_total_hits_successfully(
+            [
+                TrackTotalHits::Track(false),
+                TrackTotalHits::Track(true),
+                TrackTotalHits::Count(10),
+            ],
+            json!([
+                false,
+                true,
+                10,
+            ])
+        )
     }
 }
