@@ -29,41 +29,41 @@ impl PrePostTags {
     pub fn new<I>(pre_tags: I, post_tags: I) -> Self
     where
         I: IntoIterator,
-        I::Item: Into<String>,
+        I::Item: ToString,
     {
         Self {
-            pre_tags: pre_tags.into_iter().map(Into::into).collect(),
-            post_tags: post_tags.into_iter().map(Into::into).collect(),
+            pre_tags: pre_tags.into_iter().map(|x| x.to_string()).collect(),
+            post_tags: post_tags.into_iter().map(|x| x.to_string()).collect(),
         }
     }
 }
 impl<T, const N: usize> From<([T; N], [T; N])> for Tags
 where
-    T: Into<String> + Copy,
+    T: ToString,
 {
     fn from(values: ([T; N], [T; N])) -> Self {
         Self::Custom(PrePostTags {
-            pre_tags: values.0.iter().map(|t| Into::into(*t)).collect(),
-            post_tags: values.1.iter().map(|t| Into::into(*t)).collect(),
+            pre_tags: values.0.iter().map(ToString::to_string).collect(),
+            post_tags: values.1.iter().map(ToString::to_string).collect(),
         })
     }
 }
 
 impl<T, const N: usize> From<([T; N], [T; N])> for PrePostTags
 where
-    T: Into<String> + Copy,
+    T: ToString,
 {
     fn from(values: ([T; N], [T; N])) -> Self {
         Self {
-            pre_tags: values.0.iter().map(|t| Into::into(*t)).collect(),
-            post_tags: values.1.iter().map(|t| Into::into(*t)).collect(),
+            pre_tags: values.0.iter().map(ToString::to_string).collect(),
+            post_tags: values.1.iter().map(ToString::to_string).collect(),
         }
     }
 }
 
 impl<T> From<(Vec<T>, Vec<T>)> for Tags
 where
-    T: Into<String>,
+    T: ToString,
 {
     fn from(values: (Vec<T>, Vec<T>)) -> Self {
         Tags::Custom(PrePostTags::new(values.0, values.1))
@@ -72,7 +72,7 @@ where
 
 impl<T> From<(Vec<T>, Vec<T>)> for PrePostTags
 where
-    T: Into<String>,
+    T: ToString,
 {
     fn from(values: (Vec<T>, Vec<T>)) -> Self {
         Self::new(values.0, values.1)
@@ -81,24 +81,24 @@ where
 
 impl<'a, T> From<(&'a [T], &'a [T])> for Tags
 where
-    T: Into<String> + Copy,
+    T: ToString,
 {
     fn from(values: (&'a [T], &'a [T])) -> Self {
         Tags::Custom(PrePostTags {
-            pre_tags: values.0.iter().map(|t| Into::into(*t)).collect(),
-            post_tags: values.1.iter().map(|t| Into::into(*t)).collect(),
+            pre_tags: values.0.iter().map(ToString::to_string).collect(),
+            post_tags: values.1.iter().map(ToString::to_string).collect(),
         })
     }
 }
 
 impl<'a, T> From<(&'a [T], &'a [T])> for PrePostTags
 where
-    T: Into<String> + Copy,
+    T: ToString,
 {
     fn from(values: (&'a [T], &'a [T])) -> Self {
         Self {
-            pre_tags: values.0.iter().map(|t| Into::into(*t)).collect(),
-            post_tags: values.1.iter().map(|t| Into::into(*t)).collect(),
+            pre_tags: values.0.iter().map(ToString::to_string).collect(),
+            post_tags: values.1.iter().map(ToString::to_string).collect(),
         }
     }
 }
