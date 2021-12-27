@@ -72,7 +72,7 @@ impl Serialize for SortMissing {
         match self {
             Self::First => "_first".serialize(serializer),
             Self::Last => "_last".serialize(serializer),
-            Self::Custom(field) => field.as_str().serialize(serializer),
+            Self::Custom(field) => field.serialize(serializer),
         }
     }
 }
@@ -124,7 +124,7 @@ impl Serialize for SortField {
             Self::Key => "_key".serialize(serializer),
             Self::Count => "_count".serialize(serializer),
             Self::Doc => "_doc".serialize(serializer),
-            Self::Field(field) => field.as_str().serialize(serializer),
+            Self::Field(field) => field.serialize(serializer),
         }
     }
 }
