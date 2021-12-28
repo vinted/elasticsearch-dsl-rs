@@ -128,6 +128,7 @@ query!(Query {
     GeoBoundingBox(GeoBoundingBoxQuery),
     GeoShapeLookup(GeoShapeLookupQuery),
     Json(JsonQuery),
+    Wrapper(WrapperQuery),
 });
 
 /// A collection of queries
