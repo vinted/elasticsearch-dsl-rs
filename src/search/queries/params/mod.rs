@@ -8,6 +8,7 @@ mod inner_hits;
 mod negative_boost;
 mod operator;
 mod rewrite;
+mod script_object;
 mod tie_breaker;
 mod zero_terms_query;
 
@@ -40,6 +41,7 @@ pub use self::pinned_query::*;
 pub use self::range_query::*;
 pub use self::regexp_query::*;
 pub use self::rewrite::*;
+pub use self::script_object::*;
 pub use self::shape_query::*;
 pub use self::simple_query_string_query::*;
 pub use self::terms_set_query::*;
