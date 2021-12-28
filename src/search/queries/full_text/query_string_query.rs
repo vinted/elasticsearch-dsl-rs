@@ -383,17 +383,18 @@ impl ShouldSkip for QueryStringQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::query_string("search text"),
             json!({
                 "query_string": {
                     "query": "search text",
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::query_string("search text")
                 .fields(["database"])
                 .default_operator(Operator::And)
@@ -425,7 +426,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test",
                 }
-            })
+            }),
         );
     }
 }

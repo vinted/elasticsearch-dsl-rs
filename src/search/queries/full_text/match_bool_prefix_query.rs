@@ -122,8 +122,9 @@ impl Serialize for MatchBoolPrefixQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::match_bool_prefix("test", "search text"),
             json!({
                 "match_bool_prefix": {
@@ -131,10 +132,10 @@ mod tests {
                         "query": "search text"
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::match_bool_prefix("test", "search text")
                 .analyzer("search_time_analyzer")
                 .minimum_should_match("12")
@@ -152,7 +153,7 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
     }
 }

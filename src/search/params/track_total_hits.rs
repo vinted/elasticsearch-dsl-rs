@@ -30,19 +30,17 @@ impl From<i64> for TrackTotalHits {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::*;
 
-    test_serialization! {
-        serializes_track_total_hits_successfully(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             [
                 TrackTotalHits::Track(false),
                 TrackTotalHits::Track(true),
                 TrackTotalHits::Count(10),
             ],
-            json!([
-                false,
-                true,
-                10,
-            ])
+            json!([false, true, 10,]),
         )
     }
 }

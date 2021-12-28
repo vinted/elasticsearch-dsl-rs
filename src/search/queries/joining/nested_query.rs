@@ -142,8 +142,9 @@ impl ShouldSkip for NestedQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::nested("vehicles", Query::term("vehicles.license", "ABC123")),
             json!({
                 "nested": {
@@ -156,10 +157,10 @@ mod tests {
                         }
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::nested("vehicles", Query::term("vehicles.license", "ABC123"))
                 .boost(3)
                 .name("test"),
@@ -176,10 +177,10 @@ mod tests {
                     "boost": 3,
                     "_name": "test",
                 }
-            })
+            }),
         );
 
-        with_multi_level_nested_queries(
+        assert_serialize(
             Query::nested(
                 "driver",
                 Query::nested(
@@ -203,7 +204,7 @@ mod tests {
                         }
                     }
                 }
-            })
+            }),
         );
     }
 }

@@ -129,8 +129,9 @@ impl ShouldSkip for GeoShapeLookupQuery {}
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn test_serialization() {
+        assert_serialize(
             Query::geo_shape_lookup("pin.location", "id", "index", "path"),
             json!({
                 "geo_shape": {
@@ -142,32 +143,32 @@ mod tests {
                         }
                     },
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::geo_shape_lookup("pin.location", "id", "index", "path")
                 .boost(2)
                 .name("test")
                 .ignore_unmapped(true)
                 .relation(SpatialRelation::Within)
                 .routing("routing"),
-                json!({
-                    "geo_shape": {
-                        "_name": "test",
-                        "boost": 2,
-                        "ignore_unmapped": true,
-                        "pin.location": {
-                            "indexed_shape": {
-                                "id": "id",
-                                "index": "index",
-                                "path": "path",
-                                "routing": "routing"
-                            },
-                            "relation": "WITHIN"
+            json!({
+                "geo_shape": {
+                    "_name": "test",
+                    "boost": 2,
+                    "ignore_unmapped": true,
+                    "pin.location": {
+                        "indexed_shape": {
+                            "id": "id",
+                            "index": "index",
+                            "path": "path",
+                            "routing": "routing"
                         },
-                    }
-                })
+                        "relation": "WITHIN"
+                    },
+                }
+            }),
         );
     }
 }

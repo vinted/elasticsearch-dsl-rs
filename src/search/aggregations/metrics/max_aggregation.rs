@@ -53,21 +53,21 @@ impl MaxAggregation {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Aggregation::max("test_max", "test_field"),
-            json!({ "max": { "field": "test_field" } })
+            json!({ "max": { "field": "test_field" } }),
         );
 
-        with_all_fields(
-            Aggregation::max("test_max", "test_field")
-                .missing(100.1),
+        assert_serialize(
+            Aggregation::max("test_max", "test_field").missing(100.1),
             json!({
                 "max": {
                     "field": "test_field",
                     "missing": 100.1
                 }
-            })
+            }),
         );
     }
 }

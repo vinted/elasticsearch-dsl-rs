@@ -131,35 +131,36 @@ impl Serialize for ScriptLang {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(Script::default(), json!({ "script": {}}));
+    #[test]
+    fn serialization() {
+        assert_serialize(Script::default(), json!({ "script": {}}));
 
-        with_all_fields(
+        assert_serialize(
             Script::new()
-            .source("Math.log(_score * 2) * params['multiplier'].len()")
-            .param("multiplier", vec![ 1, 2, 3])
-            .lang(ScriptLang::Painless),
+                .source("Math.log(_score * 2) * params['multiplier'].len()")
+                .param("multiplier", vec![1, 2, 3])
+                .lang(ScriptLang::Painless),
             json!({ "script": {
                 "source": "Math.log(_score * 2) * params['multiplier'].len()",
                 "lang": "painless",
                 "params": {
                     "multiplier": [ 1, 2, 3]
                 }
-            }})
+            }}),
         );
 
-        with_all_fields_custom_script_lang(
+        assert_serialize(
             Script::new()
-            .source("doc['my_field'].value * params['multiplier']")
-            .param("multiplier", 1)
-            .lang(ScriptLang::Custom("my_lang".into())),
+                .source("doc['my_field'].value * params['multiplier']")
+                .param("multiplier", 1)
+                .lang(ScriptLang::Custom("my_lang".into())),
             json!({ "script": {
                 "source": "doc['my_field'].value * params['multiplier']",
                 "lang": "my_lang",
                 "params": {
                     "multiplier": 1
                 }
-            }})
+            }}),
         );
     }
 }

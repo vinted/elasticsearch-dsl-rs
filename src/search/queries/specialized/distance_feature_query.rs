@@ -171,69 +171,67 @@ impl<O: Origin> ShouldSkip for DistanceFeatureQuery<O> {}
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::prelude::*;
 
-    mod date {
-        use super::*;
-        use chrono::prelude::*;
+    #[test]
+    fn serialization() {
+        assert_serialize(
+            Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7)),
+            json!({
+                "distance_feature": {
+                    "field": "test",
+                    "origin": "2014-07-08T09:01:00Z",
+                    "pivot": "7d",
+                }
+            }),
+        );
 
-        test_serialization! {
-            with_required_fields(
-                Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7)),
-                json!({
-                    "distance_feature": {
-                        "field": "test",
-                        "origin": "2014-07-08T09:01:00Z",
-                        "pivot": "7d",
-                    }
-                })
-            );
+        assert_serialize(
+            Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7))
+                .boost(1.5)
+                .name("test"),
+            json!({
+                "distance_feature": {
+                    "field": "test",
+                    "origin": "2014-07-08T09:01:00Z",
+                    "pivot": "7d",
+                    "boost": 1.5,
+                    "_name": "test",
+                }
+            }),
+        );
+        assert_serialize(
+            Query::distance_feature(
+                "test",
+                GeoPoint::coordinates(12.0, 13.0),
+                Distance::Kilometers(15),
+            ),
+            json!({
+                "distance_feature": {
+                    "field": "test",
+                    "origin": [13.0, 12.0],
+                    "pivot": "15km",
+                }
+            }),
+        );
 
-            with_all_fields(
-                Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7))
-                    .boost(1.5)
-                    .name("test"),
-                json!({
-                    "distance_feature": {
-                        "field": "test",
-                        "origin": "2014-07-08T09:01:00Z",
-                        "pivot": "7d",
-                        "boost": 1.5,
-                        "_name": "test",
-                    }
-                })
-            );
-        }
-    }
-
-    mod geo {
-        use super::*;
-
-        test_serialization! {
-            with_required_fields(
-                Query::distance_feature("test", GeoPoint::coordinates(12.0, 13.0), Distance::Kilometers(15)),
-                json!({
-                    "distance_feature": {
-                        "field": "test",
-                        "origin": [13.0, 12.0],
-                        "pivot": "15km",
-                    }
-                })
-            );
-
-            with_all_fields(
-                Query::distance_feature("test", GeoPoint::coordinates(12.0, 13.0), Distance::Kilometers(15))
-                    .boost(2)
-                    .name("test"),
-                json!({
-                    "distance_feature": {
-                        "field": "test",
-                        "origin": [13.0, 12.0],
-                        "pivot": "15km",
-                        "boost": 2,
-                        "_name": "test",
-                    }
-                })
-            );
-        }
+        assert_serialize(
+            Query::distance_feature(
+                "test",
+                GeoPoint::coordinates(12.0, 13.0),
+                Distance::Kilometers(15),
+            )
+            .boost(2)
+            .name("test"),
+            json!({
+                "distance_feature": {
+                    "field": "test",
+                    "origin": [13.0, 12.0],
+                    "pivot": "15km",
+                    "boost": 2,
+                    "_name": "test",
+                }
+            }),
+        );
     }
 }

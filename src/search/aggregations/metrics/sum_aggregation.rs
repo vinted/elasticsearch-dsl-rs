@@ -50,21 +50,21 @@ impl SumAggregation {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Aggregation::sum("test_sum", "test_field"),
-            json!({ "sum": { "field": "test_field" } })
+            json!({ "sum": { "field": "test_field" } }),
         );
 
-        with_all_fields(
-            Aggregation::sum("test_sum", "test_field")
-                .missing(100.1),
+        assert_serialize(
+            Aggregation::sum("test_sum", "test_field").missing(100.1),
             json!({
                 "sum": {
                     "field": "test_field",
                     "missing": 100.1
                 }
-            })
+            }),
         );
     }
 }

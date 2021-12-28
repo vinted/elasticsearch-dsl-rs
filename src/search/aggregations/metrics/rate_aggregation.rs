@@ -77,13 +77,11 @@ impl RateAggregation {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
-            Aggregation::rate("test_rate"),
-            json!({ "rate": { } })
-        );
+    #[test]
+    fn serialization() {
+        assert_serialize(Aggregation::rate("test_rate"), json!({ "rate": { } }));
 
-        with_all_fields(
+        assert_serialize(
             Aggregation::rate("test_rate")
                 .field("price")
                 .unit(CalendarInterval::Day)
@@ -94,7 +92,7 @@ mod tests {
                     "unit": "day",
                     "mode": "value_count"
                 }
-            })
+            }),
         );
     }
 }

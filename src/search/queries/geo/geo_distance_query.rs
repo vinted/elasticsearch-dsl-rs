@@ -85,47 +85,49 @@ impl ShouldSkip for GeoDistanceQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        geo_distance_coordinates(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::geo_distance(
                 "pin.location",
                 GeoPoint::Coordinates {
                     latitude: 40.12,
                     longitude: -71.34,
                 },
-                Distance::Kilometers(300)
+                Distance::Kilometers(300),
             ),
             json!({
                 "geo_distance": {
                     "distance": "300km",
                     "pin.location": [-71.34, 40.12],
                 }
-            })
+            }),
         );
 
-        geo_distance_geohash(
+        assert_serialize(
             Query::geo_distance(
                 "pin.location",
                 GeoPoint::Geohash("drm3btev3e86".into()),
-                Distance::Miles(200)
+                Distance::Miles(200),
             ),
             json!({
                 "geo_distance": {
                     "distance": "200mi",
                     "pin.location": "drm3btev3e86",
                 }
-            })
+            }),
         );
 
-        geo_distance_name_and_boost(
+        assert_serialize(
             Query::geo_distance(
                 "pin.location",
                 GeoPoint::Coordinates {
                     latitude: 40.12,
                     longitude: -71.34,
                 },
-                Distance::Kilometers(300)
-            ).distance_type(DistanceType::Plane)
+                Distance::Kilometers(300),
+            )
+            .distance_type(DistanceType::Plane)
             .validation_method(ValidationMethod::Strict)
             .name("test_name")
             .boost(1),
@@ -138,7 +140,7 @@ mod tests {
                     "_name": "test_name",
                     "boost": 1,
                 }
-            })
+            }),
         );
     }
 }

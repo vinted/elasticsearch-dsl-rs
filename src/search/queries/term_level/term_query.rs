@@ -86,8 +86,9 @@ impl Serialize for TermQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::term("test", 123),
             json!({
                 "term": {
@@ -95,10 +96,10 @@ mod tests {
                         "value": 123
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::term("test", 123).boost(2).name("test"),
             json!({
                 "term": {
@@ -108,12 +109,12 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
 
-        with_none(
+        assert_serialize(
             Query::bool().filter(Query::term("test", None::<String>)),
-            json!({ "bool": {} })
+            json!({ "bool": {} }),
         )
     }
 }

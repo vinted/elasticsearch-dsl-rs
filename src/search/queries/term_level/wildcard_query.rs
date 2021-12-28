@@ -102,8 +102,9 @@ impl Serialize for WildcardQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::wildcard("test", "value*"),
             json!({
                 "wildcard": {
@@ -111,10 +112,10 @@ mod tests {
                         "value": "value*"
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::wildcard("test", "value*")
                 .rewrite(Rewrite::ConstantScore)
                 .case_insensitive(true)
@@ -130,12 +131,12 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
 
-        with_none(
+        assert_serialize(
             Query::bool().filter(Query::wildcard("test", None::<String>)),
-            json!({ "bool": {} })
+            json!({ "bool": {} }),
         )
     }
 }

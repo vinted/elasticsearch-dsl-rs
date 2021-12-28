@@ -122,19 +122,18 @@ impl Serialize for Tags {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::*;
 
-    test_serialization! {
-        styled(
-            Tags::Styled,
-            json!({ "tags_schema": "styled" })
-        );
+    #[test]
+    fn serialization() {
+        assert_serialize(Tags::Styled, json!({ "tags_schema": "styled" }));
 
-        custom(
+        assert_serialize(
             Tags::Custom((["<h1>"], ["</h1>"]).into()),
             json!({
                 "pre_tags": ["<h1>"],
                 "post_tags": ["</h1>"]
-            })
+            }),
         );
     }
 }

@@ -66,17 +66,18 @@ impl ShouldSkip for IdsQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::ids(vec![1, 3, 2, 5, 4, 6]),
             json!({
                 "ids": {
                     "values": ["1", "2", "3", "4", "5", "6"],
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::ids(vec![1, 3, 2, 5, 4, 6]).boost(1.3).name("test"),
             json!({
                 "ids": {
@@ -84,7 +85,7 @@ mod tests {
                     "boost": 1.3,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

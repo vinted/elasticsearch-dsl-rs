@@ -132,18 +132,19 @@ impl ShouldSkip for CombinedFieldsQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::combined_fields(["test"], "search text"),
             json!({
                 "combined_fields": {
                     "query": "search text",
                     "fields": ["test"],
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::combined_fields(["test"], "search text")
                 .auto_generate_synonyms_phrase_query(true)
                 .operator(Operator::And)
@@ -162,7 +163,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test",
                 }
-            })
+            }),
         );
     }
 }

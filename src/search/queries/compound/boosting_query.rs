@@ -81,8 +81,9 @@ impl ShouldSkip for BoostingQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::boosting(Query::term("test1", 123), Query::term("test2", 456), 0.2),
             json!({
                 "boosting": {
@@ -102,10 +103,10 @@ mod tests {
                     },
                     "negative_boost": 0.2
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::boosting(Query::term("test1", 123), Query::term("test2", 456), 0.2)
                 .boost(3)
                 .name("test"),
@@ -129,7 +130,7 @@ mod tests {
                     "boost": 3,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

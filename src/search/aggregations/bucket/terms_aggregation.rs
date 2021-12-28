@@ -131,13 +131,14 @@ impl TermsAggregation {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_field_only(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Aggregation::terms("test_agg", "test_field"),
-            json!({ "terms": { "field": "test_field" } })
+            json!({ "terms": { "field": "test_field" } }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Aggregation::terms("test_agg", "test_field")
                 .size(5u16)
                 .min_doc_count(2u16)
@@ -153,16 +154,14 @@ mod tests {
                         { "test_order": "asc" }
                     ]
                 }
-            })
+            }),
         );
 
-        with_sub_aggregations(
+        assert_serialize(
             Aggregation::terms("test_agg", "test_field")
                 .size(0u16)
                 .order(("test_order", SortOrder::Asc))
-                .aggregate(
-                    Aggregation::terms("test_sub_agg", "test_field2").size(3u16)
-                ),
+                .aggregate(Aggregation::terms("test_sub_agg", "test_field2").size(3u16)),
             json!({
                 "terms": {
                     "field": "test_field",
@@ -179,7 +178,7 @@ mod tests {
                         }
                     }
                 }
-            })
+            }),
         );
     }
 }

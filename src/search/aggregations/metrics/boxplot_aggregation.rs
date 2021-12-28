@@ -80,13 +80,14 @@ impl BoxplotAggregation {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Aggregation::boxplot("test_boxplot", "test_field"),
-            json!({ "boxplot": { "field": "test_field" } })
+            json!({ "boxplot": { "field": "test_field" } }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Aggregation::boxplot("test_boxplot", "test_field")
                 .compression(100)
                 .missing(10),
@@ -96,7 +97,7 @@ mod tests {
                     "compression": 100,
                     "missing": 10
                 }
-            })
+            }),
         );
     }
 }

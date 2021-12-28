@@ -124,51 +124,53 @@ impl Serialize for FvhBoundaryScanner {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::*;
 
-    test_serialization! {
-        unified_sentence_without_locale(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             UnifiedBoundaryScanner::Sentence(None),
-            json!({ "boundary_scanner": "sentence" })
+            json!({ "boundary_scanner": "sentence" }),
         );
 
-        unified_sentence_with_locale(
+        assert_serialize(
             UnifiedBoundaryScanner::Sentence(Some("en-US".into())),
-            json!({ "boundary_scanner": "sentence", "boundary_scanner_locale": "en-US" })
+            json!({ "boundary_scanner": "sentence", "boundary_scanner_locale": "en-US" }),
         );
 
-        unified_word_without_locale(
+        assert_serialize(
             UnifiedBoundaryScanner::Word(None),
-            json!({ "boundary_scanner": "word" })
+            json!({ "boundary_scanner": "word" }),
         );
 
-        unified_word_with_locale(
+        assert_serialize(
             UnifiedBoundaryScanner::Word(Some("en-US".into())),
-            json!({ "boundary_scanner": "word", "boundary_scanner_locale": "en-US" })
+            json!({ "boundary_scanner": "word", "boundary_scanner_locale": "en-US" }),
         );
 
-        fvh_chars(
+        assert_serialize(
             FvhBoundaryScanner::Chars,
-            json!({ "boundary_scanner": "chars" })
+            json!({ "boundary_scanner": "chars" }),
         );
 
-        fvh_sentence_without_locale(
+        assert_serialize(
             FvhBoundaryScanner::Sentence(None),
-            json!({ "boundary_scanner": "sentence" })
+            json!({ "boundary_scanner": "sentence" }),
         );
 
-        fvh_sentence_with_locale(
+        assert_serialize(
             FvhBoundaryScanner::Sentence(Some("en-US".into())),
-            json!({ "boundary_scanner": "sentence", "boundary_scanner_locale": "en-US" })
+            json!({ "boundary_scanner": "sentence", "boundary_scanner_locale": "en-US" }),
         );
 
-        fvh_word_without_locale(
+        assert_serialize(
             FvhBoundaryScanner::Word(None),
-            json!({ "boundary_scanner": "word" })
+            json!({ "boundary_scanner": "word" }),
         );
 
-        fvh_word_with_locale(
+        assert_serialize(
             FvhBoundaryScanner::Word(Some("en-US".into())),
-            json!({ "boundary_scanner": "word", "boundary_scanner_locale": "en-US" })
+            json!({ "boundary_scanner": "word", "boundary_scanner_locale": "en-US" }),
         );
     }
 }

@@ -168,17 +168,18 @@ mod tests {
     use super::*;
     use chrono::prelude::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::range("test_field"),
             json!({
                 "range": {
                     "test_field": {}
                 }
-            })
+            }),
         );
 
-        with_none_fields(
+        assert_serialize(
             Query::range("test_field")
                 .gt(Option::<i32>::None)
                 .lt(Option::<i32>::None)
@@ -188,10 +189,10 @@ mod tests {
                 "range": {
                     "test_field": {}
                 }
-            })
+            }),
         );
 
-        with_all_numeric_fields(
+        assert_serialize(
             Query::range("test_numeric_field")
                 .gt(1)
                 .gte(2)
@@ -212,10 +213,10 @@ mod tests {
                         "_name": "range_query_test"
                     }
                 }
-            })
+            }),
         );
 
-        with_all_date_fields(
+        assert_serialize(
             Query::range("test_date_field")
                 .gt(Utc.ymd(2014, 11, 28).and_hms(12, 0, 1))
                 .gte(Utc.ymd(2014, 11, 28).and_hms(12, 0, 2))
@@ -240,7 +241,7 @@ mod tests {
                         "_name": "range_query_test"
                     }
                 }
-            })
+            }),
         );
     }
 }

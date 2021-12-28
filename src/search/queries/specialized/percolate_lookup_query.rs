@@ -115,8 +115,9 @@ impl ShouldSkip for PercolateLookupQuery {}
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::percolate_lookup("field_name", "index_name", "document_id"),
             json!({
                 "percolate": {
@@ -124,10 +125,10 @@ mod tests {
                     "index": "index_name",
                     "id": "document_id"
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::percolate_lookup("field_name", "index_name", "document_id")
                 .name("toast")
                 .routing("routing_value")
@@ -143,7 +144,7 @@ mod tests {
                     "preference": "preference_value",
                     "version": 123,
                 }
-            })
+            }),
         );
     }
 }

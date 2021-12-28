@@ -65,17 +65,18 @@ impl ShouldSkip for ExistsQuery {}
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::exists("test"),
             json!({
                 "exists": {
                     "field": "test"
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::exists("test").boost(2).name("test"),
             json!({
                 "exists": {
@@ -83,7 +84,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

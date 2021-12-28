@@ -205,18 +205,11 @@ impl From<Sort> for Vec<Sort> {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_field_only(
-            Sort::new("test"),
-            json!({"test": {}})
-        );
-
-        with_predefined_sort_field(
-            Sort::new(SortField::Id),
-            json!({"_id": {}})
-        );
-
-        with_all_attributes(
+    #[test]
+    fn serialization() {
+        assert_serialize(Sort::new("test"), json!({"test": {}}));
+        assert_serialize(Sort::new(SortField::Id), json!({"_id": {}}));
+        assert_serialize(
             Sort::new("test")
                 .order(SortOrder::Asc)
                 .mode(SortMode::Max)
@@ -229,7 +222,7 @@ mod tests {
                     "unmapped_type": "long",
                     "missing": "miss",
                 }
-            })
+            }),
         );
     }
 }

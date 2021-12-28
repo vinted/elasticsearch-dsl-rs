@@ -254,24 +254,28 @@ impl ShouldSkip for SimpleQueryStringQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::simple_query_string("search text"),
             json!({
                 "simple_query_string": {
                     "query": "search text",
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::simple_query_string("search text")
                 .fields(["database"])
                 .default_operator(Operator::And)
                 .analyze_wildcard(true)
                 .analyzer("search_time_analyzer")
                 .auto_generate_synonyms_phrase_query(true)
-                .flags([SimpleQueryStringQueryFlags::And, SimpleQueryStringQueryFlags::Escape])
+                .flags([
+                    SimpleQueryStringQueryFlags::And,
+                    SimpleQueryStringQueryFlags::Escape,
+                ])
                 .fuzzy_max_expansions(20)
                 .fuzzy_prefix_length(3)
                 .fuzzy_transpositions(false)
@@ -298,7 +302,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test",
                 }
-            })
+            }),
         );
     }
 }

@@ -179,10 +179,11 @@ impl ShouldSkip for BoolQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(Query::bool(), json!({ "bool": {} }));
+    #[test]
+    fn serialization() {
+        assert_serialize(Query::bool(), json!({ "bool": {} }));
 
-        with_multiple_queries(
+        assert_serialize(
             Query::bool()
                 .musts([Query::term("test1", 1), Query::term("test2", 2)])
                 .shoulds([Query::term("test1", 3), Query::term("test2", 4)])
@@ -213,10 +214,10 @@ mod tests {
                     "boost": 1.3,
                     "_name":"test"
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::bool()
                 .must(Query::term("test1", 1))
                 .must(Query::term("test2", 2))
@@ -251,7 +252,7 @@ mod tests {
                     "boost": 1.3,
                     "_name":"test"
                 }
-            })
+            }),
         );
     }
 }

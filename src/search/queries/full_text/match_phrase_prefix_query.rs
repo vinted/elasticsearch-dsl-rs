@@ -131,8 +131,9 @@ impl Serialize for MatchPhrasePrefixQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::match_phrase_prefix("test", "search text"),
             json!({
                 "match_phrase_prefix": {
@@ -140,10 +141,10 @@ mod tests {
                         "query": "search text"
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::match_phrase_prefix("test", "search text")
                 .analyzer("search_time_analyzer")
                 .max_expansions(20)
@@ -163,7 +164,7 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
     }
 }

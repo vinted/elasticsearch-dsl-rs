@@ -109,8 +109,9 @@ mod tests {
         assert!(!Rescore::new(Query::range("field").gte(1)).should_skip());
     }
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Rescore::new(Query::term("title", "test")),
             json!({
                 "query": {
@@ -122,10 +123,10 @@ mod tests {
                         }
                     }
                 }
-            })
+            }),
         );
 
-        with_optional_fields(
+        assert_serialize(
             Rescore::new(Query::term("title", "test"))
                 .rescore_query_weight(0.2)
                 .query_weight(0.5)
@@ -143,7 +144,7 @@ mod tests {
                     "rescore_query_weight": 0.2
                 },
                 "window_size": 100
-            })
+            }),
         );
     }
 }

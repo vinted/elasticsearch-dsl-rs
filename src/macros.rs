@@ -1,28 +1,3 @@
-/// Used to compare serialized structures
-#[doc(hidden)]
-#[macro_export]
-#[cfg(test)]
-macro_rules! test_serialization {
-    (
-        $(
-            $name:ident($subject:expr, $expectation:expr)
-        );+
-        $(;)?
-    ) => {
-        use serde_json::{json, Value, to_string, from_str};
-
-        $(
-            #[test]
-            fn $name() {
-                let string = to_string(&$subject).unwrap();
-                let result: Value = from_str(&string).unwrap();
-
-                assert_eq!(result, $expectation);
-            }
-        )+
-    };
-}
-
 #[doc(hidden)]
 #[macro_export]
 macro_rules! add_boost_and_name {

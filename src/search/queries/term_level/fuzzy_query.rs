@@ -151,8 +151,9 @@ impl Serialize for FuzzyQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::fuzzy("test", 123),
             json!({
                 "fuzzy": {
@@ -160,10 +161,10 @@ mod tests {
                         "value": 123
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::fuzzy("test", 123)
                 .fuzziness(Fuzziness::Auto)
                 .max_expansions(3)
@@ -185,12 +186,12 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
 
-        with_none(
+        assert_serialize(
             Query::bool().filter(Query::fuzzy("test", None::<String>)),
-            json!({ "bool": {} })
+            json!({ "bool": {} }),
         )
     }
 }

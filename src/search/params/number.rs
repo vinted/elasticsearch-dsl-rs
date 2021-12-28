@@ -247,16 +247,18 @@ impl PartialOrd for N {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::*;
 
-    test_serialization! {
-        serializes_number_correctly(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             [
                 Number::from(2),
                 Number::from(-2),
                 Number::from(2.2f32),
                 Number::from(2.2f64),
             ],
-            json!([2, -2, 2.2, 2.2])
+            json!([2, -2, 2.2, 2.2]),
         )
     }
 
