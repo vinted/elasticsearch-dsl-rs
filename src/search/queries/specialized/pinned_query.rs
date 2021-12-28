@@ -67,12 +67,10 @@ impl ShouldSkip for PinnedQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_ids_fields(
-            Query::pinned(
-                PinnedQueryValues::ids([1]),
-                Query::term("user_id", 2)
-            ),
+    #[test]
+    fn serialization() {
+        assert_serialize(
+            Query::pinned(PinnedQueryValues::ids([1]), Query::term("user_id", 2)),
             json!({
                 "pinned": {
                     "ids": ["1"],
@@ -84,13 +82,13 @@ mod tests {
                         }
                     }
                 }
-            })
+            }),
         );
 
-        with_required_docs_fields(
+        assert_serialize(
             Query::pinned(
                 PinnedQueryValues::docs([PinnedDocument::new("index", 1)]),
-                Query::term("user_id", 2)
+                Query::term("user_id", 2),
             ),
             json!({
                 "pinned": {
@@ -103,16 +101,13 @@ mod tests {
                         }
                     }
                 }
-            })
+            }),
         );
 
-        with_all_ids_fields(
-            Query::pinned(
-                PinnedQueryValues::ids([1]),
-                Query::term("user_id", 2)
-            )
-            .boost(2)
-            .name("test"),
+        assert_serialize(
+            Query::pinned(PinnedQueryValues::ids([1]), Query::term("user_id", 2))
+                .boost(2)
+                .name("test"),
             json!({
                 "pinned": {
                     "ids": ["1"],
@@ -126,13 +121,13 @@ mod tests {
                     "boost": 2,
                     "_name": "test"
                 }
-            })
+            }),
         );
 
-        with_all_docs_fields(
+        assert_serialize(
             Query::pinned(
                 PinnedQueryValues::docs([PinnedDocument::new("index", 1)]),
-                Query::term("user_id", 2)
+                Query::term("user_id", 2),
             )
             .boost(2)
             .name("test"),
@@ -149,7 +144,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

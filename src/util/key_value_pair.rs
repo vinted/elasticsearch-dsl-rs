@@ -39,8 +39,10 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::*;
 
-    test_serialization! {
-        serializes_as_key_value_pair(KeyValuePair::new("key", "value"), json!({ "key": "value" }));
+    #[test]
+    fn serializes_as_key_value_pair() {
+        assert_serialize(KeyValuePair::new("key", "value"), json!({ "key": "value" }));
     }
 }

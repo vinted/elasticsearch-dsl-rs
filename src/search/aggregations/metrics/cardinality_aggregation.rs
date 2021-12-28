@@ -64,13 +64,14 @@ impl CardinalityAggregation {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Aggregation::cardinality("test_cardinality", "test_field"),
-            json!({ "cardinality": { "field": "test_field" } })
+            json!({ "cardinality": { "field": "test_field" } }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Aggregation::cardinality("test_cardinality", "test_field")
                 .precision_threshold(100u16)
                 .missing("N/A"),
@@ -80,7 +81,7 @@ mod tests {
                     "precision_threshold": 100,
                     "missing": "N/A"
                 }
-            })
+            }),
         );
     }
 }

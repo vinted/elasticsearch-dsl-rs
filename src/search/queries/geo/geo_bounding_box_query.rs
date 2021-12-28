@@ -66,24 +66,40 @@ impl ShouldSkip for GeoBoundingBoxQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        geo_bounding_box_wkt(
-            Query::geo_bounding_box("pin.location", GeoBoundingBox::WellKnownText {
-                wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into()
-            }), json!({
+    #[test]
+    fn serialization() {
+        assert_serialize(
+            Query::geo_bounding_box(
+                "pin.location",
+                GeoBoundingBox::WellKnownText {
+                    wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into(),
+                },
+            ),
+            json!({
                 "geo_bounding_box": {
                     "pin.location": {
                         "wkt": "BBOX (-74.1, -71.12, 40.73, 40.01)"
                     }
                 }
-            })
+            }),
         );
 
-        geo_bounding_box_geopoint(
-            Query::geo_bounding_box("pin.location", GeoBoundingBox::MainDiagonal {
-                top_left: GeoPoint::Coordinates { longitude: -74.1, latitude: 40.73 },
-                bottom_right: GeoPoint::Coordinates { longitude: -71.12, latitude: 40.01 }
-            }).validation_method(ValidationMethod::Strict).name("test_name"),
+        assert_serialize(
+            Query::geo_bounding_box(
+                "pin.location",
+                GeoBoundingBox::MainDiagonal {
+                    top_left: GeoPoint::Coordinates {
+                        longitude: -74.1,
+                        latitude: 40.73,
+                    },
+                    bottom_right: GeoPoint::Coordinates {
+                        longitude: -71.12,
+                        latitude: 40.01,
+                    },
+                },
+            )
+            .validation_method(ValidationMethod::Strict)
+            .name("test_name"),
             json!({
                 "geo_bounding_box": {
                     "validation_method": "STRICT",
@@ -93,16 +109,20 @@ mod tests {
                         "bottom_right": [ -71.12, 40.01 ]
                     }
                 }
-            })
+            }),
         );
 
-        geo_bounding_box_vertices(
-            Query::geo_bounding_box("pin.location", GeoBoundingBox::Vertices {
-                top: 40.73,
-                left: -74.1,
-                bottom: 40.01,
-                right: -71.12
-            }).validation_method(ValidationMethod::Strict)
+        assert_serialize(
+            Query::geo_bounding_box(
+                "pin.location",
+                GeoBoundingBox::Vertices {
+                    top: 40.73,
+                    left: -74.1,
+                    bottom: 40.01,
+                    right: -71.12,
+                },
+            )
+            .validation_method(ValidationMethod::Strict)
             .name("test_name")
             .boost(1),
             json!({
@@ -117,7 +137,7 @@ mod tests {
                         "right": -71.12
                     }
                 }
-            })
+            }),
         )
     }
 }

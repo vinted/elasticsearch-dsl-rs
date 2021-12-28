@@ -99,24 +99,30 @@ impl Highlight {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        default(Highlight::new(), json!({}));
+    #[test]
+    fn serialization() {
+        assert_serialize(Highlight::new(), json!({}));
 
-        with_multiple_fields(
-            Highlight::new().field("field1").field("field2").field("field.*"),
+        assert_serialize(
+            Highlight::new()
+                .field("field1")
+                .field("field2")
+                .field("field.*"),
             json!({
                 "fields": {
                     "field1": {},
                     "field2": {},
                     "field.*": {},
                 }
-            })
+            }),
         );
 
-        with_global_highlighter_settings(
+        assert_serialize(
             Highlight::new()
                 .highlighter(Highlighter::new().tags((["<eim>"], ["</eim>"])))
-                .field("field1").field("field2").field("field.*"),
+                .field("field1")
+                .field("field2")
+                .field("field.*"),
             json!({
                 "pre_tags": ["<eim>"],
                 "post_tags": ["</eim>"],
@@ -125,15 +131,16 @@ mod tests {
                     "field2": {},
                     "field.*": {},
                 }
-            })
+            }),
         );
 
-        with_highlighter_settings(
+        assert_serialize(
             Highlight::new()
-                .highlighter(Highlighter::new()
-                    .tags((["<eim>"], ["</eim>"]))
-                    .fvh()
-                    .matched_fields(["one", "two", "three"])
+                .highlighter(
+                    Highlighter::new()
+                        .tags((["<eim>"], ["</eim>"]))
+                        .fvh()
+                        .matched_fields(["one", "two", "three"]),
                 )
                 .field("field1")
                 .field("field2")
@@ -151,7 +158,7 @@ mod tests {
                         "no_match_size": 2,
                     },
                 }
-            })
+            }),
         );
     }
 }

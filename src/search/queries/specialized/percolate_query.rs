@@ -80,8 +80,9 @@ impl ShouldSkip for PercolateQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        single_with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::percolate("field_name", json!({"message": "lol"})),
             json!({
                 "percolate": {
@@ -90,10 +91,10 @@ mod tests {
                         "message": "lol"
                     }
                 }
-            })
+            }),
         );
 
-        single_with_all_fields(
+        assert_serialize(
             Query::percolate("field_name", json!({"message": "lol"})).name("toast"),
             json!({
                 "percolate": {
@@ -103,10 +104,10 @@ mod tests {
                         "message": "lol"
                     }
                 }
-            })
+            }),
         );
 
-        multiple_with_required_fields(
+        assert_serialize(
             Query::percolate("field_name", [json!({"message": "lol"})]),
             json!({
                 "percolate": {
@@ -117,10 +118,10 @@ mod tests {
                         }
                     ]
                 }
-            })
+            }),
         );
 
-        multiple_with_all_fields(
+        assert_serialize(
             Query::percolate("field_name", [json!({"message": "lol"})]).name("toast"),
             json!({
                 "percolate": {
@@ -132,7 +133,7 @@ mod tests {
                         }
                     ]
                 }
-            })
+            }),
         );
     }
 }

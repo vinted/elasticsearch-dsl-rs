@@ -69,41 +69,49 @@ pub enum DistanceType {
 
 #[cfg(test)]
 mod tests {
-    use crate::{DistanceType, GeoBoundingBox, GeoPoint};
+    use super::*;
+    use crate::util::*;
 
-    test_serialization! {
-        serializes_as_geo_bounding_box_geo_point(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             GeoBoundingBox::MainDiagonal {
-            top_left: GeoPoint::Coordinates {longitude: -74.1, latitude: 40.73},
-            bottom_right: GeoPoint::Coordinates {longitude: -71.12, latitude: 40.01}
+                top_left: GeoPoint::Coordinates {
+                    longitude: -74.1,
+                    latitude: 40.73,
+                },
+                bottom_right: GeoPoint::Coordinates {
+                    longitude: -71.12,
+                    latitude: 40.01,
+                },
             },
             json!({
                 "top_left": [-74.1, 40.73],
                 "bottom_right": [-71.12, 40.01]
-            })
+            }),
         );
 
-        serializes_as_geo_bounding_box_geohash(
+        assert_serialize(
             GeoBoundingBox::SubDiagonal {
                 top_right: GeoPoint::Geohash("dr5r9ydj2y73".into()),
-                bottom_left: GeoPoint::Geohash("drj7teegpus6".into())
+                bottom_left: GeoPoint::Geohash("drj7teegpus6".into()),
             },
             json!({
                 "top_right": "dr5r9ydj2y73",
             "bottom_left": "drj7teegpus6"
-            })
+            }),
         );
 
-        serializes_as_geo_bounding_box_wkt(
+        assert_serialize(
             GeoBoundingBox::WellKnownText {
-                wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into()
+                wkt: "BBOX (-74.1, -71.12, 40.73, 40.01)".into(),
             },
             json!({
                 "wkt": "BBOX (-74.1, -71.12, 40.73, 40.01)"
-            })
+            }),
         );
 
-        serializes_as_geo_bounding_box_vertices(
+        assert_serialize(
             GeoBoundingBox::Vertices {
                 top: 40.73,
                 left: -74.1,
@@ -115,17 +123,12 @@ mod tests {
                 "left": -74.1,
                 "bottom": 40.01,
                 "right": -71.12
-            })
+            }),
         );
 
-        serializes_as_distance_type_arc(
-            DistanceType::Arc,
-            json!("arc")
-        );
-
-        serializes_as_distance_type_plane(
-            DistanceType::Plane,
-            json!("plane")
+        assert_serialize(
+            [DistanceType::Arc, DistanceType::Plane],
+            json!(["arc", "plane"]),
         );
     }
 }

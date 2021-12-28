@@ -542,47 +542,54 @@ impl Script {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use chrono::prelude::*;
 
-    mod decay {
-        use super::*;
-        use chrono::prelude::*;
-
-        test_serialization! {
-            with_required_date_time_fields(
-                Decay::new(DecayFunction::Gauss, "test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7)),
-                json!({
-                    "gauss": {
-                        "test": {
-                            "origin": "2014-07-08T09:01:00Z",
-                            "scale": "7d",
-                        }
+    #[test]
+    fn serialization() {
+        assert_serialize(
+            Decay::new(
+                DecayFunction::Gauss,
+                "test",
+                Utc.ymd(2014, 7, 8).and_hms(9, 1, 0),
+                Time::Days(7),
+            ),
+            json!({
+                "gauss": {
+                    "test": {
+                        "origin": "2014-07-08T09:01:00Z",
+                        "scale": "7d",
                     }
-                })
-            );
+                }
+            }),
+        );
 
-            with_required_location_fields(
-                Decay::new(DecayFunction::Exp, "test", GeoPoint::coordinates(12.0, 13.0), Distance::Kilometers(15)),
-                json!({
-                    "exp": {
-                        "test": {
-                            "origin": [13.0, 12.0],
-                            "scale": "15km",
-                        }
+        assert_serialize(
+            Decay::new(
+                DecayFunction::Exp,
+                "test",
+                GeoPoint::coordinates(12.0, 13.0),
+                Distance::Kilometers(15),
+            ),
+            json!({
+                "exp": {
+                    "test": {
+                        "origin": [13.0, 12.0],
+                        "scale": "15km",
                     }
-                })
-            );
+                }
+            }),
+        );
 
-            with_required_numeric_fields(
-                Decay::new(DecayFunction::Linear, "test", 1, 2),
-                json!({
-                    "linear": {
-                        "test": {
-                            "origin": 1,
-                            "scale": 2,
-                        }
+        assert_serialize(
+            Decay::new(DecayFunction::Linear, "test", 1, 2),
+            json!({
+                "linear": {
+                    "test": {
+                        "origin": 1,
+                        "scale": 2,
                     }
-                })
-            );
-        }
+                }
+            }),
+        );
     }
 }

@@ -368,30 +368,30 @@ impl Default for StringOrVecString {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Analyze::new("analyze these pants"),
             json!({
                 "text": "analyze these pants"
-            })
+            }),
         );
 
-        with_built_in_analyzer(
-            Analyze::new("analyze these pants")
-                .analyzer(
-                    Analysis::analyzer("test_default")
-                ),
+        assert_serialize(
+            Analyze::new("analyze these pants").analyzer(Analysis::analyzer("test_default")),
             json!({
                 "text": "analyze these pants",
                 "analyzer": "test_default"
-            })
+            }),
         );
 
-        with_custom_analyzer(
+        assert_serialize(
             Analyze::new(["here is one to test", "and here is another one"])
-                .analyzer(CustomAnalyzer::new("lowercase")
-                    .char_filter(["html_strip", "test_strip"])
-                    .filter([json!({"type": "stop", "stopwords": ["a", "is", "this"]})]))
+                .analyzer(
+                    CustomAnalyzer::new("lowercase")
+                        .char_filter(["html_strip", "test_strip"])
+                        .filter([json!({"type": "stop", "stopwords": ["a", "is", "this"]})]),
+                )
                 .attributes(["score", "keyword"])
                 .explain(true),
             json!({
@@ -407,25 +407,24 @@ mod tests {
                 "tokenizer": "lowercase",
                 "explain": true,
                 "text": ["here is one to test", "and here is another one"]
-            })
+            }),
         );
 
-        with_built_in_normalizer(
-            Analyze::new("analyze these pants")
-                .analyzer(
-                    Analysis::normalizer("asciifolding")
-                ),
+        assert_serialize(
+            Analyze::new("analyze these pants").analyzer(Analysis::normalizer("asciifolding")),
             json!({
                 "text": "analyze these pants",
                 "normalizer": "asciifolding"
-            })
+            }),
         );
 
-        with_custom_normalizer(
+        assert_serialize(
             Analyze::new(["here is one to test", "and here is another one"])
-                .analyzer(CustomNormalizer::new()
-                    .char_filter(["html_strip", "test_strip"])
-                    .filter([json!({"type": "stop", "stopwords": ["a", "is", "this"]})]))
+                .analyzer(
+                    CustomNormalizer::new()
+                        .char_filter(["html_strip", "test_strip"])
+                        .filter([json!({"type": "stop", "stopwords": ["a", "is", "this"]})]),
+                )
                 .attributes(["score", "keyword"])
                 .explain(true),
             json!({
@@ -440,18 +439,15 @@ mod tests {
                 "filter" : [{"type": "stop", "stopwords": ["a", "is", "this"]}],
                 "explain": true,
                 "text": ["here is one to test", "and here is another one"]
-            })
+            }),
         );
 
-        with_field(
-            Analyze::new("analyze these pants")
-                .analyzer(
-                    Analysis::field("title")
-                ),
+        assert_serialize(
+            Analyze::new("analyze these pants").analyzer(Analysis::field("title")),
             json!({
                 "text": "analyze these pants",
                 "field": "title"
-            })
+            }),
         );
     }
 }

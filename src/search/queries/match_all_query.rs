@@ -47,12 +47,13 @@ impl ShouldSkip for MatchAllQuery {}
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(Query::match_all(), json!({ "match_all": {} }));
+    #[test]
+    fn serialization() {
+        assert_serialize(Query::match_all(), json!({ "match_all": {} }));
 
-        with_all_fields(
+        assert_serialize(
             Query::match_all().boost(2).name("test"),
-            json!({ "match_all": { "boost": 2, "_name": "test" } })
+            json!({ "match_all": { "boost": 2, "_name": "test" } }),
         );
     }
 }

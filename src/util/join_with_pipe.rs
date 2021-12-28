@@ -12,3 +12,23 @@ where
         .join("|")
         .serialize(serializer)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::util::*;
+
+    #[test]
+    fn tests_serialization() {
+        #[derive(Serialize)]
+        struct JoinWithPipe {
+            #[serde(serialize_with = "join_with_pipe")]
+            value: &'static [i32],
+        }
+
+        assert_serialize(
+            JoinWithPipe { value: &[1, 2, 3] },
+            json!({ "value": "1|2|3" }),
+        )
+    }
+}

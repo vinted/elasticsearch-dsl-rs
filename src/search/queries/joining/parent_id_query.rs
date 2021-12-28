@@ -78,19 +78,23 @@ impl ShouldSkip for ParentIdQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::parent_id("my-child", 1),
             json!({
                 "parent_id": {
                     "type": "my-child",
                     "id": "1"
                 }
-            })
+            }),
         );
 
-        with_all_fields(
-            Query::parent_id("my-child", 1).boost(2).name("test").ignore_unmapped(true),
+        assert_serialize(
+            Query::parent_id("my-child", 1)
+                .boost(2)
+                .name("test")
+                .ignore_unmapped(true),
             json!({
                 "parent_id": {
                     "type": "my-child",
@@ -99,7 +103,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

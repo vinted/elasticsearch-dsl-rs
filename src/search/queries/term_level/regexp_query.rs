@@ -148,8 +148,9 @@ impl Serialize for RegexpQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::regexp("test", "regexp"),
             json!({
                 "regexp": {
@@ -157,10 +158,10 @@ mod tests {
                         "value": "regexp"
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::regexp("test", "regexp")
                 .flags([RegexpFlag::Complement, RegexpFlag::Interval])
                 .case_insensitive(false)
@@ -180,7 +181,7 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
     }
 }

@@ -232,8 +232,9 @@ impl Serialize for MatchQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::r#match("test", "search text"),
             json!({
                 "match": {
@@ -241,10 +242,10 @@ mod tests {
                         "query": "search text"
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::r#match("test", "search text")
                 .analyzer("search_time_analyzer")
                 .auto_generate_synonyms_phrase_query(true)
@@ -278,7 +279,7 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
     }
 }

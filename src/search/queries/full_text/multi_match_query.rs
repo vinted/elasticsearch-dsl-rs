@@ -243,18 +243,19 @@ impl ShouldSkip for MultiMatchQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::multi_match(["test"], "search text"),
             json!({
                 "multi_match": {
                     "query": "search text",
                     "fields": ["test"],
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::multi_match(["test"], "search text")
                 .r#type(MultiMatchQueryType::BestFields(Some(TieBreaker::from(0.2))))
                 .analyzer("search_time_analyzer")
@@ -290,7 +291,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test",
                 }
-            })
+            }),
         );
     }
 }

@@ -131,8 +131,9 @@ impl ShouldSkip for FunctionScoreQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::function_score(Query::term("test", 1)).function(RandomScore::new()),
             json!({
                 "function_score": {
@@ -149,10 +150,10 @@ mod tests {
                         }
                     ]
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::function_score(Query::term("test", 1))
                 .function(RandomScore::new())
                 .function(Weight::new(2.0))
@@ -186,7 +187,7 @@ mod tests {
                     "boost": 1.1,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

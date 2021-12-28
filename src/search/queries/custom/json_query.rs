@@ -46,10 +46,11 @@ impl ShouldSkip for JsonQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::json(json!({ "term": { "user": "username" } })),
-            json!({ "term": { "user": "username" } })
+            json!({ "term": { "user": "username" } }),
         );
     }
 }

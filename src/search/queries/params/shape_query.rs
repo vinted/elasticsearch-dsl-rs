@@ -27,21 +27,18 @@ impl Default for SpatialRelation {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::*;
 
-    test_serialization! {
-        serializes_spatial_relationships(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             [
                 SpatialRelation::Intersects,
                 SpatialRelation::Disjoint,
                 SpatialRelation::Within,
                 SpatialRelation::Contains,
             ],
-            json!([
-                "INTERSECTS",
-                "DISJOINT",
-                "WITHIN",
-                "CONTAINS"
-            ])
+            json!(["INTERSECTS", "DISJOINT", "WITHIN", "CONTAINS"]),
         );
     }
 }

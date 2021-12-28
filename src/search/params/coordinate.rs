@@ -51,21 +51,12 @@ impl From<(f32, f32)> for Coordinate {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::*;
 
-    test_serialization! {
-        serializes_coordinate(
-            Coordinate::new(1.1, 2.2),
-            json!([1.1, 2.2])
-        );
-
-        serializes_coordinate_from_array(
-            Coordinate::from([1.1, 2.2]),
-            json!([1.1, 2.2])
-        );
-
-        serializes_coordinate_from_tuple(
-            Coordinate::from((1.1, 2.2)),
-            json!([1.1, 2.2])
-        );
+    #[test]
+    fn serialization() {
+        assert_serialize(Coordinate::new(1.1, 2.2), json!([1.1, 2.2]));
+        assert_serialize(Coordinate::from([1.1, 2.2]), json!([1.1, 2.2]));
+        assert_serialize(Coordinate::from((1.1, 2.2)), json!([1.1, 2.2]));
     }
 }

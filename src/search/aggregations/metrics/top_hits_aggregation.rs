@@ -91,13 +91,14 @@ impl TopHitsAggregation {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Aggregation::top_hits("test_agg"),
-            json!({ "top_hits": { } })
+            json!({ "top_hits": { } }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Aggregation::top_hits("test_agg")
                 .source(false)
                 .from(2u8)
@@ -112,7 +113,7 @@ mod tests {
                         { "sort_field": { "order": "desc" } }
                     ]
                 }
-            })
+            }),
         );
     }
 }

@@ -112,8 +112,9 @@ impl ShouldSkip for HasChildQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::has_child("child", Query::term("tag", "elasticsearch")),
             json!({
                 "has_child": {
@@ -126,10 +127,10 @@ mod tests {
                         }
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::has_child("child", Query::term("tag", "elasticsearch"))
                 .boost(2)
                 .name("test")
@@ -154,7 +155,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

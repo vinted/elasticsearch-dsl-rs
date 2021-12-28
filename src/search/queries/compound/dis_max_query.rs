@@ -115,8 +115,9 @@ impl ShouldSkip for DisMaxQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::dis_max()
                 .query(Query::r#match("t1", "text"))
                 .query(Query::r#match("t2", "text")),
@@ -139,12 +140,11 @@ mod tests {
                         }
                     ]
                 }
-            })
+            }),
         );
 
-        with_multiple_queries(
-            Query::dis_max()
-                .queries([Query::r#match("t1", "text"), Query::r#match("t2", "text")]),
+        assert_serialize(
+            Query::dis_max().queries([Query::r#match("t1", "text"), Query::r#match("t2", "text")]),
             json!({
                 "dis_max": {
                     "queries": [
@@ -164,10 +164,10 @@ mod tests {
                         }
                     ]
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::dis_max()
                 .query(Query::r#match("t1", "text"))
                 .query(Query::r#match("t2", "text"))
@@ -196,7 +196,7 @@ mod tests {
                     "boost": 3,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

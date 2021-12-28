@@ -47,12 +47,13 @@ impl ShouldSkip for MatchNoneQuery {}
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(Query::match_none(), json!({"match_none": {} }));
+    #[test]
+    fn serialization() {
+        assert_serialize(Query::match_none(), json!({"match_none": {} }));
 
-        with_all_fields(
+        assert_serialize(
             Query::match_none().boost(2).name("test"),
-            json!({ "match_none": { "boost": 2, "_name": "test" } })
+            json!({ "match_none": { "boost": 2, "_name": "test" } }),
         );
     }
 }

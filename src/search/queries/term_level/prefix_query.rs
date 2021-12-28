@@ -107,8 +107,9 @@ impl Serialize for PrefixQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::prefix("test", 123),
             json!({
                 "prefix": {
@@ -116,10 +117,10 @@ mod tests {
                         "value": 123
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::prefix("test", 123)
                 .rewrite(Rewrite::ConstantScore)
                 .case_insensitive(true)
@@ -135,12 +136,12 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
 
-        with_none(
+        assert_serialize(
             Query::bool().filter(Query::prefix("test", None::<String>)),
-            json!({ "bool": {} })
+            json!({ "bool": {} }),
         )
     }
 }

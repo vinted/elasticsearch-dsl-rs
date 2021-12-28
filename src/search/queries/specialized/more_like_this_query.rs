@@ -359,136 +359,125 @@ impl ShouldSkip for MoreLikeThisQuery {
 mod tests {
     use super::*;
 
-    mod string {
-        use super::*;
+    #[test]
+    fn serialization() {
+        assert_serialize(
+            Query::more_like_this(["test"]).fields(["title"]),
+            json!({
+                "more_like_this": {
+                    "fields": ["title"],
+                    "like": [
+                        "test"
+                    ]
+                }
+            }),
+        );
 
-        test_serialization! {
-            with_required_fields(
-                Query::more_like_this(["test"])
-                    .fields(["title"]),
-                json!({
-                    "more_like_this": {
-                        "fields": ["title"],
-                        "like": [
-                            "test"
-                        ]
-                    }
-                })
-            );
+        assert_serialize(
+            Query::more_like_this(["test"])
+                .fields(["title", "description"])
+                .min_term_freq(1)
+                .max_query_terms(12)
+                .boost(1.2)
+                .name("more_like_this"),
+            json!({
+                "more_like_this": {
+                    "fields": ["title", "description"],
+                    "like": [
+                        "test"
+                    ],
+                    "min_term_freq": 1,
+                    "max_query_terms": 12,
+                    "boost": 1.2,
+                    "_name": "more_like_this"
+                }
+            }),
+        );
+        assert_serialize(
+            Query::more_like_this([Document::new("123")]).fields(["title"]),
+            json!({
+                "more_like_this": {
+                    "fields": ["title"],
+                    "like": [
+                        {
+                            "_id": "123"
+                        }
+                    ]
+                }
+            }),
+        );
 
-            with_optional_fields(
-                Query::more_like_this(["test"])
-                    .fields(["title", "description"])
-                    .min_term_freq(1)
-                    .max_query_terms(12)
-                    .boost(1.2)
-                    .name("more_like_this"),
-                json!({
-                    "more_like_this": {
-                        "fields": ["title", "description"],
-                        "like": [
-                            "test"
-                        ],
-                        "min_term_freq": 1,
-                        "max_query_terms": 12,
-                        "boost": 1.2,
-                        "_name": "more_like_this"
-                    }
-                })
-            );
-        }
-    }
+        assert_serialize(
+            Query::more_like_this([Document::new("123")])
+                .fields(["title", "description"])
+                .min_term_freq(1)
+                .max_query_terms(12)
+                .boost(1.2)
+                .name("more_like_this"),
+            json!({
+                "more_like_this": {
+                    "fields": ["title", "description"],
+                    "like": [
+                        {
+                            "_id": "123"
+                        }
+                    ],
+                    "min_term_freq": 1,
+                    "max_query_terms": 12,
+                    "boost": 1.2,
+                    "_name": "more_like_this"
+                }
+            }),
+        );
+        assert_serialize(
+            Query::more_like_this([Like::from(Document::new("123")), Like::from("test")])
+                .fields(["title"]),
+            json!({
+                "more_like_this": {
+                    "fields": ["title"],
+                    "like": [
+                        {
+                            "_id": "123"
+                        },
+                        "test"
+                    ]
+                }
+            }),
+        );
 
-    mod document {
-        use super::*;
-
-        test_serialization! {
-            with_required_fields(
-                Query::more_like_this([Document::new("123")])
-                    .fields(["title"]),
-                json!({
-                    "more_like_this": {
-                        "fields": ["title"],
-                        "like": [
-                            {
-                                "_id": "123"
-                            }
-                        ]
-                    }
-                })
-            );
-
-            with_optional_fields(
-                Query::more_like_this([Document::new("123")])
-                    .fields(["title", "description"])
-                    .min_term_freq(1)
-                    .max_query_terms(12)
-                    .boost(1.2)
-                    .name("more_like_this"),
-                json!({
-                    "more_like_this": {
-                        "fields": ["title", "description"],
-                        "like": [
-                            {
-                                "_id": "123"
-                            }
-                        ],
-                        "min_term_freq": 1,
-                        "max_query_terms": 12,
-                        "boost": 1.2,
-                        "_name": "more_like_this"
-                    }
-                })
-            );
-        }
-    }
-
-    mod both {
-        use super::*;
-
-        test_serialization! {
-            with_required_fields(
-                Query::more_like_this([Like::from(Document::new("123")), Like::from("test")])
-                    .fields(["title"]),
-                json!({
-                    "more_like_this": {
-                        "fields": ["title"],
-                        "like": [
-                            {
-                                "_id": "123"
-                            },
-                            "test"
-                        ]
-                    }
-                })
-            );
-
-            with_optional_fields(
-                Query::more_like_this([Like::from(Document::new("123").index("test_index").routing("test_routing").source(false)), Like::from("test")])
-                    .fields(["title", "description"])
-                    .min_term_freq(1)
-                    .max_query_terms(12)
-                    .boost(1.2)
-                    .name("more_like_this"),
-                json!({
-                    "more_like_this": {
-                        "fields": ["title", "description"],
-                        "like": [
-                            {
-                                "_id": "123",
-                                "_index": "test_index",
-                                "_routing": "test_routing",
-                                "_source": false
-                            },
-                            "test"
-                        ],
-                        "min_term_freq": 1,
-                        "max_query_terms": 12,
-                        "boost": 1.2,
-                        "_name": "more_like_this"
-                    }
-                })
-            );
-        }
+        assert_serialize(
+            Query::more_like_this([
+                Like::from(
+                    Document::new("123")
+                        .index("test_index")
+                        .routing("test_routing")
+                        .source(false),
+                ),
+                Like::from("test"),
+            ])
+            .fields(["title", "description"])
+            .min_term_freq(1)
+            .max_query_terms(12)
+            .boost(1.2)
+            .name("more_like_this"),
+            json!({
+                "more_like_this": {
+                    "fields": ["title", "description"],
+                    "like": [
+                        {
+                            "_id": "123",
+                            "_index": "test_index",
+                            "_routing": "test_routing",
+                            "_source": false
+                        },
+                        "test"
+                    ],
+                    "min_term_freq": 1,
+                    "max_query_terms": 12,
+                    "boost": 1.2,
+                    "_name": "more_like_this"
+                }
+            }),
+        );
     }
 }

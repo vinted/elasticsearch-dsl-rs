@@ -80,13 +80,14 @@ impl ShouldSkip for TermsQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::terms("test", vec![123, 12, 13]),
-            json!({"terms": { "test": [12, 13, 123] } })
+            json!({"terms": { "test": [12, 13, 123] } }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::terms("test", vec![123]).boost(2).name("test"),
             json!({
                 "terms": {
@@ -94,7 +95,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test",
                 }
-            })
+            }),
         );
     }
 

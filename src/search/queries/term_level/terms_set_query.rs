@@ -99,8 +99,9 @@ impl Serialize for TermsSetQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::terms_set("test", [123], "required_matches"),
             json!({
                 "terms_set": {
@@ -109,17 +110,20 @@ mod tests {
                         "minimum_should_match_field": "required_matches"
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::terms_set(
                 "programming_languages",
                 ["c++", "java", "php"],
-                TermsSetScript::new("Math.min(params.num_terms_sets, doc['required_matches'].value)").params(json!({"num_terms_sets": 2}))
+                TermsSetScript::new(
+                    "Math.min(params.num_terms_sets, doc['required_matches'].value)",
+                )
+                .params(json!({"num_terms_sets": 2})),
             )
-                .boost(2)
-                .name("test"),
+            .boost(2)
+            .name("test"),
             json!({
                 "terms_set": {
                     "programming_languages": {
@@ -134,7 +138,7 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
     }
 }

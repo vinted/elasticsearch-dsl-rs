@@ -369,17 +369,18 @@ impl ShouldSkip for RankFeatureLinearQuery {}
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::rank_feature("test"),
             json!({
                 "rank_feature": {
                     "field": "test",
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::rank_feature("test").boost(2).name("query"),
             json!({
                 "rank_feature": {
@@ -387,11 +388,14 @@ mod tests {
                     "boost": 2,
                     "_name": "query",
                 }
-            })
+            }),
         );
 
-        with_saturation(
-            Query::rank_feature("test").saturation().boost(2).name("query"),
+        assert_serialize(
+            Query::rank_feature("test")
+                .saturation()
+                .boost(2)
+                .name("query"),
             json!({
                 "rank_feature": {
                     "field": "test",
@@ -399,11 +403,15 @@ mod tests {
                     "_name": "query",
                     "saturation": {},
                 }
-            })
+            }),
         );
 
-        with_saturation_and_pivot_value(
-            Query::rank_feature("test").saturation().pivot(2.2).boost(2).name("query"),
+        assert_serialize(
+            Query::rank_feature("test")
+                .saturation()
+                .pivot(2.2)
+                .boost(2)
+                .name("query"),
             json!({
                 "rank_feature": {
                     "field": "test",
@@ -413,11 +421,14 @@ mod tests {
                         "pivot": 2.2,
                     },
                 }
-            })
+            }),
         );
 
-        with_logarithm(
-            Query::rank_feature("test").logarithm(2.2).boost(2).name("query"),
+        assert_serialize(
+            Query::rank_feature("test")
+                .logarithm(2.2)
+                .boost(2)
+                .name("query"),
             json!({
                 "rank_feature": {
                     "field": "test",
@@ -427,11 +438,14 @@ mod tests {
                         "scaling_factor": 2.2
                     },
                 }
-            })
+            }),
         );
 
-        with_sigmoid(
-            Query::rank_feature("test").sigmoid(2.2, 3.3).boost(2).name("query"),
+        assert_serialize(
+            Query::rank_feature("test")
+                .sigmoid(2.2, 3.3)
+                .boost(2)
+                .name("query"),
             json!({
                 "rank_feature": {
                     "field": "test",
@@ -442,10 +456,10 @@ mod tests {
                         "exponent": 3.3,
                     },
                 }
-            })
+            }),
         );
 
-        with_linear(
+        assert_serialize(
             Query::rank_feature("test").linear().boost(2).name("query"),
             json!({
                 "rank_feature": {
@@ -454,7 +468,7 @@ mod tests {
                     "_name": "query",
                     "linear": {},
                 }
-            })
+            }),
         );
     }
 }

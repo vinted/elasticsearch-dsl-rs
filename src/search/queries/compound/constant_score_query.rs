@@ -66,8 +66,9 @@ impl ShouldSkip for ConstantScoreQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::constant_score(Query::term("test1", 123)),
             json!({
                 "constant_score": {
@@ -79,11 +80,13 @@ mod tests {
                         }
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
-            Query::constant_score(Query::term("test1", 123)).boost(3).name("test"),
+        assert_serialize(
+            Query::constant_score(Query::term("test1", 123))
+                .boost(3)
+                .name("test"),
             json!({
                 "constant_score": {
                     "filter": {
@@ -96,7 +99,7 @@ mod tests {
                     "boost": 3,
                     "_name": "test"
                 }
-            })
+            }),
         );
     }
 }

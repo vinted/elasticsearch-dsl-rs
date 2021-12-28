@@ -109,8 +109,9 @@ impl Serialize for MatchPhraseQuery {
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::match_phrase("test", "search text"),
             json!({
                 "match_phrase": {
@@ -118,10 +119,10 @@ mod tests {
                         "query": "search text"
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::match_phrase("test", "search text")
                 .analyzer("search_time_analyzer")
                 .slop(1u8)
@@ -137,7 +138,7 @@ mod tests {
                         "_name": "test"
                     }
                 }
-            })
+            }),
         );
     }
 }

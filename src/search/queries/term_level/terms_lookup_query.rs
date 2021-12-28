@@ -113,8 +113,9 @@ impl ShouldSkip for TermsLookupQuery {}
 mod tests {
     use super::*;
 
-    test_serialization! {
-        with_required_fields(
+    #[test]
+    fn serialization() {
+        assert_serialize(
             Query::terms_lookup("test", "index_value", "id_value", "path_value"),
             json!({
                 "terms": {
@@ -124,10 +125,10 @@ mod tests {
                         "path": "path_value",
                     }
                 }
-            })
+            }),
         );
 
-        with_all_fields(
+        assert_serialize(
             Query::terms_lookup("test", "index_value", "id_value", "path_value")
                 .routing("routing_value")
                 .boost(2)
@@ -143,7 +144,7 @@ mod tests {
                     "boost": 2,
                     "_name": "test",
                 }
-            })
+            }),
         );
     }
 }
