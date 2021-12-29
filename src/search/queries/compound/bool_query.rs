@@ -157,9 +157,9 @@ impl BoolQuery {
     /// [minimum_should_match parameter](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html).
     pub fn minimum_should_match<S>(mut self, minimum_should_match: S) -> Self
     where
-        S: ToString,
+        S: Into<MinimumShouldMatch>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.to_string());
+        self.inner.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
