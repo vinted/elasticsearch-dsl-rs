@@ -1,14 +1,13 @@
 use crate::params::*;
 use crate::util::*;
 use chrono::{DateTime, Utc};
-use std::cmp::Ordering;
 use std::time::SystemTime;
 
 /// Leaf term value
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct Term(Option<Inner>);
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[serde(untagged)]
 enum Inner {
     /// Boolean value
@@ -22,44 +21,6 @@ enum Inner {
 
     /// Date
     Date(Date),
-}
-
-impl PartialEq for Inner {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (Inner::Bool(s), Inner::Bool(o)) => s.eq(o),
-            (Inner::String(s), Inner::String(o)) => s.eq(o),
-            (Inner::Number(s), Inner::Number(o)) => s.eq(o),
-            (Inner::Date(s), Inner::Date(o)) => s.eq(o),
-            _ => false,
-        }
-    }
-}
-
-impl Eq for Inner {}
-
-impl PartialOrd for Inner {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        match (&self, other) {
-            (Self::Bool(s), Self::Bool(o)) => s.partial_cmp(o),
-            (Self::String(s), Self::String(o)) => s.partial_cmp(o),
-            (Self::Number(s), Self::Number(o)) => s.partial_cmp(o),
-            (Self::Date(s), Self::Date(o)) => s.partial_cmp(o),
-            _ => Some(Ordering::Less),
-        }
-    }
-}
-
-impl Ord for Inner {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match (&self, other) {
-            (Self::Bool(s), Self::Bool(o)) => s.cmp(o),
-            (Self::String(s), Self::String(o)) => s.cmp(o),
-            (Self::Number(s), Self::Number(o)) => s.partial_cmp(o).unwrap_or(Ordering::Less),
-            (Self::Date(s), Self::Date(o)) => s.cmp(o),
-            _ => Ordering::Less,
-        }
-    }
 }
 
 impl From<bool> for Term {
