@@ -242,6 +242,7 @@ impl ShouldSkip for MultiMatchQuery {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::convert::TryFrom;
 
     #[test]
     fn serialization() {
@@ -257,7 +258,9 @@ mod tests {
 
         assert_serialize(
             Query::multi_match(["test"], "search text")
-                .r#type(MultiMatchQueryType::BestFields(Some(TieBreaker::from(0.2))))
+                .r#type(MultiMatchQueryType::BestFields(
+                    TieBreaker::try_from(0.2).ok(),
+                ))
                 .analyzer("search_time_analyzer")
                 .auto_generate_synonyms_phrase_query(true)
                 .fuzziness(23)

@@ -1,5 +1,6 @@
 use crate::search::*;
 use crate::util::*;
+
 /// Returns documents matching one or more wrapped queries, called query clauses or clauses.
 ///
 /// If a returned document matches multiple query clauses, the `dis_max` query assigns the document
@@ -96,9 +97,11 @@ impl DisMaxQuery {
     /// count, but the clause with the highest score counts most.
     pub fn tie_breaker<T>(mut self, tie_breaker: T) -> Self
     where
-        T: Into<TieBreaker>,
+        T: std::convert::TryInto<TieBreaker>,
     {
-        self.inner.tie_breaker = Some(tie_breaker.into());
+        if let Ok(tie_breaker) = tie_breaker.try_into() {
+            self.inner.tie_breaker = Some(tie_breaker);
+        }
         self
     }
 

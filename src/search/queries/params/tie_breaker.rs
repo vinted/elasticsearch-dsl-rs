@@ -1,3 +1,5 @@
+use std::convert::TryFrom;
+
 /// Floating point number between `0` and `1.0` used to increase the
 /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
 /// of documents matching multiple query clauses. Defaults to `0.0`.
@@ -25,17 +27,18 @@ impl TieBreaker {
 
     /// Maximum value
     const MAXIMUM: f32 = 1f32;
-
-    /// Creates a new instance of `tie_breaker` value
-    pub fn new(value: f32) -> Self {
-        let value = f32::min(f32::max(Self::MINIMUM, value), Self::MAXIMUM);
-
-        Self(value)
-    }
 }
 
-impl From<f32> for TieBreaker {
-    fn from(value: f32) -> Self {
-        Self::new(value)
+impl TryFrom<f32> for TieBreaker {
+    type Error = &'static str;
+
+    fn try_from(value: f32) -> Result<Self, Self::Error> {
+        if value < Self::MINIMUM {
+            Err("Value cannot be lower than 0")
+        } else if value > Self::MAXIMUM {
+            Err("Value cannot be greater than 1")
+        } else {
+            Ok(Self(value))
+        }
     }
 }
