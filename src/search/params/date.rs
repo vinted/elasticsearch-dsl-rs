@@ -1,6 +1,8 @@
+use chrono::{DateTime, Utc};
 use std::time::SystemTime;
 
-type ChronoTime = chrono::DateTime<chrono::Utc>;
+/// [`DateTime<Utc>`] type alias
+pub type ChronoTime = DateTime<Utc>;
 
 /// Time variants to serialize
 #[derive(Debug, Clone, Copy, Serialize)]
