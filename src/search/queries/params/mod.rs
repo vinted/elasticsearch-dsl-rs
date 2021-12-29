@@ -5,6 +5,7 @@ mod boost;
 mod fuzziness;
 mod has_child_query;
 mod inner_hits;
+mod minimum_should_match;
 mod negative_boost;
 mod operator;
 mod rewrite;
@@ -32,6 +33,7 @@ pub use self::fuzziness::*;
 pub use self::geo_query::*;
 pub use self::has_child_query::*;
 pub use self::inner_hits::*;
+pub use self::minimum_should_match::*;
 pub use self::multi_match_query::*;
 pub use self::negative_boost::*;
 pub use self::nested_query::*;
@@ -47,8 +49,3 @@ pub use self::simple_query_string_query::*;
 pub use self::terms_set_query::*;
 pub use self::tie_breaker::*;
 pub use self::zero_terms_query::*;
-
-/// The `minimum_should_match` type alias
-///
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html>
-pub type MinimumShouldMatch = String;
