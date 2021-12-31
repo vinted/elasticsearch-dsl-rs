@@ -17,8 +17,6 @@ use crate::{Aggregation, Number};
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-boxplot-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct BoxplotAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     boxplot: BoxplotAggregationInner,
 }
 
@@ -34,11 +32,9 @@ struct BoxplotAggregationInner {
 impl Aggregation {
     /// Creates an instance of [`BoxplotAggregation`]
     ///
-    /// - `name` - name of the aggregation
     /// - `field` - field to aggregate
-    pub fn boxplot(name: impl Into<String>, field: impl Into<String>) -> BoxplotAggregation {
+    pub fn boxplot(field: impl Into<String>) -> BoxplotAggregation {
         BoxplotAggregation {
-            name: name.into(),
             boxplot: BoxplotAggregationInner {
                 field: field.into(),
                 compression: None,
@@ -83,12 +79,12 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize(
-            Aggregation::boxplot("test_boxplot", "test_field"),
+            Aggregation::boxplot("test_field"),
             json!({ "boxplot": { "field": "test_field" } }),
         );
 
         assert_serialize(
-            Aggregation::boxplot("test_boxplot", "test_field")
+            Aggregation::boxplot("test_field")
                 .compression(100)
                 .missing(10),
             json!({

@@ -42,12 +42,13 @@ macro_rules! add_boost_and_name {
 macro_rules! add_aggregate {
     () => {
         /// Pushes aggregation
-        pub fn aggregate<A>(mut self, aggregation: A) -> Self
+        pub fn aggregate<N, A>(mut self, aggregation_name: N, aggregation: A) -> Self
         where
+            N: Into<AggregationName>,
             A: Into<Aggregation>,
         {
             let a = aggregation.into();
-            let _ = self.aggs.entry(a.name()).or_insert(a);
+            let _ = self.aggs.entry(aggregation_name.into()).or_insert(a);
             self
         }
     };

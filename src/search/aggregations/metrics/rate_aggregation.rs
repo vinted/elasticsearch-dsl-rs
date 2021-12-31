@@ -9,8 +9,6 @@ use crate::util::*;
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-rate-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct RateAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     rate: RateAggregationInner,
 }
 
@@ -26,11 +24,8 @@ struct RateAggregationInner {
 
 impl Aggregation {
     /// Creates an instance of [`RateAggregation`]
-    ///
-    /// - `name` - name of the aggregation
-    pub fn rate(name: impl Into<String>) -> RateAggregation {
+    pub fn rate() -> RateAggregation {
         RateAggregation {
-            name: name.into(),
             rate: RateAggregationInner {
                 field: None,
                 unit: None,
@@ -79,10 +74,10 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(Aggregation::rate("test_rate"), json!({ "rate": { } }));
+        assert_serialize(Aggregation::rate(), json!({ "rate": { } }));
 
         assert_serialize(
-            Aggregation::rate("test_rate")
+            Aggregation::rate()
                 .field("price")
                 .unit(CalendarInterval::Day)
                 .mode(RateMode::ValueCount),

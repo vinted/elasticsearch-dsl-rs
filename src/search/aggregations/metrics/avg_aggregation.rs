@@ -8,8 +8,6 @@ use crate::util::*;
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-avg-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct AvgAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     avg: AvgAggregationInner,
 }
 
@@ -24,11 +22,9 @@ struct AvgAggregationInner {
 impl Aggregation {
     /// Creates an instance of [`AvgAggregation`]
     ///
-    /// - `name` - name of the aggregation
     /// - `field` - field to aggregate
-    pub fn avg(name: impl Into<String>, field: impl Into<String>) -> AvgAggregation {
+    pub fn avg(field: impl Into<String>) -> AvgAggregation {
         AvgAggregation {
-            name: name.into(),
             avg: AvgAggregationInner {
                 field: field.into(),
                 missing: None,
@@ -53,12 +49,12 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize(
-            Aggregation::avg("test_avg", "test_field"),
+            Aggregation::avg("test_field"),
             json!({ "avg": { "field": "test_field" } }),
         );
 
         assert_serialize(
-            Aggregation::avg("test_avg", "test_field").missing(100.1),
+            Aggregation::avg("test_field").missing(100.1),
             json!({
                 "avg": {
                     "field": "test_field",
