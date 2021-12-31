@@ -55,22 +55,9 @@ impl DisMaxQuery {
     /// **must match one or more** of these queries. If a document matches multiple queries,
     /// Elasticsearch uses the highest
     /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
-    pub fn query<Q>(mut self, query: Q) -> Self
+    pub fn query<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Option<Query>>,
-    {
-        self.inner.queries.push(query);
-        self
-    }
-
-    /// Contains one or more query clauses. Returned documents
-    /// **must match one or more** of these queries. If a document matches multiple queries,
-    /// Elasticsearch uses the highest
-    /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
-    pub fn queries<I>(mut self, queries: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Into<Query>,
+        Q: Into<Queries>,
     {
         self.inner.queries.extend(queries);
         self
@@ -144,7 +131,7 @@ mod tests {
         );
 
         assert_serialize(
-            Query::dis_max().queries([Query::r#match("t1", "text"), Query::r#match("t2", "text")]),
+            Query::dis_max().query([Query::r#match("t1", "text"), Query::r#match("t2", "text")]),
             json!({
                 "dis_max": {
                     "queries": [
