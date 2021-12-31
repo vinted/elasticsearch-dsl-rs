@@ -59,38 +59,18 @@ impl Query {
 
 impl BoolQuery {
     /// The clause (query) must appear in matching documents and will contribute to the score.
-    pub fn must<Q>(mut self, query: Q) -> Self
+    pub fn must<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Option<Query>>,
-    {
-        self.inner.must.push(query);
-        self
-    }
-
-    /// The clause (query) must appear in matching documents and will contribute to the score.
-    pub fn musts<I>(mut self, queries: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Into<Query>,
+        Q: Into<Queries>,
     {
         self.inner.must.extend(queries);
         self
     }
 
     /// The clause (query) should appear in the matching document.
-    pub fn should<Q>(mut self, query: Q) -> Self
+    pub fn should<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Option<Query>>,
-    {
-        self.inner.should.push(query);
-        self
-    }
-
-    /// The clause (query) should appear in the matching document.
-    pub fn shoulds<I>(mut self, queries: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Into<Query>,
+        Q: Into<Queries>,
     {
         self.inner.should.extend(queries);
         self
@@ -100,22 +80,9 @@ impl BoolQuery {
     /// However unlike must the score of the query will be ignored.
     /// Filter clauses are executed in [filter context](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html),
     /// meaning that scoring is ignored and clauses are considered for caching.
-    pub fn filter<Q>(mut self, query: Q) -> Self
+    pub fn filter<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Option<Query>>,
-    {
-        self.inner.filter.push(query);
-        self
-    }
-
-    /// The clause (query) must appear in matching documents.
-    /// However unlike must the score of the query will be ignored.
-    /// Filter clauses are executed in [filter context](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html),
-    /// meaning that scoring is ignored and clauses are considered for caching.
-    pub fn filters<I>(mut self, queries: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Into<Query>,
+        Q: Into<Queries>,
     {
         self.inner.filter.extend(queries);
         self
@@ -125,22 +92,9 @@ impl BoolQuery {
     /// Clauses are executed in [filter context](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
     /// meaning that scoring is ignored and clauses are considered for caching.
     /// Because scoring is ignored, a score of `0` for all documents is returned.
-    pub fn must_not<Q>(mut self, query: Q) -> Self
+    pub fn must_not<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Option<Query>>,
-    {
-        self.inner.must_not.push(query);
-        self
-    }
-
-    /// The clause (query) must not appear in the matching documents.
-    /// Clauses are executed in [filter context](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
-    /// meaning that scoring is ignored and clauses are considered for caching.
-    /// Because scoring is ignored, a score of `0` for all documents is returned.
-    pub fn must_nots<I>(mut self, queries: I) -> Self
-    where
-        I: IntoIterator,
-        I::Item: Into<Query>,
+        Q: Into<Queries>,
     {
         self.inner.must_not.extend(queries);
         self
@@ -185,10 +139,10 @@ mod tests {
 
         assert_serialize(
             Query::bool()
-                .musts([Query::term("test1", 1), Query::term("test2", 2)])
-                .shoulds([Query::term("test1", 3), Query::term("test2", 4)])
-                .filters([Query::term("test1", 5), Query::term("test2", 6)])
-                .must_nots([Query::term("test1", 7), Query::term("test2", 8)])
+                .must([Query::term("test1", 1), Query::term("test2", 2)])
+                .should([Query::term("test1", 3), Query::term("test2", 4)])
+                .filter([Query::term("test1", 5), Query::term("test2", 6)])
+                .must_not([Query::term("test1", 7), Query::term("test2", 8)])
                 .minimum_should_match("2")
                 .boost(1.3)
                 .name("test"),

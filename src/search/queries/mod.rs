@@ -45,50 +45,58 @@ pub use self::match_none_query::*;
 use crate::util::*;
 
 macro_rules! query {
-    ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
+    ($($variant:ident($query:ty)),+ $(,)?) => {
         /// A container enum for supported Elasticsearch query types
         #[derive(Debug, Clone, PartialEq, Serialize)]
         #[serde(untagged)]
         #[allow(missing_docs)]
-        pub enum $name {
+        pub enum Query {
             $(
                 $variant($query),
             )*
         }
 
-        $(
-            impl From<$query> for $name {
-                fn from(q: $query) -> Self {
-                    $name::$variant(q)
-                }
-            }
-        )+
-
-        $(
-            impl From<$query> for Option<$name> {
-                fn from(q: $query) -> Self {
-                    if q.should_skip() {
-                        None
-                    } else {
-                        Some($name::$variant(q))
-                    }
-                }
-            }
-        )+
-
-        impl ShouldSkip for $name {
+        impl ShouldSkip for Query {
             fn should_skip(&self) -> bool {
                 match self {
                     $(
-                        $name::$variant(q) => q.should_skip(),
+                        Query::$variant(q) => q.should_skip(),
                     )+
                 }
             }
         }
+
+        $(
+            impl From<$query> for Query {
+                fn from(q: $query) -> Self {
+                    Query::$variant(q)
+                }
+            }
+
+            impl From<$query> for Option<Query> {
+                fn from(q: $query) -> Self {
+                    if q.should_skip() {
+                        None
+                    } else {
+                        Some(Query::$variant(q))
+                    }
+                }
+            }
+
+            impl From<$query> for Queries {
+                fn from(q: $query) -> Self {
+                    if q.should_skip() {
+                        Default::default()
+                    } else {
+                        Self(vec![q.into(); 1])
+                    }
+                }
+            }
+        )+
     };
 }
 
-query!(Query {
+query!(
     Bool(BoolQuery),
     Prefix(PrefixQuery),
     Regexp(RegexpQuery),
@@ -129,18 +137,19 @@ query!(Query {
     GeoShapeLookup(GeoShapeLookupQuery),
     Json(JsonQuery),
     Wrapper(WrapperQuery),
-});
+);
 
 /// A collection of queries
 #[derive(Debug, Default, Clone, PartialEq, Serialize)]
 pub struct Queries(Vec<Query>);
 
-impl IntoIterator for Queries {
-    type Item = Query;
-    type IntoIter = std::vec::IntoIter<Query>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.0.into_iter()
+impl<T> From<T> for Queries
+where
+    T: IntoIterator,
+    T::Item: Into<Option<Query>>,
+{
+    fn from(value: T) -> Self {
+        Self(value.into_iter().filter_map(Into::into).collect())
     }
 }
 
@@ -151,22 +160,11 @@ impl ShouldSkip for Queries {
 }
 
 impl Queries {
-    /// Pushes a query to the collection
-    pub fn push<Q>(&mut self, query: Q)
-    where
-        Q: Into<Option<Query>>,
-    {
-        if let Some(query) = query.into() {
-            self.0.push(query);
-        }
-    }
-
     /// Pushes multiple queries to the collection
     pub fn extend<Q>(&mut self, queries: Q)
     where
-        Q: IntoIterator,
-        Q::Item: Into<Query>,
+        Q: Into<Queries>,
     {
-        self.0.extend(queries.into_iter().map(Into::into))
+        self.0.extend(queries.into().0)
     }
 }

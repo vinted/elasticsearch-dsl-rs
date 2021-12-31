@@ -11,7 +11,7 @@ fn main() {
                 .must(Query::term("user.id", "kimchy"))
                 .filter(Query::term("tags", "production"))
                 .must_not(Query::range("age").gte(10).lte(10))
-                .shoulds([Query::term("tags", "env1"), Query::term("tags", "deployed")])
+                .should([Query::term("tags", "env1"), Query::term("tags", "deployed")])
                 .minimum_should_match("1")
                 .boost(1),
         );
