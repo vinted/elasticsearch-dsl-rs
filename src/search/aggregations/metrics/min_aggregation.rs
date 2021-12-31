@@ -11,8 +11,6 @@ use crate::util::*;
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct MinAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     min: MinAggregationInner,
 }
 
@@ -27,11 +25,9 @@ struct MinAggregationInner {
 impl Aggregation {
     /// Creates an instance of [`MinAggregation`]
     ///
-    /// - `name` - name of the aggregation
     /// - `field` - field to aggregate
-    pub fn min(name: impl Into<String>, field: impl Into<String>) -> MinAggregation {
+    pub fn min(field: impl Into<String>) -> MinAggregation {
         MinAggregation {
-            name: name.into(),
             min: MinAggregationInner {
                 field: field.into(),
                 missing: None,
@@ -56,12 +52,12 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize(
-            Aggregation::min("test_min", "test_field"),
+            Aggregation::min("test_field"),
             json!({ "min": { "field": "test_field" } }),
         );
 
         assert_serialize(
-            Aggregation::min("test_min", "test_field").missing(100.1),
+            Aggregation::min("test_field").missing(100.1),
             json!({
                 "min": {
                     "field": "test_field",

@@ -18,8 +18,6 @@ use std::convert::TryInto;
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-top-hits-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct TopHitsAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     top_hits: TopHitsAggregationInner,
 }
 
@@ -40,11 +38,8 @@ struct TopHitsAggregationInner {
 
 impl Aggregation {
     /// Creates an instance of [`TopHitsAggregation`]
-    ///
-    /// - `name` - name of the aggregation
-    pub fn top_hits(name: impl Into<String>) -> TopHitsAggregation {
+    pub fn top_hits() -> TopHitsAggregation {
         TopHitsAggregation {
-            name: name.into(),
             top_hits: TopHitsAggregationInner {
                 _source: None,
                 from: None,
@@ -93,13 +88,10 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
-            Aggregation::top_hits("test_agg"),
-            json!({ "top_hits": { } }),
-        );
+        assert_serialize(Aggregation::top_hits(), json!({ "top_hits": { } }));
 
         assert_serialize(
-            Aggregation::top_hits("test_agg")
+            Aggregation::top_hits()
                 .source(false)
                 .from(2u8)
                 .size(10u8)

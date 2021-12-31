@@ -7,8 +7,6 @@ use crate::util::*;
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-sum-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct SumAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     sum: SumAggregationInner,
 }
 
@@ -23,11 +21,9 @@ struct SumAggregationInner {
 impl Aggregation {
     /// Creates an instance of [`SumAggregation`]
     ///
-    /// - `name` - name of the aggregation
     /// - `field` - field to aggregate
-    pub fn sum(name: impl Into<String>, field: impl Into<String>) -> SumAggregation {
+    pub fn sum(field: impl Into<String>) -> SumAggregation {
         SumAggregation {
-            name: name.into(),
             sum: SumAggregationInner {
                 field: field.into(),
                 missing: None,
@@ -53,12 +49,12 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize(
-            Aggregation::sum("test_sum", "test_field"),
+            Aggregation::sum("test_field"),
             json!({ "sum": { "field": "test_field" } }),
         );
 
         assert_serialize(
-            Aggregation::sum("test_sum", "test_field").missing(100.1),
+            Aggregation::sum("test_field").missing(100.1),
             json!({
                 "sum": {
                     "field": "test_field",

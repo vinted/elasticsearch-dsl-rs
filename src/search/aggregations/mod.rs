@@ -24,39 +24,28 @@ pub use self::params::*;
 pub use self::pipeline::*;
 
 macro_rules! aggregation {
-    ($name:ident { $($variant:ident($query:ty)),+ $(,)? }) => {
+    ($($variant:ident($query:ty)),+ $(,)?) => {
         /// A container enum for supported Elasticsearch query types
         #[derive(Debug, Clone, PartialEq, Serialize)]
         #[serde(untagged)]
         #[allow(missing_docs)]
-        pub enum $name {
+        pub enum Aggregation {
             $(
                 $variant($query),
             )*
         }
 
         $(
-            impl From<$query> for $name {
+            impl From<$query> for Aggregation {
                 fn from(q: $query) -> Self {
-                    $name::$variant(q)
+                    Aggregation::$variant(q)
                 }
             }
         )+
-
-        impl $name {
-            /// Gets aggregation name
-            pub fn name(&self) -> String {
-                match self {
-                    $(
-                        Self::$variant(a) => a.name.clone(),
-                    )+
-                }
-            }
-        }
     };
 }
 
-aggregation!(Aggregation {
+aggregation!(
     Terms(TermsAggregation),
     TopHits(TopHitsAggregation),
     Cardinality(CardinalityAggregation),
@@ -65,7 +54,7 @@ aggregation!(Aggregation {
     Min(MinAggregation),
     Sum(SumAggregation),
     Rate(RateAggregation),
-});
+);
 
 /// Type alias for a collection of aggregations
-pub type Aggregations = std::collections::BTreeMap<String, Aggregation>;
+pub type Aggregations = std::collections::BTreeMap<AggregationName, Aggregation>;

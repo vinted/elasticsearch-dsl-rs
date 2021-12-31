@@ -7,12 +7,10 @@ use std::convert::TryInto;
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html>
 pub struct TermsAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     terms: TermsAggregationInner,
-    /// Sub-aggregations
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    pub(crate) aggs: Aggregations,
+    aggs: Aggregations,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
@@ -58,11 +56,9 @@ where
 impl Aggregation {
     /// Creates an instance of [`TermsAggregation`]
     ///
-    /// - `name` - name of the aggregation
     /// - `field` - field to group by
-    pub fn terms(name: impl Into<String>, field: impl Into<String>) -> TermsAggregation {
+    pub fn terms(field: impl Into<String>) -> TermsAggregation {
         TermsAggregation {
-            name: name.into(),
             terms: TermsAggregationInner {
                 field: field.into(),
                 size: None,
@@ -134,12 +130,12 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize(
-            Aggregation::terms("test_agg", "test_field"),
+            Aggregation::terms("test_field"),
             json!({ "terms": { "field": "test_field" } }),
         );
 
         assert_serialize(
-            Aggregation::terms("test_agg", "test_field")
+            Aggregation::terms("test_field")
                 .size(5u16)
                 .min_doc_count(2u16)
                 .show_term_doc_count_error(false)
@@ -158,10 +154,10 @@ mod tests {
         );
 
         assert_serialize(
-            Aggregation::terms("test_agg", "test_field")
+            Aggregation::terms("test_field")
                 .size(0u16)
                 .order(("test_order", SortOrder::Asc))
-                .aggregate(Aggregation::terms("test_sub_agg", "test_field2").size(3u16)),
+                .aggregate("test_sub_agg", Aggregation::terms("test_field2").size(3u16)),
             json!({
                 "terms": {
                     "field": "test_field",

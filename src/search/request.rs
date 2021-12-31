@@ -46,21 +46,30 @@ impl Search {
     }
 
     /// Indicates which source fields are returned for matching documents
-    pub fn source(mut self, source: impl Into<SourceFilter>) -> Self {
+    pub fn source<S>(mut self, source: S) -> Self
+    where
+        S: Into<SourceFilter>,
+    {
         self._source = Some(source.into());
         self
     }
 
     /// Specific `tag` of the request for logging and statistical purposes.
-    pub fn stats(mut self, stats: impl Into<String>) -> Self {
-        self.stats.push(stats.into());
+    pub fn stats<S>(mut self, stats: S) -> Self
+    where
+        S: ToString,
+    {
+        self.stats.push(stats.to_string());
         self
     }
 
     /// Starting document offset.
     ///
     /// Defaults to `0`.
-    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
+    pub fn from<S>(mut self, from: S) -> Self
+    where
+        S: TryInto<u64>,
+    {
         if let Ok(from) = from.try_into() {
             self.from = Some(from);
         }
@@ -70,7 +79,10 @@ impl Search {
     /// The number of hits to return.
     ///
     /// Defaults to `10`.
-    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
+    pub fn size<S>(mut self, size: S) -> Self
+    where
+        S: TryInto<u64>,
+    {
         if let Ok(size) = size.try_into() {
             self.size = Some(size);
         }
@@ -79,38 +91,46 @@ impl Search {
 
     /// Defines the search definition using the
     /// [Query DSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html).
-    pub fn query(mut self, query: impl Into<Query>) -> Self {
+    pub fn query<Q>(mut self, query: Q) -> Self
+    where
+        Q: Into<Query>,
+    {
         self.query = Some(query.into());
         self
     }
 
     /// A collection of sorting fields
-    pub fn sort(mut self, sort: impl Into<Vec<Sort>>) -> Self {
+    pub fn sort<S>(mut self, sort: S) -> Self
+    where
+        S: Into<Vec<Sort>>,
+    {
         self.sort.extend(sort.into());
         self
     }
 
-    /// Aggregations
-    pub fn aggregate(mut self, aggregation: impl Into<Aggregation>) -> Self {
-        let aggregation = aggregation.into();
-        let _ = self.aggs.entry(aggregation.name()).or_insert(aggregation);
-        self
-    }
-
     /// Track total hits
-    pub fn track_total_hits(mut self, track_total_hits: impl Into<TrackTotalHits>) -> Self {
+    pub fn track_total_hits<T>(mut self, track_total_hits: T) -> Self
+    where
+        T: Into<TrackTotalHits>,
+    {
         self.track_total_hits = Some(track_total_hits.into());
         self
     }
 
     /// Highlight
-    pub fn highlight(mut self, highlight: impl Into<Highlight>) -> Self {
+    pub fn highlight<H>(mut self, highlight: H) -> Self
+    where
+        H: Into<Highlight>,
+    {
         self.highlight = Some(highlight.into());
         self
     }
 
     /// Rescore
-    pub fn rescore(mut self, rescore: impl Into<Rescore>) -> Self {
+    pub fn rescore<R>(mut self, rescore: R) -> Self
+    where
+        R: Into<Rescore>,
+    {
         let rescore = rescore.into();
 
         if !rescore.should_skip() {
@@ -119,4 +139,6 @@ impl Search {
 
         self
     }
+
+    add_aggregate!();
 }

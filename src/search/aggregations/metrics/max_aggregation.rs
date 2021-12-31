@@ -11,8 +11,6 @@ use crate::util::*;
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct MaxAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     max: MaxAggregationInner,
 }
 
@@ -27,11 +25,9 @@ struct MaxAggregationInner {
 impl Aggregation {
     /// Creates an instance of [`MaxAggregation`]
     ///
-    /// - `name` - name of the aggregation
     /// - `field` - field to aggregate
-    pub fn max(name: impl Into<String>, field: impl Into<String>) -> MaxAggregation {
+    pub fn max(field: impl Into<String>) -> MaxAggregation {
         MaxAggregation {
-            name: name.into(),
             max: MaxAggregationInner {
                 field: field.into(),
                 missing: None,
@@ -56,12 +52,12 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize(
-            Aggregation::max("test_max", "test_field"),
+            Aggregation::max("test_field"),
             json!({ "max": { "field": "test_field" } }),
         );
 
         assert_serialize(
-            Aggregation::max("test_max", "test_field").missing(100.1),
+            Aggregation::max("test_field").missing(100.1),
             json!({
                 "max": {
                     "field": "test_field",

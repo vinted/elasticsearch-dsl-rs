@@ -6,8 +6,6 @@ use crate::util::*;
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-cardinality-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct CardinalityAggregation {
-    #[serde(skip_serializing)]
-    pub(crate) name: String,
     cardinality: CardinalityAggregationInner,
 }
 
@@ -25,14 +23,9 @@ struct CardinalityAggregationInner {
 impl Aggregation {
     /// Creates an instance of [`CardinalityAggregation`]
     ///
-    /// - `name` - name of the aggregation
     /// - `field` - field to aggregate
-    pub fn cardinality(
-        name: impl Into<String>,
-        field: impl Into<String>,
-    ) -> CardinalityAggregation {
+    pub fn cardinality(field: impl Into<String>) -> CardinalityAggregation {
         CardinalityAggregation {
-            name: name.into(),
             cardinality: CardinalityAggregationInner {
                 field: field.into(),
                 precision_threshold: None,
@@ -67,12 +60,12 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize(
-            Aggregation::cardinality("test_cardinality", "test_field"),
+            Aggregation::cardinality("test_field"),
             json!({ "cardinality": { "field": "test_field" } }),
         );
 
         assert_serialize(
-            Aggregation::cardinality("test_cardinality", "test_field")
+            Aggregation::cardinality("test_field")
                 .precision_threshold(100u16)
                 .missing("N/A"),
             json!({
