@@ -1,5 +1,36 @@
 use serde::Serialize;
-use std::{fmt::Display, str::FromStr};
+use std::{error::Error, fmt::Display, num::ParseFloatError, str::FromStr};
+
+/// An error which can be returned when parsing a coordinate.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ParseCoordinateError {
+    /// Coordinate is invalid
+    ///
+    /// This will occur when coordinate cannot be parsed as [`f32`]
+    Invalid(ParseFloatError),
+
+    /// Coordinate is missing
+    ///
+    /// This will occur when fewer than two coordinates are passed
+    Missing,
+
+    /// Coordinate is redundant
+    ///
+    /// This will occur when more than two coordinates are passed
+    Redundant,
+}
+
+impl Display for ParseCoordinateError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Invalid(e) => e.fmt(f),
+            Self::Missing => "fewer than two coordinates are passed".fmt(f),
+            Self::Redundant => "more than two coordinates are passed".fmt(f),
+        }
+    }
+}
+
+impl Error for ParseCoordinateError {}
 
 /// Represents a point in two dimensional space
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
@@ -49,17 +80,28 @@ impl From<(f32, f32)> for Coordinate {
 }
 
 impl FromStr for Coordinate {
-    type Err = String;
+    type Err = ParseCoordinateError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut values = s.split(',');
 
-        let x = values.next().and_then(|x| x.trim().parse().ok());
-        let y = values.next().and_then(|x| x.trim().parse().ok());
+        let x = values
+            .next()
+            .ok_or(Self::Err::Missing)?
+            .trim()
+            .parse()
+            .map_err(Self::Err::Invalid)?;
 
-        match (x, y, values.next()) {
-            (Some(x), Some(y), None) => Ok(Self { x, y }),
-            _ => Err(format!("Couldn't parse '{}' as coordinate", s)),
+        let y = values
+            .next()
+            .ok_or(Self::Err::Missing)?
+            .trim()
+            .parse()
+            .map_err(Self::Err::Invalid)?;
+
+        match values.next() {
+            Some(_) => Err(Self::Err::Redundant),
+            None => Ok(Self { x, y }),
         }
     }
 }
@@ -87,8 +129,10 @@ mod tests {
             Coordinate::new(1., 2.)
         );
 
+        assert!(Coordinate::from_str("").is_err());
         assert!(Coordinate::from_str("1.1").is_err());
         assert!(Coordinate::from_str("1.1,2.2,3").is_err());
+        assert!(Coordinate::from_str("1.1,abc").is_err());
         assert!(Coordinate::from_str("abc").is_err());
     }
 }
