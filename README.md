@@ -27,17 +27,34 @@ Documentation for the library is available on [docs.rs](https://docs.rs/elastics
 ```rust
 use elasticsearch_dsl::*;
 
-let query = Search::new()
-    .source(false)
-    .stats("statistics")
-    .from(0)
-    .size(30)
-    .query(
-        Query::bool()
-            .must(Query::multi_match(["title", "description"], "you know, for search"))
-            .filter(Query::terms("tags", ["elasticsearch"]))
-            .should(Query::term("verified", true).boost(10)),
-    );
+fn main() {
+    let query = Search::new()
+        .source(false)
+        .stats("statistics")
+        .from(0)
+        .size(30)
+        .query(
+            Query::bool()
+                .must(Query::multi_match(
+                    ["title", "description"],
+                    "you know, for search",
+                ))
+                .filter(Query::terms("tags", ["elasticsearch"]))
+                .should(Query::term("verified", true).boost(10)),
+        )
+        .aggregate(
+            "country_ids",
+            Aggregation::terms("country_id")
+                .aggregate("catalog_ids", Aggregation::terms("catalog_id"))
+                .aggregate("company_ids", Aggregation::terms("company_id"))
+                .aggregate(
+                    "top1",
+                    Aggregation::top_hits()
+                        .size(1)
+                        .sort(Sort::new(SortField::Id).order(SortOrder::Desc)),
+                ),
+        );
+}
 ```
 
 See examples for more.
