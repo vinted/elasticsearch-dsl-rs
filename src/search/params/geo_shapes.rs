@@ -5,13 +5,15 @@ use crate::search::*;
 /// Note: Elasticsearch uses WGS-84 coordinates only
 #[derive(Debug, Clone, Copy, PartialEq, Serialize)]
 pub struct PointGeoShape {
-    coordinates: GeoCoordinate,
+    /// Coordinates
+    pub coordinates: GeoCoordinate,
 }
 
 /// An arbitrary line given two or more points
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct LineStringGeoShape {
-    coordinates: Vec<GeoCoordinate>,
+    /// Coordinates
+    pub coordinates: Vec<GeoCoordinate>,
 }
 
 /// A closed polygon whose first and last point must match, thus requiring
@@ -19,47 +21,56 @@ pub struct LineStringGeoShape {
 /// vertices
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct PolygonGeoShape {
-    coordinates: Vec<Vec<GeoCoordinate>>,
+    /// Coordinates
+    pub coordinates: Vec<Vec<GeoCoordinate>>,
 }
 
 /// An array of unconnected, but likely related points
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct MultiPointGeoShape {
-    coordinates: Vec<GeoCoordinate>,
+    /// Coordinates
+    pub coordinates: Vec<GeoCoordinate>,
 }
 
 /// An array of separate linestrings
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct MultiLineStringGeoShape {
-    coordinates: Vec<Vec<GeoCoordinate>>,
+    /// Coordinates
+    pub coordinates: Vec<Vec<GeoCoordinate>>,
 }
 
 /// An array of separate polygons
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct MultiPolygonGeoShape {
-    coordinates: Vec<Vec<Vec<GeoCoordinate>>>,
+    /// Coordinates
+    pub coordinates: Vec<Vec<Vec<GeoCoordinate>>>,
 }
 
 /// A bounding rectangle, or envelope, specified by specifying only
 /// the top left and bottom right points.
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct EnvelopeGeoShape {
-    coordinates: Vec<GeoCoordinate>,
+    /// Coordinates
+    pub coordinates: Vec<GeoCoordinate>,
 }
 
 /// A circle specified by a center point and radius with units,
 /// which default to `METERS`
 #[derive(Debug, Clone, Copy, PartialEq, Serialize)]
 pub struct CircleGeoShape {
-    coordinates: GeoCoordinate,
-    radius: Distance,
+    /// Coordinates
+    pub coordinates: GeoCoordinate,
+
+    /// Circle radius
+    pub radius: Distance,
 }
 
 /// A GeoJSON shape similar to the `multi*` shapes except that multiple types
 /// can coexist (e.g., a Point and a LineString)
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct GeometryCollection {
-    geometries: Vec<GeoShape>,
+    /// A collection of geo shapes
+    pub geometries: Vec<GeoShape>,
 }
 
 /// The `geo_shape` data type facilitates the indexing of and searching with
@@ -67,6 +78,7 @@ pub struct GeometryCollection {
 /// when either the data being indexed or the queries being executed contain
 /// shapes other than just points.
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(tag = "type")]
 pub enum GeoShape {
     /// A single geographic coordinate
     ///
