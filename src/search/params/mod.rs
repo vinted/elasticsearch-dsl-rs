@@ -2,7 +2,9 @@
 
 mod coordinate;
 mod date;
+mod geo_coordinate;
 mod geo_point;
+mod geo_shapes;
 mod number;
 mod search_filter;
 mod term;
@@ -13,7 +15,9 @@ mod units;
 
 pub use self::coordinate::*;
 pub use self::date::*;
+pub use self::geo_coordinate::*;
 pub use self::geo_point::*;
+pub use self::geo_shapes::*;
 pub use self::number::*;
 pub use self::search_filter::*;
 pub use self::term::*;
