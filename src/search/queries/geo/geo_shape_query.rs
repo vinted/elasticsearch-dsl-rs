@@ -102,12 +102,7 @@ mod tests {
     #[test]
     fn test_serialization() {
         assert_serialize(
-            Query::geo_shape(
-                "pin.location",
-                GeoShape::Point(PointGeoShape {
-                    coordinates: GeoCoordinate::from([2.2, 1.1]),
-                }),
-            ),
+            Query::geo_shape("pin.location", GeoShape::point([2.2, 1.1])),
             json!({
                 "geo_shape": {
                     "pin.location": {
@@ -121,16 +116,11 @@ mod tests {
         );
 
         assert_serialize(
-            Query::geo_shape(
-                "pin.location",
-                GeoShape::Point(PointGeoShape {
-                    coordinates: GeoCoordinate::from([2.2, 1.1]),
-                }),
-            )
-            .boost(2)
-            .name("test")
-            .ignore_unmapped(true)
-            .relation(SpatialRelation::Within),
+            Query::geo_shape("pin.location", GeoShape::point([2.2, 1.1]))
+                .boost(2)
+                .name("test")
+                .ignore_unmapped(true)
+                .relation(SpatialRelation::Within),
             json!({
                 "geo_shape": {
                     "_name": "test",
