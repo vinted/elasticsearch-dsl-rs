@@ -58,7 +58,7 @@ pub enum GeoShape {
     #[serde(rename = "envelope")]
     Envelope {
         /// Coordinates
-        coordinates: Vec<GeoCoordinate>,
+        coordinates: [GeoCoordinate; 2],
     },
 
     /// A circle specified by a center point and radius with units,
@@ -164,13 +164,12 @@ impl GeoShape {
     }
 
     /// Creates an instance of [`GeoShape::Envelope`]
-    pub fn envelope<T>(coordinates: T) -> Self
+    pub fn envelope<T>(top_left: T, bottom_right: T) -> Self
     where
-        T: IntoIterator,
-        T::Item: Into<GeoCoordinate>,
+        T: Into<GeoCoordinate>,
     {
         Self::Envelope {
-            coordinates: coordinates.into_iter().map(Into::into).collect(),
+            coordinates: [top_left.into(), bottom_right.into()],
         }
     }
 
