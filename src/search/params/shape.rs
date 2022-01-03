@@ -56,7 +56,7 @@ pub enum Shape {
     #[serde(rename = "envelope")]
     Envelope {
         /// Coordinates
-        coordinates: [Coordinate; 2],
+        coordinates: (Coordinate, Coordinate),
     },
 
     /// A GeoJSON shape similar to the `multi*` shapes except that multiple
@@ -104,6 +104,7 @@ impl Shape {
                 .collect(),
         }
     }
+
     /// Creates an instance of [`Shape::MultiPoint`]
     pub fn multi_point<T>(coordinates: T) -> Self
     where
@@ -156,7 +157,7 @@ impl Shape {
         T: Into<Coordinate>,
     {
         Self::Envelope {
-            coordinates: [top_left.into(), bottom_right.into()],
+            coordinates: (top_left.into(), bottom_right.into()),
         }
     }
 

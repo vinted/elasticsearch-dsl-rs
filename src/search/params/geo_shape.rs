@@ -58,7 +58,7 @@ pub enum GeoShape {
     #[serde(rename = "envelope")]
     Envelope {
         /// Coordinates
-        coordinates: [GeoCoordinate; 2],
+        coordinates: (GeoCoordinate, GeoCoordinate),
     },
 
     /// A circle specified by a center point and radius with units,
@@ -117,6 +117,7 @@ impl GeoShape {
                 .collect(),
         }
     }
+
     /// Creates an instance of [`GeoShape::MultiPoint`]
     pub fn multi_point<T>(coordinates: T) -> Self
     where
@@ -169,7 +170,7 @@ impl GeoShape {
         T: Into<GeoCoordinate>,
     {
         Self::Envelope {
-            coordinates: [top_left.into(), bottom_right.into()],
+            coordinates: (top_left.into(), bottom_right.into()),
         }
     }
 
