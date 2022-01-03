@@ -63,7 +63,7 @@ pub enum Shape {
     /// types can coexist (e.g., a Point and a LineString)
     #[serde(rename = "geometrycollection")]
     GeometryCollection {
-        /// A collection of geo shapes
+        /// A collection of shapes
         geometries: Vec<Shape>,
     },
 }
@@ -170,5 +170,170 @@ impl Shape {
         Self::GeometryCollection {
             geometries: geometries.into_iter().map(Into::into).collect(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::util::*;
+
+    #[test]
+    fn serialization() {
+        assert_serialize(
+            Shape::point([-77.0, 38.0]),
+            json!({
+                "type": "point",
+                "coordinates": [-77.0, 38.0]
+            }),
+        );
+
+        assert_serialize(
+            Shape::line_string([[-77.0, 38.0], [-77.0, 38.0]]),
+            json!({
+                "type": "linestring",
+                "coordinates": [[-77.0, 38.0], [-77.0, 38.0]]
+            }),
+        );
+
+        assert_serialize(
+            Shape::polygon([
+                vec![
+                    [-17.0, 10.0],
+                    [16.0, 15.0],
+                    [12.0, 0.0],
+                    [16.0, -15.0],
+                    [-17.0, -10.0],
+                    [-17.0, 10.0],
+                ],
+                vec![[18.2, 8.2], [-18.8, 8.2], [-10.8, -8.8], [18.2, 8.2]],
+            ]),
+            json!({
+                "type": "polygon",
+                "coordinates": [
+                    [
+                        [-17.0, 10.0],
+                        [16.0, 15.0],
+                        [12.0, 0.0],
+                        [16.0, -15.0],
+                        [-17.0, -10.0],
+                        [-17.0, 10.0],
+                    ],
+                    [
+                        [18.2, 8.2],
+                        [-18.8, 8.2],
+                        [-10.8, -8.8],
+                        [18.2, 8.2],
+                    ],
+                ]
+            }),
+        );
+
+        assert_serialize(
+            Shape::multi_point([[-77.0, 38.0], [-77.0, 38.0]]),
+            json!({
+                "type": "multipoint",
+                "coordinates": [[-77.0, 38.0], [-77.0, 38.0]]
+            }),
+        );
+
+        assert_serialize(
+            Shape::multi_line_string([
+                [[12.0, 2.0], [13.0, 2.0], [13.0, 3.0], [12.0, 3.0]],
+                [[10.0, 0.0], [11.0, 0.0], [11.0, 1.0], [10.0, 1.0]],
+                [[10.2, 0.2], [10.8, 0.2], [10.8, 0.8], [12.0, 0.8]],
+            ]),
+            json!({
+                "type": "multilinestring",
+                "coordinates": [
+                    [[12.0, 2.0], [13.0, 2.0], [13.0, 3.0], [12.0, 3.0]],
+                    [[10.0, 0.0], [11.0, 0.0], [11.0, 1.0], [10.0, 1.0]],
+                    [[10.2, 0.2], [10.8, 0.2], [10.8, 0.8], [12.0, 0.8]],
+                ]
+            }),
+        );
+
+        assert_serialize(
+            Shape::multi_polygon([
+                vec![
+                    vec![
+                        [-17.0, 10.0],
+                        [16.0, 15.0],
+                        [12.0, 0.0],
+                        [16.0, -15.0],
+                        [-17.0, -10.0],
+                        [-17.0, 10.0],
+                    ],
+                    vec![[18.2, 8.2], [-18.8, 8.2], [-10.8, -8.8], [18.2, 8.2]],
+                ],
+                vec![vec![
+                    [-15.0, 8.0],
+                    [16.0, 15.0],
+                    [12.0, 0.0],
+                    [16.0, -15.0],
+                    [-17.0, -10.0],
+                    [-15.0, 8.0],
+                ]],
+            ]),
+            json!({
+                "type": "multipolygon",
+                "coordinates": [
+                    [
+                        [
+                            [-17.0, 10.0],
+                            [16.0, 15.0],
+                            [12.0, 0.0],
+                            [16.0, -15.0],
+                            [-17.0, -10.0],
+                            [-17.0, 10.0],
+                        ],
+                        [
+                            [18.2, 8.2],
+                            [-18.8, 8.2],
+                            [-10.8, -8.8],
+                            [18.2, 8.2],
+                        ],
+                    ],
+                    [
+                        [
+                            [-15.0, 8.0],
+                            [16.0, 15.0],
+                            [12.0, 0.0],
+                            [16.0, -15.0],
+                            [-17.0, -10.0],
+                            [-15.0, 8.0],
+                        ]
+                    ],
+                ]
+            }),
+        );
+
+        assert_serialize(
+            Shape::envelope([-77.0, 38.0], [-77.0, 38.0]),
+            json!({
+                "type": "envelope",
+                "coordinates": [[-77.0, 38.0], [-77.0, 38.0]]
+            }),
+        );
+
+        assert_serialize(
+            Shape::geometry_collection([
+                Shape::envelope([-77.0, 38.0], [-77.0, 38.0]),
+                Shape::point([-77.0, 38.0]),
+            ]),
+            json!({
+                "type": "geometrycollection",
+                "geometries": [
+                    {
+                        "type": "envelope",
+                        "coordinates": [[-77.0, 38.0], [-77.0, 38.0]]
+                    },
+                    {
+                        "type": "point",
+                        "coordinates": [-77.0, 38.0]
+                    },
+                ]
+            }),
+        );
     }
 }
