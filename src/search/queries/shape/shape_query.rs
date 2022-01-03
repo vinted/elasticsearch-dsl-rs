@@ -2,22 +2,14 @@ use crate::search::*;
 use crate::util::*;
 use serde::Serialize;
 
-/// Filter documents indexed using the `geo_shape` or `geo_point` type.
+/// Queries documents that contain fields indexed using the `shape` type.
 ///
-/// Requires the
-/// [`geo_shape` mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-shape.html)
-/// or the
-/// [`geo_point` mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html).
+/// Requires the [`shape` Mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/shape.html).
 ///
-/// The `geo_shape` query uses the same grid square representation as the
-/// `geo_shape` mapping to find documents that have a shape that intersects
-/// with the query shape. It will also use the same Prefix Tree configuration
-/// as defined for the field mapping.
-///
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-shape-query.html>
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-shape-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct GeoShapeQuery {
-    #[serde(rename = "geo_shape")]
+pub struct ShapeQuery {
+    #[serde(rename = "shape")]
     inner: Inner,
 }
 
@@ -38,23 +30,23 @@ struct Inner {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct InlineShape {
-    shape: GeoShape,
+    shape: Shape,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     relation: Option<SpatialRelation>,
 }
 
 impl Query {
-    /// Creates an instance of [`GeoShapeQuery`]
+    /// Creates an instance of [`ShapeQuery`]
     ///
     /// - `field` - Field you wish to search
     /// - `shape` - Shape you with to search
-    pub fn geo_shape<S, T>(field: S, shape: T) -> GeoShapeQuery
+    pub fn shape<S, T>(field: S, shape: T) -> ShapeQuery
     where
         S: ToString,
-        T: Into<GeoShape>,
+        T: Into<Shape>,
     {
-        GeoShapeQuery {
+        ShapeQuery {
             inner: Inner {
                 pair: KeyValuePair::new(
                     field.to_string(),
@@ -71,8 +63,8 @@ impl Query {
     }
 }
 
-impl GeoShapeQuery {
-    /// The [geo_shape strategy](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-shape.html#spatial-strategy)
+impl ShapeQuery {
+    /// The [shape strategy](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-shape.html#spatial-strategy)
     /// mapping parameter determines which spatial relation operators may be
     /// used at search time.
     pub fn relation(mut self, relation: SpatialRelation) -> Self {
@@ -93,7 +85,7 @@ impl GeoShapeQuery {
     add_boost_and_name!();
 }
 
-impl ShouldSkip for GeoShapeQuery {}
+impl ShouldSkip for ShapeQuery {}
 
 #[cfg(test)]
 mod tests {
@@ -102,9 +94,9 @@ mod tests {
     #[test]
     fn test_serialization() {
         assert_serialize(
-            Query::geo_shape("pin.location", GeoShape::point([2.2, 1.1])),
+            Query::shape("pin.location", Shape::point([2.2, 1.1])),
             json!({
-                "geo_shape": {
+                "shape": {
                     "pin.location": {
                         "shape": {
                             "type": "point",
@@ -116,13 +108,13 @@ mod tests {
         );
 
         assert_serialize(
-            Query::geo_shape("pin.location", GeoShape::point([2.2, 1.1]))
+            Query::shape("pin.location", Shape::point([2.2, 1.1]))
                 .boost(2)
                 .name("test")
                 .ignore_unmapped(true)
                 .relation(SpatialRelation::Within),
             json!({
-                "geo_shape": {
+                "shape": {
                     "_name": "test",
                     "boost": 2,
                     "ignore_unmapped": true,
