@@ -56,6 +56,19 @@ macro_rules! query {
             )*
         }
 
+        impl IntoIterator for Query {
+            type Item = Self;
+            type IntoIter = std::option::IntoIter<Self::Item>;
+
+            fn into_iter(self) -> Self::IntoIter {
+                if self.should_skip() {
+                    None.into_iter()
+                } else {
+                    Some(self).into_iter()
+                }
+            }
+        }
+
         impl ShouldSkip for Query {
             fn should_skip(&self) -> bool {
                 match self {
