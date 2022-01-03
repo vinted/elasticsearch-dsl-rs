@@ -2,22 +2,14 @@ use crate::search::*;
 use crate::util::*;
 use serde::Serialize;
 
-/// Filter documents indexed using the `geo_shape` or `geo_point` type.
+/// Queries documents that contain fields indexed using the `shape` type.
 ///
-/// Requires the
-/// [`geo_shape` mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-shape.html)
-/// or the
-/// [`geo_point` mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html).
+/// Requires the [`shape` Mapping](https://www.elastic.co/guide/en/elasticsearch/reference/current/shape.html).
 ///
-/// The `geo_shape` query uses the same grid square representation as the
-/// `geo_shape` mapping to find documents that have a shape that intersects
-/// with the query shape. It will also use the same Prefix Tree configuration
-/// as defined for the field mapping.
-///
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-shape-query.html>
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-shape-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct GeoShapeLookupQuery {
-    #[serde(rename = "geo_shape")]
+pub struct ShapeLookupQuery {
+    #[serde(rename = "shape")]
     inner: Inner,
 }
 
@@ -59,16 +51,16 @@ struct IndexedShape {
 }
 
 impl Query {
-    /// Creates an instance of [`GeoShapeLookupQuery`]
+    /// Creates an instance of [`ShapeLookupQuery`]
     ///
     /// - `field` - Field you wish to search
     /// - `id` - The ID of the document that containing the pre-indexed shape
-    pub fn geo_shape_lookup<S, T>(field: S, id: T) -> GeoShapeLookupQuery
+    pub fn shape_lookup<S, T>(field: S, id: T) -> ShapeLookupQuery
     where
         S: ToString,
         T: ToString,
     {
-        GeoShapeLookupQuery {
+        ShapeLookupQuery {
             inner: Inner {
                 pair: KeyValuePair::new(
                     field.to_string(),
@@ -90,7 +82,7 @@ impl Query {
     }
 }
 
-impl GeoShapeLookupQuery {
+impl ShapeLookupQuery {
     /// Name of the index where the pre-indexed shape is. Defaults to shapes
     pub fn index<S>(mut self, index: S) -> Self
     where
@@ -118,7 +110,7 @@ impl GeoShapeLookupQuery {
         self
     }
 
-    /// The [geo_shape strategy](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-shape.html#spatial-strategy)
+    /// The [shape strategy](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-shape.html#spatial-strategy)
     /// mapping parameter determines which spatial relation operators may be
     /// used at search time.
     pub fn relation(mut self, relation: SpatialRelation) -> Self {
@@ -139,7 +131,7 @@ impl GeoShapeLookupQuery {
     add_boost_and_name!();
 }
 
-impl ShouldSkip for GeoShapeLookupQuery {}
+impl ShouldSkip for ShapeLookupQuery {}
 
 #[cfg(test)]
 mod tests {
@@ -148,9 +140,9 @@ mod tests {
     #[test]
     fn test_serialization() {
         assert_serialize(
-            Query::geo_shape_lookup("pin.location", "id"),
+            Query::shape_lookup("pin.location", "id"),
             json!({
-                "geo_shape": {
+                "shape": {
                     "pin.location": {
                         "indexed_shape": {
                             "id": "id",
@@ -161,7 +153,7 @@ mod tests {
         );
 
         assert_serialize(
-            Query::geo_shape_lookup("pin.location", "id")
+            Query::shape_lookup("pin.location", "id")
                 .boost(2)
                 .name("test")
                 .ignore_unmapped(true)
@@ -170,7 +162,7 @@ mod tests {
                 .index("index")
                 .path("path"),
             json!({
-                "geo_shape": {
+                "shape": {
                     "_name": "test",
                     "boost": 2,
                     "ignore_unmapped": true,
