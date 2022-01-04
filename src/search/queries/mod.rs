@@ -153,6 +153,8 @@ query!(
     Shape(ShapeQuery),
     Json(JsonQuery),
     Wrapper(WrapperQuery),
+    Script(ScriptQuery),
+    ScriptScore(ScriptScoreQuery),
 );
 
 /// A collection of queries

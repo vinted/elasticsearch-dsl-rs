@@ -18,8 +18,14 @@ use std::collections::BTreeMap;
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-using.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Script {
-    #[serde(rename = "script")]
-    inner: Inner,
+    #[serde(flatten)]
+    source: ScriptSource,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    lang: Option<ScriptLang>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    params: BTreeMap<String, serde_json::Value>,
 }
 
 /// The script itself, which you specify as `source` for an inline script or
@@ -36,18 +42,6 @@ pub enum ScriptSource {
     Id(String),
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
-    #[serde(flatten)]
-    source: ScriptSource,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    lang: Option<ScriptLang>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    params: BTreeMap<String, serde_json::Value>,
-}
-
 impl Script {
     /// Creates an instance of inlined [`Script`]
     pub fn source<S>(source: S) -> Self
@@ -55,11 +49,9 @@ impl Script {
         S: ToString,
     {
         Self {
-            inner: Inner {
-                source: ScriptSource::Source(source.to_string()),
-                lang: None,
-                params: BTreeMap::new(),
-            },
+            source: ScriptSource::Source(source.to_string()),
+            lang: None,
+            params: BTreeMap::new(),
         }
     }
 
@@ -69,11 +61,9 @@ impl Script {
         S: ToString,
     {
         Self {
-            inner: Inner {
-                source: ScriptSource::Id(id.to_string()),
-                lang: None,
-                params: BTreeMap::new(),
-            },
+            source: ScriptSource::Id(id.to_string()),
+            lang: None,
+            params: BTreeMap::new(),
         }
     }
 
@@ -82,7 +72,7 @@ impl Script {
     where
         S: Into<ScriptLang>,
     {
-        self.inner.lang = Some(lang.into());
+        self.lang = Some(lang.into());
         self
     }
 
@@ -94,7 +84,7 @@ impl Script {
         T: Serialize,
     {
         if let Ok(param) = serde_json::to_value(param) {
-            let _ = self.inner.params.entry(name.to_string()).or_insert(param);
+            let _ = self.params.entry(name.to_string()).or_insert(param);
         }
         self
     }
@@ -124,16 +114,19 @@ pub enum ScriptLang {
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-painless.html>
     Painless,
+
     /// Lucene’s expressions compile a `javascript` expression to bytecode. They are designed for
     /// high-performance custom ranking and sorting functions and are enabled for `inline` and `stored`
     /// scripting by default.
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-expression.html>
     Expression,
+
     /// A template language to search with templates
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>
     Mustache,
+
     /// Custom language refer to [Advanced scripts using script engines](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-engine.html)
     Custom(String),
 }
@@ -179,12 +172,10 @@ mod tests {
                 .param("multiplier", [1, 2, 3])
                 .lang(ScriptLang::Painless),
             json!({
-                "script": {
-                    "source": "Math.log(_score * 2) * params['multiplier'].len()",
-                    "lang": "painless",
-                    "params": {
-                        "multiplier": [1, 2, 3]
-                    }
+                "source": "Math.log(_score * 2) * params['multiplier'].len()",
+                "lang": "painless",
+                "params": {
+                    "multiplier": [1, 2, 3]
                 }
             }),
         );
@@ -194,12 +185,10 @@ mod tests {
                 .param("multiplier", 1)
                 .lang("my_lang"),
             json!({
-                "script": {
-                    "source": "doc['my_field'].value * params['multiplier']",
-                    "lang": "my_lang",
-                    "params": {
-                        "multiplier": 1
-                    }
+                "source": "doc['my_field'].value * params['multiplier']",
+                "lang": "my_lang",
+                "params": {
+                    "multiplier": 1
                 }
             }),
         );
@@ -207,11 +196,9 @@ mod tests {
         assert_serialize(
             Script::id(123).param("multiplier", [1, 2, 3]),
             json!({
-                "script": {
-                    "id": "123",
-                    "params": {
-                        "multiplier": [1, 2, 3]
-                    }
+                "id": "123",
+                "params": {
+                    "multiplier": [1, 2, 3]
                 }
             }),
         );
