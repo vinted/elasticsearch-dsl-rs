@@ -1,21 +1,22 @@
 use crate::search::*;
 use crate::util::*;
 
-/// Uses a [script](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html)
-/// to provide a custom score for returned documents.
-///
-/// The `script_score` query is useful if, for example, a scoring function is
-/// expensive and you only need to calculate the score of a filtered set of
-/// documents.
+/// A query allowing you to modify the score of documents that are retrieved by
+/// a query. This can be useful if, for example, a score function is
+/// computationally expensive and it is sufficient to compute the score on a
+/// filtered set of documents.
 ///
 /// To create script score query:
 /// ```
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// Query::script(Script::source("return doc['amount'].value < 10;"));
+/// Query::script_score(
+///     Query::r#match("message", "elasticsearch"),
+///     Script::source("doc['my-int'].value / 10"),
+/// );
 /// ```
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-script-query.html>
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-script-score-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct ScriptScoreQuery {
     #[serde(rename = "script_score")]
