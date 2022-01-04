@@ -165,7 +165,13 @@ where
     T::Item: Into<Option<Query>>,
 {
     fn from(value: T) -> Self {
-        Self(value.into_iter().filter_map(Into::into).collect())
+        Self(
+            value
+                .into_iter()
+                .filter_map(Into::into)
+                .filter(|x| !x.should_skip())
+                .collect(),
+        )
     }
 }
 
@@ -182,5 +188,61 @@ impl Queries {
         Q: Into<Queries>,
     {
         self.0.extend(queries.into().0)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn adds_query() {
+        let mut queries = Queries::default();
+
+        let query = Query::terms("test", [1]);
+
+        queries.extend(query);
+
+        assert_eq!(queries.0.len(), 1);
+    }
+
+    #[test]
+    fn adds_queries() {
+        let mut queries = Queries::default();
+
+        let query_1 = Query::terms("test", [1]);
+        let query_2 = Query::terms("test", [2]);
+
+        queries.extend([query_1, query_2]);
+
+        assert_eq!(queries.0.len(), 2);
+    }
+
+    #[test]
+    fn skips_queries() {
+        let mut queries = Queries::default();
+
+        let empty_values: [i32; 0] = [];
+
+        let query_1 = Query::terms("test", empty_values).into();
+        let query_2 = Query::from(Query::terms("test", empty_values));
+        let query_3 = Query::Terms(Query::terms("test", empty_values));
+
+        queries.extend([query_1, query_2, query_3]);
+
+        assert!(queries.0.is_empty());
+    }
+
+    #[test]
+    fn skips_query() {
+        let mut queries = Queries::default();
+
+        let empty_values: [i32; 0] = [];
+
+        let query = Query::terms("test", empty_values);
+
+        queries.extend(query);
+
+        assert!(queries.0.is_empty());
     }
 }
