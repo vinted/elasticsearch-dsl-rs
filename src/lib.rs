@@ -15,7 +15,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! elasticsearch-dsl = "0.1"
+//! elasticsearch-dsl = "0.2"
 //! ```
 //!
 //! ## Documentation
