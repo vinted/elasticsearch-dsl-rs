@@ -46,7 +46,6 @@ mod order;
 mod tags;
 
 use crate::util::*;
-use std::collections::HashMap;
 
 pub use self::boundary_scanner::*;
 pub use self::encoder::*;
@@ -63,34 +62,42 @@ pub struct Highlight {
     #[serde(flatten, skip_serializing_if = "ShouldSkip::should_skip")]
     highlighter: Option<Highlighter>,
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    fields: HashMap<String, Highlighter>,
+    fields: Vec<KeyValuePair<String, Highlighter>>,
 }
 
 impl Highlight {
-    /// Creates a new instance of [Highlight](Highlight)
+    /// Creates a new instance of [Highlight]
     pub fn new() -> Self {
         Default::default()
     }
 
     /// Sets highlighter settings
-    pub fn highlighter(mut self, highlighter: impl Into<Highlighter>) -> Self {
+    pub fn highlighter<H>(mut self, highlighter: H) -> Self
+    where
+        H: Into<Highlighter>,
+    {
         self.highlighter = Some(highlighter.into());
         self
     }
 
     /// Adds field or field pattern to highlighter
-    pub fn field(mut self, field: impl Into<String>) -> Self {
-        let _ = self.fields.insert(field.into(), Default::default());
+    pub fn field<F>(mut self, field: F) -> Self
+    where
+        F: ToString,
+    {
+        self.fields
+            .push(KeyValuePair::new(field.to_string(), Default::default()));
         self
     }
 
     /// Adds field or field pattern to highlighter
-    pub fn field_highlighter(
-        mut self,
-        field: impl Into<String>,
-        highlighter: impl Into<Highlighter>,
-    ) -> Self {
-        let _ = self.fields.insert(field.into(), highlighter.into());
+    pub fn field_highlighter<F, H>(mut self, field: F, highlighter: H) -> Self
+    where
+        F: ToString,
+        H: Into<Highlighter>,
+    {
+        self.fields
+            .push(KeyValuePair::new(field.to_string(), highlighter.into()));
         self
     }
 }
@@ -107,30 +114,30 @@ mod tests {
             Highlight::new()
                 .field("field1")
                 .field("field2")
-                .field("field.*"),
+                .field("field3"),
             json!({
-                "fields": {
-                    "field1": {},
-                    "field2": {},
-                    "field.*": {},
-                }
+                "fields": [
+                    { "field1": {} },
+                    { "field2": {} },
+                    { "field3": {} },
+                ]
             }),
         );
 
         assert_serialize(
             Highlight::new()
                 .highlighter(Highlighter::new().tags((["<eim>"], ["</eim>"])))
-                .field("field1")
+                .field("field3")
                 .field("field2")
-                .field("field.*"),
+                .field("field1"),
             json!({
                 "pre_tags": ["<eim>"],
                 "post_tags": ["</eim>"],
-                "fields": {
-                    "field1": {},
-                    "field2": {},
-                    "field.*": {},
-                }
+                "fields": [
+                    { "field3": {} },
+                    { "field2": {} },
+                    { "field1": {} },
+                ]
             }),
         );
 
@@ -144,20 +151,17 @@ mod tests {
                 )
                 .field("field1")
                 .field("field2")
-                .field_highlighter("field.*", Highlighter::new().plain().no_match_size(2u32)),
+                .field_highlighter("field3", Highlighter::new().plain().no_match_size(2u32)),
             json!({
                 "pre_tags": ["<eim>"],
                 "post_tags": ["</eim>"],
                 "matched_fields": ["one", "two", "three"],
                 "type": "fvh",
-                "fields": {
-                    "field1": {},
-                    "field2": {},
-                    "field.*": {
-                        "type": "plain",
-                        "no_match_size": 2,
-                    },
-                }
+                "fields": [
+                    { "field1": {} },
+                    { "field2": {} },
+                    { "field3": { "type": "plain", "no_match_size": 2 } },
+                ]
             }),
         );
     }
