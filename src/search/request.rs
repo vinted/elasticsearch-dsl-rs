@@ -1,13 +1,16 @@
 //! Allows you to execute a search query and get back search hits that match the query.
 use crate::search::*;
 use crate::util::*;
-use std::convert::TryInto;
+use std::{collections::BTreeMap, convert::TryInto};
 
 /// Returns search hits that match the query defined in the request.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html>
 #[derive(Debug, Default, Clone, Serialize, PartialEq)]
 pub struct Search {
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    runtime_mappings: BTreeMap<String, RuntimeMapping>,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _source: Option<SourceFilter>,
 
@@ -43,6 +46,15 @@ impl Search {
     /// Creates a default search instance
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Add runtime mapping to the search request
+    pub fn runtime_mapping<S>(mut self, name: S, mapping: RuntimeMapping) -> Self
+    where
+        S: ToString,
+    {
+        let _ = self.runtime_mappings.insert(name.to_string(), mapping);
+        self
     }
 
     /// Indicates which source fields are returned for matching documents
