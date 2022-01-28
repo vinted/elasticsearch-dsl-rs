@@ -112,7 +112,7 @@ struct RuntimeScript {
 }
 
 impl RuntimeMapping {
-    /// Creates a new instance of [RuntimeField]
+    /// Creates a new instance of [RuntimeMapping]
     pub fn new<T>(r#type: RuntimeDataType, source: T) -> Self
     where
         T: ToString,
@@ -125,7 +125,7 @@ impl RuntimeMapping {
         }
     }
 
-    /// Creates a new instance of [RuntimeDataType::Boolean] [RuntimeField]
+    /// Creates a new instance of [RuntimeDataType::Boolean] [RuntimeMapping]
     pub fn boolean<T>(source: T) -> Self
     where
         T: ToString,
@@ -133,7 +133,7 @@ impl RuntimeMapping {
         Self::new(RuntimeDataType::Boolean, source)
     }
 
-    /// Creates a new instance of [RuntimeDataType::Composite] [RuntimeField]
+    /// Creates a new instance of [RuntimeDataType::Composite] [RuntimeMapping]
     pub fn composite<T>(source: T) -> Self
     where
         T: ToString,
@@ -141,7 +141,7 @@ impl RuntimeMapping {
         Self::new(RuntimeDataType::Composite, source)
     }
 
-    /// Creates a new instance of [RuntimeDataType::Date] [RuntimeField] without format
+    /// Creates a new instance of [RuntimeDataType::Date] [RuntimeMapping] without format
     pub fn date<T>(source: T) -> Self
     where
         T: ToString,
@@ -149,7 +149,7 @@ impl RuntimeMapping {
         Self::new(RuntimeDataType::Date(None), source)
     }
 
-    /// Creates a new instance of [RuntimeDataType::Date] [RuntimeField] with format
+    /// Creates a new instance of [RuntimeDataType::Date] [RuntimeMapping] with format
     pub fn date_format<F, T>(format: F, source: T) -> Self
     where
         F: ToString,
@@ -158,7 +158,7 @@ impl RuntimeMapping {
         Self::new(RuntimeDataType::Date(Some(format.to_string())), source)
     }
 
-    /// Creates a new instance of [RuntimeDataType::Double] [RuntimeField]
+    /// Creates a new instance of [RuntimeDataType::Double] [RuntimeMapping]
     pub fn double<T>(source: T) -> Self
     where
         T: ToString,
@@ -166,7 +166,7 @@ impl RuntimeMapping {
         Self::new(RuntimeDataType::Double, source)
     }
 
-    /// Creates a new instance of [RuntimeDataType::GeoPoint] [RuntimeField]
+    /// Creates a new instance of [RuntimeDataType::GeoPoint] [RuntimeMapping]
     pub fn geo_point<T>(source: T) -> Self
     where
         T: ToString,
@@ -174,7 +174,7 @@ impl RuntimeMapping {
         Self::new(RuntimeDataType::GeoPoint, source)
     }
 
-    /// Creates a new instance of [RuntimeDataType::Ip] [RuntimeField]
+    /// Creates a new instance of [RuntimeDataType::Ip] [RuntimeMapping]
     pub fn ip<T>(source: T) -> Self
     where
         T: ToString,
@@ -182,7 +182,7 @@ impl RuntimeMapping {
         Self::new(RuntimeDataType::Ip, source)
     }
 
-    /// Creates a new instance of [RuntimeDataType::Keyword] [RuntimeField]
+    /// Creates a new instance of [RuntimeDataType::Keyword] [RuntimeMapping]
     pub fn keyword<T>(source: T) -> Self
     where
         T: ToString,
@@ -190,7 +190,7 @@ impl RuntimeMapping {
         Self::new(RuntimeDataType::Keyword, source)
     }
 
-    /// Creates a new instance of [RuntimeDataType::Long] [RuntimeField]
+    /// Creates a new instance of [RuntimeDataType::Long] [RuntimeMapping]
     pub fn long<T>(source: T) -> Self
     where
         T: ToString,
