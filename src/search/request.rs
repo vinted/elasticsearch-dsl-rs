@@ -12,6 +12,12 @@ pub struct Search {
     runtime_mappings: BTreeMap<String, RuntimeMapping>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    indices_boost: Vec<KeyValuePair<String, Boost>>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    min_score: Option<f32>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _source: Option<SourceFilter>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -54,6 +60,35 @@ impl Search {
         S: ToString,
     {
         let _ = self.runtime_mappings.insert(name.to_string(), mapping);
+        self
+    }
+
+    /// Allows to configure different boost level per index when searching
+    /// across more than one indices. This is very handy when hits coming from
+    /// one index matter more than hits coming from another index (think social
+    /// graph where each user has an index).
+    pub fn indices_boost<F, B>(mut self, field: F, boost: B) -> Self
+    where
+        F: ToString,
+        B: TryInto<Boost>,
+    {
+        if let Ok(boost) = boost.try_into() {
+            self.indices_boost
+                .push(KeyValuePair::new(field.to_string(), boost));
+        }
+        self
+    }
+
+    /// Exclude documents which have a `_score` less than the minimum specified
+    /// in `min_score`
+    ///
+    /// Note, most times, this does not make much sense, but is provided for
+    /// advanced use cases
+    pub fn min_score<F>(mut self, min_score: F) -> Self
+    where
+        F: Into<f32>,
+    {
+        self.min_score = Some(min_score.into());
         self
     }
 
