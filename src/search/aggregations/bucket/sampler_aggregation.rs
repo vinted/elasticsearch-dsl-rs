@@ -1,7 +1,6 @@
-use std::convert::TryInto;
-
 use crate::search::*;
 use crate::util::*;
+use std::convert::TryInto;
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 /// A filtering aggregation used to limit any sub aggregations' processing to a sample of the top-scoring documents.
