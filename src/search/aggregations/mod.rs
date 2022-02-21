@@ -54,6 +54,7 @@ aggregation!(
     Min(MinAggregation),
     Sum(SumAggregation),
     Rate(RateAggregation),
+    Sampler(SamplerAggregation)
 );
 
 /// Type alias for a collection of aggregations
