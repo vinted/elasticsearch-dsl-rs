@@ -2,10 +2,10 @@ use crate::search::*;
 use crate::util::*;
 use std::convert::TryInto;
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
 /// A filtering aggregation used to limit any sub aggregations' processing to a sample of the top-scoring documents.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-sampler-aggregation.html>
+#[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct SamplerAggregation {
     sampler: SamplerAggregationInner,
 
