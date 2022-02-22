@@ -18,7 +18,7 @@ pub struct DiversifiedSamplerAggregation {
 /// `execution_hint` field values.
 #[derive(Debug, Clone, Serialize, PartialEq)]
 #[serde(rename_all = "snake_case")]
-pub enum ExecutionHints {
+pub enum ExecutionHint {
     /// Hold field values directly
     Map,
 
@@ -40,7 +40,7 @@ struct DiversifiedSamplerAggregationInner {
     max_docs_per_value: Option<u64>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    execution_hint: Option<ExecutionHints>,
+    execution_hint: Option<ExecutionHint>,
 }
 
 impl Aggregation {
@@ -83,7 +83,7 @@ impl DiversifiedSamplerAggregation {
     /// - hold field values directly (`map`)
     /// - hold ordinals of the field as determined by the Lucene index (`global_ordinals`)
     /// - hold hashes of the field values - with potential for hash collisions (`bytes_hash`)
-    pub fn execution_hint(mut self, execution_hint: ExecutionHints) -> Self {
+    pub fn execution_hint(mut self, execution_hint: ExecutionHint) -> Self {
         self.diversified_sampler.execution_hint = Some(execution_hint);
 
         self
@@ -112,7 +112,7 @@ mod tests {
             Aggregation::diversified_sampler("catalog_id")
                 .shard_size(50)
                 .max_docs_per_value(2)
-                .execution_hint(ExecutionHints::GlobalOrdinals)
+                .execution_hint(ExecutionHint::GlobalOrdinals)
                 .aggregate("catalog", Aggregation::terms("catalog_id"))
                 .aggregate("brand", Aggregation::terms("brand_id")),
             json!({
