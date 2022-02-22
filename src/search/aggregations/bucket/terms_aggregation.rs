@@ -28,6 +28,9 @@ struct TermsAggregationInner {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     min_doc_count: Option<u16>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    missing: Option<Term>,
 }
 
 /// Terms Aggregation sorting struct
@@ -65,6 +68,7 @@ impl Aggregation {
                 show_term_doc_count_error: None,
                 order: vec![],
                 min_doc_count: None,
+                missing: None,
             },
             aggs: Aggregations::new(),
         }
@@ -120,6 +124,13 @@ impl TermsAggregation {
         self
     }
 
+    /// The missing parameter defines how documents that are missing a value should be treated.
+    /// By default they will be ignored but it is also possible to treat them as if they had a value.
+    pub fn missing(mut self, missing: impl Into<Term>) -> Self {
+        self.terms.missing = Some(missing.into());
+        self
+    }
+
     add_aggregate!();
 }
 
@@ -139,6 +150,7 @@ mod tests {
                 .size(5u16)
                 .min_doc_count(2u16)
                 .show_term_doc_count_error(false)
+                .missing("N/A")
                 .order(TermsAggregationOrder::new("test_order", SortOrder::Asc)),
             json!({
                 "terms": {
@@ -146,6 +158,7 @@ mod tests {
                     "size": 5,
                     "min_doc_count": 2,
                     "show_term_doc_count_error": false,
+                    "missing": "N/A",
                     "order": [
                         { "test_order": "asc" }
                     ]
@@ -157,11 +170,16 @@ mod tests {
             Aggregation::terms("test_field")
                 .size(0u16)
                 .order(("test_order", SortOrder::Asc))
-                .aggregate("test_sub_agg", Aggregation::terms("test_field2").size(3u16)),
+                .missing(123)
+                .aggregate(
+                    "test_sub_agg",
+                    Aggregation::terms("test_field2").size(3u16).missing(false),
+                ),
             json!({
                 "terms": {
                     "field": "test_field",
                     "size": 0,
+                    "missing": 123,
                     "order": [
                         { "test_order": "asc" }
                     ]
@@ -170,7 +188,8 @@ mod tests {
                     "test_sub_agg": {
                         "terms": {
                             "field": "test_field2",
-                            "size": 3
+                            "size": 3,
+                            "missing": false
                         }
                     }
                 }
