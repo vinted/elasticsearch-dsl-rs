@@ -17,6 +17,7 @@ pub struct DiversifiedSamplerAggregation {
 
 /// `execution_hint` field values.
 #[derive(Debug, Clone, Serialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
 pub enum ExecutionHints {
     /// Hold field values directly
     Map,
@@ -110,12 +111,16 @@ mod tests {
         assert_serialize(
             Aggregation::diversified_sampler("catalog_id")
                 .shard_size(50)
+                .max_docs_per_value(2)
+                .execution_hint(ExecutionHints::GlobalOrdinals)
                 .aggregate("catalog", Aggregation::terms("catalog_id"))
                 .aggregate("brand", Aggregation::terms("brand_id")),
             json!({
                 "diversified_sampler": {
                     "field": "catalog_id",
-                    "shard_size": 50
+                    "shard_size": 50,
+                    "max_docs_per_value": 2,
+                    "execution_hint": "global_ordinals"
                 },
                 "aggs": {
                     "catalog": {
