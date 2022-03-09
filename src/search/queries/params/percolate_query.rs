@@ -11,24 +11,6 @@ pub enum PercolateSource {
     Documents(Vec<serde_json::Value>),
 }
 
-impl From<serde_json::Value> for PercolateSource {
-    fn from(document: serde_json::Value) -> Self {
-        Self::Document(document)
-    }
-}
-
-impl From<Vec<serde_json::Value>> for PercolateSource {
-    fn from(documents: Vec<serde_json::Value>) -> Self {
-        Self::Documents(documents)
-    }
-}
-
-impl<const N: usize> From<[serde_json::Value; N]> for PercolateSource {
-    fn from(value: [serde_json::Value; N]) -> Self {
-        Self::Documents(value.to_vec())
-    }
-}
-
 impl ShouldSkip for PercolateSource {
     fn should_skip(&self) -> bool {
         match self {

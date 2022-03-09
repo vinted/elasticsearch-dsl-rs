@@ -1,5 +1,6 @@
 use crate::search::*;
 use crate::util::*;
+use serde::Serialize;
 
 /// The `percolate` query can be used to match queries stored in an index. The percolate query
 /// itself contains the document that will be used as query to match with the stored queries.
@@ -46,12 +47,19 @@ impl Query {
     pub fn percolate<S, T>(field: S, source: T) -> PercolateQuery
     where
         S: ToString,
-        T: Into<PercolateSource>,
+        T: Serialize,
     {
+        let source = serde_json::to_value(source).unwrap_or_default();
+        let source = if let Some(array) = source.as_array() {
+            PercolateSource::Documents(array.to_vec())
+        } else {
+            PercolateSource::Document(source)
+        };
+
         PercolateQuery {
             inner: Inner {
                 field: field.to_string(),
-                source: source.into(),
+                source,
                 name: None,
             },
         }
@@ -82,6 +90,52 @@ mod tests {
 
     #[test]
     fn serialization() {
+        #[derive(Serialize)]
+        struct Source {
+            id: i32,
+            message: &'static str,
+        }
+
+        assert_serialize(
+            Query::percolate(
+                "field_name",
+                Source {
+                    id: 1,
+                    message: "search text",
+                },
+            ),
+            json!({
+                "percolate": {
+                    "field": "field_name",
+                    "document": {
+                        "id": 1,
+                        "message": "search text",
+                    }
+                }
+            }),
+        );
+
+        assert_serialize(
+            Query::percolate(
+                "field_name",
+                [Source {
+                    id: 1,
+                    message: "search text",
+                }],
+            ),
+            json!({
+                "percolate": {
+                    "field": "field_name",
+                    "documents": [
+                        {
+                            "id": 1,
+                            "message": "search text",
+                        }
+                    ]
+                }
+            }),
+        );
+
         assert_serialize(
             Query::percolate("field_name", json!({"message": "lol"})),
             json!({
