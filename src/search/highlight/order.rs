@@ -6,7 +6,7 @@
 /// [How highlighters work internally](https://www.elastic.co/guide/en/elasticsearch/reference/current/highlighting.html#how-es-highlighters-work-internally)
 /// for more details how different highlighters find the best fragments.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
-#[serde(untagged, rename_all = "lowercase")]
+#[serde(rename_all = "lowercase")]
 pub enum Order {
     /// Sorts highlighted fragments by score.
     Score,
