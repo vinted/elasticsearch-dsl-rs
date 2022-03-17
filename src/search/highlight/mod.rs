@@ -164,5 +164,31 @@ mod tests {
                 ]
             }),
         );
+
+        assert_serialize(
+            Highlight::new()
+                .highlighter(
+                    Highlighter::new()
+                        .tags((["<eim>"], ["</eim>"]))
+                        .fvh()
+                        .matched_fields(["one", "two", "three"])
+                        .order(Order::Score),
+                )
+                .field("field1")
+                .field("field2")
+                .field_highlighter("field3", Highlighter::new().plain().no_match_size(2u32)),
+            json!({
+                "pre_tags": ["<eim>"],
+                "post_tags": ["</eim>"],
+                "matched_fields": ["one", "two", "three"],
+                "order": "score",
+                "type": "fvh",
+                "fields": [
+                    { "field1": {} },
+                    { "field2": {} },
+                    { "field3": { "type": "plain", "no_match_size": 2 } },
+                ]
+            }),
+        );
     }
 }
