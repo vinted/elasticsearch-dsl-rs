@@ -28,7 +28,7 @@ macro_rules! aggregation {
         /// A container enum for supported Elasticsearch query types
         #[derive(Debug, Clone, PartialEq, Serialize)]
         #[serde(untagged)]
-        #[allow(missing_docs)]
+        #[allow(missing_docs, clippy::large_enum_variant)]
         pub enum Aggregation {
             $(
                 $variant($query),
