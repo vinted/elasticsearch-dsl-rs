@@ -12,11 +12,6 @@ pub struct FilterAggregation {
     aggs: Aggregations,
 }
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
-struct FilterAggregationInner {
-    query: Query,
-}
-
 impl Aggregation {
     /// Creates an instance of [`FilterAggregation`]
     ///
