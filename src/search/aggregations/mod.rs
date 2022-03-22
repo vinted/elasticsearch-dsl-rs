@@ -55,6 +55,7 @@ aggregation!(
     Sum(SumAggregation),
     Rate(RateAggregation),
     Sampler(SamplerAggregation),
+    Filter(FilterAggregation),
     DiversifiedSampler(DiversifiedSamplerAggregation)
 );
 
