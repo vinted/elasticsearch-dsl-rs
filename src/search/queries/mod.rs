@@ -88,13 +88,19 @@ macro_rules! query {
 
             impl PartialEq<$query> for Query {
                 fn eq(&self, other: &$query) -> bool {
-                    self.eq(&Query::from(other.clone()))
+                    match self {
+                        Query::$variant(query) => query.eq(other),
+                        _ => false,
+                    }
                 }
             }
 
             impl PartialEq<Query> for $query {
                 fn eq(&self, other: &Query) -> bool {
-                    Query::from(self.clone()).eq(other)
+                    match other {
+                        Query::$variant(query) => self.eq(query),
+                        _ => false,
+                    }
                 }
             }
 
