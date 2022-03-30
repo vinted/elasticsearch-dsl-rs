@@ -86,6 +86,18 @@ macro_rules! query {
                 }
             }
 
+            impl PartialEq<$query> for Query {
+                fn eq(&self, other: &$query) -> bool {
+                    self.eq(&Query::from(other.clone()))
+                }
+            }
+
+            impl PartialEq<Query> for $query {
+                fn eq(&self, other: &Query) -> bool {
+                    Query::from(self.clone()).eq(other)
+                }
+            }
+
             impl From<$query> for Option<Query> {
                 fn from(q: $query) -> Self {
                     if q.should_skip() {
@@ -246,5 +258,17 @@ mod tests {
         queries.extend(query);
 
         assert!(queries.0.is_empty());
+    }
+
+    #[test]
+    fn partial_eq() {
+        assert_eq!(
+            Query::term("field", "value"),
+            Query::from(Query::term("field", "value"))
+        );
+        assert_eq!(
+            Query::from(Query::term("field", "value")),
+            Query::term("field", "value"),
+        );
     }
 }
