@@ -26,13 +26,23 @@ pub use self::pipeline::*;
 macro_rules! aggregation {
     ($($variant:ident($query:ty)),+ $(,)?) => {
         /// A container enum for supported Elasticsearch query types
-        #[derive(Debug, Clone, PartialEq, Serialize)]
+        #[derive(Clone, PartialEq, Serialize)]
         #[serde(untagged)]
         #[allow(missing_docs, clippy::large_enum_variant)]
         pub enum Aggregation {
             $(
                 $variant($query),
             )*
+        }
+
+        impl std::fmt::Debug for Aggregation {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                match self {
+                    $(
+                        Self::$variant(q) => q.fmt(f),
+                    )+
+                }
+            }
         }
 
         $(
