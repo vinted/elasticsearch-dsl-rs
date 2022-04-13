@@ -2,8 +2,14 @@ use super::*;
 use crate::util::*;
 
 /// A collection of terms
-#[derive(Debug, Clone, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, PartialEq, PartialOrd, Serialize)]
 pub struct Terms(std::collections::BTreeSet<Term>);
+
+impl std::fmt::Debug for Terms {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 
 impl<T> From<T> for Terms
 where

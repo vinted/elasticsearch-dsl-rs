@@ -2,12 +2,18 @@
 use std::{f32, fmt};
 
 /// A container type for boost values
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Copy, PartialEq, PartialOrd, Serialize)]
 pub struct NegativeBoost(f32);
+
+impl fmt::Debug for NegativeBoost {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        self.0.fmt(f)
+    }
+}
 
 impl fmt::Display for NegativeBoost {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", self.0)
+        self.0.fmt(f)
     }
 }
 

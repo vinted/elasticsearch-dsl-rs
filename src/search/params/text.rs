@@ -2,8 +2,14 @@ use crate::util::*;
 use std::borrow::Cow;
 
 /// Search text
-#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct Text(Option<String>);
+
+impl std::fmt::Debug for Text {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 
 impl ShouldSkip for Text {
     fn should_skip(&self) -> bool {

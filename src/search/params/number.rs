@@ -1,10 +1,10 @@
 use std::cmp::Ordering;
 
 /// Numeric enum
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Number(N);
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
+#[derive(Clone, Copy, Serialize, Deserialize)]
 #[serde(untagged)]
 enum N {
     /// Non-negative integers
@@ -18,6 +18,17 @@ enum N {
 
     /// 64-bit floats
     F64(f64),
+}
+
+impl std::fmt::Debug for Number {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self.0 {
+            N::Pos(value) => value.fmt(f),
+            N::Neg(value) => value.fmt(f),
+            N::F32(value) => value.fmt(f),
+            N::F64(value) => value.fmt(f),
+        }
+    }
 }
 
 impl std::fmt::Display for Number {

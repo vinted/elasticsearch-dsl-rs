@@ -5,8 +5,18 @@ use std::{cmp::Ordering, convert::TryFrom, fmt};
 const ERROR_MSG: &str = "Boost value cannot be negative";
 
 /// A container type for boost values
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Copy, PartialEq, PartialOrd, Serialize)]
 pub struct Boost(Inner);
+
+impl fmt::Debug for Boost {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.0 {
+            Inner::U64(value) => value.fmt(f),
+            Inner::F32(value) => value.fmt(f),
+            Inner::F64(value) => value.fmt(f),
+        }
+    }
+}
 
 impl fmt::Display for Boost {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
