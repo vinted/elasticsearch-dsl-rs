@@ -47,7 +47,7 @@ use crate::util::*;
 macro_rules! query {
     ($($variant:ident($query:ty)),+ $(,)?) => {
         /// A container enum for supported Elasticsearch query types
-        #[derive(Debug, Clone, PartialEq, Serialize)]
+        #[derive(Clone, PartialEq, Serialize)]
         #[serde(untagged)]
         #[allow(missing_docs)]
         pub enum Query {
@@ -73,7 +73,17 @@ macro_rules! query {
             fn should_skip(&self) -> bool {
                 match self {
                     $(
-                        Query::$variant(q) => q.should_skip(),
+                        Self::$variant(q) => q.should_skip(),
+                    )+
+                }
+            }
+        }
+
+        impl std::fmt::Debug for Query {
+            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+                match self {
+                    $(
+                        Self::$variant(q) => q.fmt(f),
                     )+
                 }
             }
@@ -89,7 +99,7 @@ macro_rules! query {
             impl PartialEq<$query> for Query {
                 fn eq(&self, other: &$query) -> bool {
                     match self {
-                        Query::$variant(query) => query.eq(other),
+                        Self::$variant(query) => query.eq(other),
                         _ => false,
                     }
                 }
@@ -176,8 +186,14 @@ query!(
 );
 
 /// A collection of queries
-#[derive(Debug, Default, Clone, PartialEq, Serialize)]
+#[derive(Default, Clone, PartialEq, Serialize)]
 pub struct Queries(Vec<Query>);
+
+impl std::fmt::Debug for Queries {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 
 impl<T> From<T> for Queries
 where
