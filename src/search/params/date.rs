@@ -5,7 +5,7 @@ use std::time::SystemTime;
 pub type ChronoTime = DateTime<Utc>;
 
 /// Time variants to serialize
-#[derive(Debug, Clone, Copy, Serialize)]
+#[derive(Clone, Copy, Serialize)]
 #[serde(untagged)]
 pub enum Date {
     /// System time
@@ -13,6 +13,15 @@ pub enum Date {
 
     /// Chrono time
     Chrono(ChronoTime),
+}
+
+impl std::fmt::Debug for Date {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::System(value) => value.fmt(f),
+            Self::Chrono(value) => value.fmt(f),
+        }
+    }
 }
 
 impl From<SystemTime> for Date {

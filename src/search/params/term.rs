@@ -4,10 +4,10 @@ use chrono::{DateTime, Utc};
 use std::time::SystemTime;
 
 /// Leaf term value
-#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Default, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub struct Term(Option<Inner>);
 
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[serde(untagged)]
 enum Inner {
     /// Boolean value
@@ -21,6 +21,26 @@ enum Inner {
 
     /// Date
     Date(Date),
+}
+
+impl std::fmt::Debug for Term {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match &self.0 {
+            Some(value) => value.fmt(f),
+            None => "None".fmt(f),
+        }
+    }
+}
+
+impl std::fmt::Debug for Inner {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Bool(value) => value.fmt(f),
+            Self::String(value) => value.fmt(f),
+            Self::Number(value) => value.fmt(f),
+            Self::Date(value) => value.fmt(f),
+        }
+    }
 }
 
 impl From<bool> for Term {
