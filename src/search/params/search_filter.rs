@@ -44,52 +44,73 @@ impl<'a> From<&'a str> for SourceFilter {
     }
 }
 
-impl From<Vec<String>> for SourceFilter {
-    fn from(includes: Vec<String>) -> Self {
-        SourceFilter::Includes(includes)
-    }
-}
-
-impl<'a> From<Vec<&'a str>> for SourceFilter {
-    fn from(includes: Vec<&'a str>) -> Self {
+impl<T> From<Vec<T>> for SourceFilter
+where
+    T: ToString,
+{
+    fn from(includes: Vec<T>) -> Self {
         SourceFilter::Includes(includes.iter().map(ToString::to_string).collect())
     }
 }
 
-impl<const N: usize> From<[String; N]> for SourceFilter {
-    fn from(includes: [String; N]) -> Self {
-        SourceFilter::Includes(includes.to_vec())
-    }
-}
-
-impl<'a, const N: usize> From<[&'a str; N]> for SourceFilter {
-    fn from(includes: [&'a str; N]) -> Self {
+impl<const N: usize, T> From<[T; N]> for SourceFilter
+where
+    T: ToString,
+{
+    fn from(includes: [T; N]) -> Self {
         SourceFilter::Includes(includes.iter().map(ToString::to_string).collect())
     }
 }
 
-impl From<(Vec<String>, Vec<String>)> for SourceFilter {
-    fn from(includes_excludes: (Vec<String>, Vec<String>)) -> Self {
+impl<I, E> From<(I, E)> for SourceFilter
+where
+    I: IntoIterator,
+    I::Item: ToString,
+    E: IntoIterator,
+    E::Item: ToString,
+{
+    fn from((includes, excludes): (I, E)) -> Self {
         SourceFilter::IncludesExcludes {
-            includes: includes_excludes.0,
-            excludes: includes_excludes.1,
+            includes: includes.into_iter().map(|x| x.to_string()).collect(),
+            excludes: excludes.into_iter().map(|x| x.to_string()).collect(),
         }
     }
 }
 
-impl<'a> From<(Vec<&'a str>, Vec<&'a str>)> for SourceFilter {
-    fn from(includes_excludes: (Vec<&'a str>, Vec<&'a str>)) -> Self {
-        SourceFilter::IncludesExcludes {
-            includes: includes_excludes
-                .0
-                .iter()
-                .map(ToString::to_string)
-                .collect(),
-            excludes: includes_excludes
-                .1
-                .iter()
-                .map(ToString::to_string)
-                .collect(),
-        }
+#[cfg(test)]
+mod tests {
+    use crate::{util::assert_serialize, Search};
+
+    #[test]
+    fn adds_boolean() {
+        assert_serialize(
+            Search::new().source(false),
+            json!({
+                "_source": false
+            }),
+        );
+    }
+
+    #[test]
+    fn adds_includes() {
+        assert_serialize(
+            Search::new().source(["abc"]),
+            json!({
+                "_source": ["abc"]
+            }),
+        );
+    }
+
+    #[test]
+    fn adds_includes_excludes() {
+        assert_serialize(
+            Search::new().source((["abc"], ["def"])),
+            json!({
+                "_source": {
+                    "includes": ["abc"],
+                    "excludes": ["def"]
+                }
+            }),
+        );
     }
 }
