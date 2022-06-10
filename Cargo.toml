@@ -1,6 +1,6 @@
 [package]
 name = "elasticsearch-dsl"
-version = "0.3.8"
+version = "0.3.9"
 authors = ["Boost <boost@vinted.com>"]
 edition = "2018"
 description = "Strongly typed Elasticsearch DSL"
@@ -12,10 +12,7 @@ license = "MIT OR Apache-2.0"
 members = ["examples/*"]
 
 [dependencies]
-chrono = { version = "0.4", default-features = false, features = [
-    "std",
-    "serde",
-] }
+chrono = { version = "0.4", default-features = false, features = ["std", "serde"] }
 serde = { version = "1", default-features = false, features = ["derive"] }
 serde_json = { version = "1" }
 
