@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 /// Control how the `_source` field is returned with every hit.
 ///
 /// By default operations return the contents of the `_source` field
@@ -26,11 +28,15 @@ pub enum SourceFilter {
     },
 }
 
+// -- Boolean
+
 impl From<bool> for SourceFilter {
     fn from(b: bool) -> Self {
         SourceFilter::Enable(b)
     }
 }
+
+// -- Include single field only
 
 impl From<String> for SourceFilter {
     fn from(include: String) -> Self {
@@ -44,35 +50,99 @@ impl<'a> From<&'a str> for SourceFilter {
     }
 }
 
-impl<T> From<Vec<T>> for SourceFilter
-where
-    T: ToString,
-{
-    fn from(includes: Vec<T>) -> Self {
+impl From<Cow<'_, str>> for SourceFilter {
+    fn from(include: Cow<'_, str>) -> Self {
+        SourceFilter::Include(include.to_string())
+    }
+}
+
+// -- Include multiple fields
+
+impl From<Vec<String>> for SourceFilter {
+    fn from(includes: Vec<String>) -> Self {
+        SourceFilter::Includes(includes)
+    }
+}
+
+impl From<Vec<&str>> for SourceFilter {
+    fn from(includes: Vec<&str>) -> Self {
         SourceFilter::Includes(includes.iter().map(ToString::to_string).collect())
     }
 }
 
-impl<const N: usize, T> From<[T; N]> for SourceFilter
-where
-    T: ToString,
-{
-    fn from(includes: [T; N]) -> Self {
+impl From<Vec<Cow<'_, str>>> for SourceFilter {
+    fn from(includes: Vec<Cow<'_, str>>) -> Self {
         SourceFilter::Includes(includes.iter().map(ToString::to_string).collect())
     }
 }
 
-impl<I, E> From<(I, E)> for SourceFilter
-where
-    I: IntoIterator,
-    I::Item: ToString,
-    E: IntoIterator,
-    E::Item: ToString,
-{
-    fn from((includes, excludes): (I, E)) -> Self {
+impl<const N: usize> From<[String; N]> for SourceFilter {
+    fn from(includes: [String; N]) -> Self {
+        SourceFilter::Includes(includes.to_vec())
+    }
+}
+
+impl<const N: usize> From<[&str; N]> for SourceFilter {
+    fn from(includes: [&str; N]) -> Self {
+        SourceFilter::Includes(includes.iter().map(ToString::to_string).collect())
+    }
+}
+
+impl<const N: usize> From<[Cow<'_, str>; N]> for SourceFilter {
+    fn from(includes: [Cow<'_, str>; N]) -> Self {
+        SourceFilter::Includes(includes.iter().map(ToString::to_string).collect())
+    }
+}
+
+// -- Include exclude fields
+
+impl From<(Vec<String>, Vec<String>)> for SourceFilter {
+    fn from((includes, excludes): (Vec<String>, Vec<String>)) -> Self {
+        SourceFilter::IncludesExcludes { includes, excludes }
+    }
+}
+
+impl From<(Vec<&str>, Vec<&str>)> for SourceFilter {
+    fn from((includes, excludes): (Vec<&str>, Vec<&str>)) -> Self {
         SourceFilter::IncludesExcludes {
-            includes: includes.into_iter().map(|x| x.to_string()).collect(),
-            excludes: excludes.into_iter().map(|x| x.to_string()).collect(),
+            includes: includes.iter().map(ToString::to_string).collect(),
+            excludes: excludes.iter().map(ToString::to_string).collect(),
+        }
+    }
+}
+
+impl From<(Vec<Cow<'_, str>>, Vec<Cow<'_, str>>)> for SourceFilter {
+    fn from((includes, excludes): (Vec<Cow<'_, str>>, Vec<Cow<'_, str>>)) -> Self {
+        SourceFilter::IncludesExcludes {
+            includes: includes.iter().map(ToString::to_string).collect(),
+            excludes: excludes.iter().map(ToString::to_string).collect(),
+        }
+    }
+}
+
+impl<const M: usize, const N: usize> From<([String; M], [String; N])> for SourceFilter {
+    fn from((includes, excludes): ([String; M], [String; N])) -> Self {
+        SourceFilter::IncludesExcludes {
+            includes: includes.to_vec(),
+            excludes: excludes.to_vec(),
+        }
+    }
+}
+
+impl<const M: usize, const N: usize> From<([&str; M], [&str; N])> for SourceFilter {
+    fn from((includes, excludes): ([&str; M], [&str; N])) -> Self {
+        SourceFilter::IncludesExcludes {
+            includes: includes.iter().map(ToString::to_string).collect(),
+            excludes: excludes.iter().map(ToString::to_string).collect(),
+        }
+    }
+}
+
+impl<const M: usize, const N: usize> From<([Cow<'_, str>; M], [Cow<'_, str>; N])> for SourceFilter {
+    fn from((includes, excludes): ([Cow<'_, str>; M], [Cow<'_, str>; N])) -> Self {
+        SourceFilter::IncludesExcludes {
+            includes: includes.iter().map(ToString::to_string).collect(),
+            excludes: excludes.iter().map(ToString::to_string).collect(),
         }
     }
 }
