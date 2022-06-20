@@ -150,7 +150,7 @@ impl Function {
         Decay::new(function, field, origin, scale)
     }
 
-    /// Creates an instance of [Script](Script)
+    /// Creates an instance of script
     ///
     /// - `source` - script source
     pub fn script(source: impl Into<String>) -> Script {
@@ -504,6 +504,7 @@ pub enum DecayFunction {
 pub struct Script {
     script_score: ScriptInnerWrapper,
 }
+
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct ScriptInnerWrapper {
     script: ScriptInner,
@@ -518,7 +519,7 @@ struct ScriptInner {
 }
 
 impl Script {
-    /// Creates an instance of [Script](Script)
+    /// Creates an instance of [Script]
     ///
     /// - `source` - script source
     pub fn new(source: impl Into<String>) -> Self {
