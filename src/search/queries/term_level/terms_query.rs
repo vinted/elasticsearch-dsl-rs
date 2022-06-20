@@ -50,7 +50,7 @@ impl Query {
     /// 65,536 terms. You can change this limit using the
     /// [`index.max_terms_count setting`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-terms-count).<br>
     /// > To use the field values of an existing document as search terms,
-    /// use the [terms lookup](crate::TermsLookup) parameters.
+    /// use the terms lookup parameters.
     pub fn terms<S, I>(field: S, values: I) -> TermsQuery
     where
         S: Into<String>,
