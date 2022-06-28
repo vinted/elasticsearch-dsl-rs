@@ -1,33 +1,10 @@
 use crate::util::*;
-use serde::de::DeserializeOwned;
-use serde_json::{value::RawValue, Value};
+use serde_json::Value;
 use std::collections::HashMap;
-
-/// Boxed raw value
-#[derive(Clone, Serialize, Deserialize)]
-pub struct BoxedRawValue(Box<RawValue>);
-
-impl std::fmt::Debug for BoxedRawValue {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.0.fmt(f)
-    }
-}
-
-impl std::fmt::Display for BoxedRawValue {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.0.fmt(f)
-    }
-}
-
-impl PartialEq for BoxedRawValue {
-    fn eq(&self, other: &Self) -> bool {
-        self.0.get() == other.0.get()
-    }
-}
 
 /// Search response
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct SearchResponse<H = Value> {
+pub struct SearchResponse<H = Value, IH = Value> {
     /// The time that it took Elasticsearch to process the query
     pub took: u32,
 
@@ -39,7 +16,7 @@ pub struct SearchResponse<H = Value> {
     pub shards: Shards,
 
     /// Search hits
-    pub hits: Hits<H>,
+    pub hits: Hits<H, IH>,
 
     /// Search aggregations
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -68,7 +45,7 @@ pub struct Shards {
 
 /// Matched hits
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Hits<H> {
+pub struct Hits<H, IH> {
     /// Total number of matched documents
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     pub total: Option<Total>,
@@ -80,12 +57,12 @@ pub struct Hits<H> {
 
     /// Matched hits
     #[serde(default = "Vec::new")]
-    pub hits: Vec<Hit<H>>,
+    pub hits: Vec<Hit<H, IH>>,
 }
 
 /// Represents a single matched document
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Hit<H> {
+pub struct Hit<H, IH> {
     /// Document index
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_index")]
     pub index: Option<String>,
@@ -108,8 +85,8 @@ pub struct Hit<H> {
     pub highlight: HashMap<String, Vec<String>>,
 
     /// Inner hits
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
-    pub inner_hits: HashMap<String, BoxedRawValue>,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    pub inner_hits: Option<InnerHitsResponse<IH>>,
 
     /// Matched queries
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
@@ -124,28 +101,23 @@ pub struct Hit<H> {
     pub fields: std::collections::BTreeMap<String, Value>,
 }
 
-impl<H> Hit<H> {
-    /// Gets inner hit by the key
-    pub fn inner_hit<IH>(&self, key: &str) -> Option<InnerHitsResult<IH>>
-    where
-        IH: DeserializeOwned,
-    {
-        let value = self.inner_hits.get(key)?;
-
-        serde_json::from_str(value.0.get()).ok()
-    }
+/// Represents inner hits
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct InnerHitsResponse<IH> {
+    /// Inner hits items
+    pub items: InnerHitsItems<IH>,
 }
 
 /// Represents inner hits
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct InnerHitsResult<H> {
+pub struct InnerHitsItems<IH> {
     /// The actual inner hits
-    pub hits: HitsMetadata<H>,
+    pub hits: InnerHitsItemsHits<IH>,
 }
 
 /// Matched inner hits
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct HitsMetadata<H> {
+pub struct InnerHitsItemsHits<IH> {
     /// Total number of matched documents
     #[serde(default)]
     pub total: Option<Total>,
@@ -157,12 +129,12 @@ pub struct HitsMetadata<H> {
 
     /// Matched hits
     #[serde(default = "Vec::new")]
-    pub hits: Vec<InnerHit<H>>,
+    pub hits: Vec<InnerHit<IH>>,
 }
 
 /// Represents a single matched inner hit document
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct InnerHit<H> {
+pub struct InnerHit<IH> {
     /// Document index
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_index")]
     pub index: Option<String>,
@@ -182,7 +154,7 @@ pub struct InnerHit<H> {
 
     /// Document source
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_source")]
-    pub source: Option<H>,
+    pub source: Option<IH>,
 
     /// Matched queries
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
@@ -293,7 +265,7 @@ mod tests {
                     score: Some(1.0),
                     source: None,
                     highlight: Default::default(),
-                    inner_hits: Default::default(),
+                    inner_hits: None,
                     matched_queries: Default::default(),
                     sort: Default::default(),
                     fields: Default::default(),
@@ -303,85 +275,5 @@ mod tests {
         };
 
         assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn reads_inner_hit_successfully() {
-        let json = json!({
-            "took": 6,
-            "timed_out": false,
-            "_shards": {
-                "total": 10,
-                "successful": 5,
-                "skipped": 3,
-                "failed": 2
-            },
-            "hits": {
-                "total": {
-                    "value": 1,
-                    "relation": "eq"
-                },
-                "max_score": 1.0,
-                "hits": [
-                    {
-                        "_index": "test",
-                        "_id": "1",
-                        "_score": 1.0,
-                        "inner_hits": {
-                            "comments": {
-                                "hits": {
-                                    "total": {
-                                        "value": 1,
-                                        "relation": "eq"
-                                    },
-                                    "max_score": 1.0,
-                                    "hits": [
-                                        {
-                                            "_index": "test",
-                                            "_id": "1",
-                                            "_nested": {
-                                                "field": "comments",
-                                                "offset": 1
-                                            },
-                                            "_score": 1.0,
-                                            "_source": {
-                                                "author": "nik9000",
-                                                "number": 2
-                                            }
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                ]
-            }
-        });
-
-        let actual: SearchResponse = serde_json::from_value(json).unwrap();
-
-        let inner_hits = actual.hits.hits[0].inner_hit("comments").unwrap();
-
-        let expected = HitsMetadata {
-            total: Some(Total {
-                value: 1,
-                relation: Relation::Equal,
-            }),
-            max_score: Some(1.0),
-            hits: vec![InnerHit {
-                index: Some("test".to_string()),
-                id: "1".to_string(),
-                score: Some(1.0),
-                nested: Some(Nested {
-                    field: "comments".to_string(),
-                    offset: 1,
-                }),
-                source: Some(json!({ "author": "nik9000", "number": 2 })),
-                matched_queries: Default::default(),
-                sort: Default::default(),
-            }],
-        };
-
-        assert_eq!(inner_hits.hits, expected);
     }
 }
