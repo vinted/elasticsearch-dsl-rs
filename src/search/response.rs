@@ -1,10 +1,54 @@
 use crate::util::*;
-use serde_json::Value;
+use serde::de::DeserializeOwned;
+use serde_json::{value::RawValue, Value};
 use std::collections::HashMap;
+
+/// A source structure with delayed serde
+#[derive(Clone, Default, Serialize, Deserialize)]
+pub struct Source(Box<RawValue>);
+
+impl std::fmt::Debug for Source {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl std::fmt::Display for Source {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl PartialEq for Source {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.get() == other.0.get()
+    }
+}
+
+impl ShouldSkip for Source {
+    fn should_skip(&self) -> bool {
+        self.eq(&Source::default())
+    }
+}
+
+impl Source {
+    /// Parses document source into a concrete type
+    pub fn parse<T>(&self) -> Result<T, serde_json::Error>
+    where
+        T: DeserializeOwned,
+    {
+        serde_json::from_str(self.0.get())
+    }
+
+    /// Creates source from a string
+    pub fn from_string(value: String) -> Result<Self, serde_json::Error> {
+        RawValue::from_string(value).map(Self)
+    }
+}
 
 /// Search response
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct SearchResponse<H = Value, IH = Value> {
+pub struct SearchResponse {
     /// The time that it took Elasticsearch to process the query
     pub took: u32,
 
@@ -16,7 +60,7 @@ pub struct SearchResponse<H = Value, IH = Value> {
     pub shards: Shards,
 
     /// Search hits
-    pub hits: Hits<H, IH>,
+    pub hits: Hits,
 
     /// Search aggregations
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -45,7 +89,7 @@ pub struct Shards {
 
 /// Matched hits
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Hits<H, IH> {
+pub struct Hits {
     /// Total number of matched documents
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     pub total: Option<Total>,
@@ -57,12 +101,12 @@ pub struct Hits<H, IH> {
 
     /// Matched hits
     #[serde(default = "Vec::new")]
-    pub hits: Vec<Hit<H, IH>>,
+    pub hits: Vec<Hit>,
 }
 
 /// Represents a single matched document
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Hit<H, IH> {
+pub struct Hit {
     /// Document index
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_index")]
     pub index: Option<String>,
@@ -77,16 +121,20 @@ pub struct Hit<H, IH> {
     pub score: Option<f32>,
 
     /// Document source
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_source")]
-    pub source: Option<H>,
+    #[serde(
+        skip_serializing_if = "ShouldSkip::should_skip",
+        rename = "_source",
+        default
+    )]
+    pub source: Source,
 
     /// Highlighted matches
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
     pub highlight: HashMap<String, Vec<String>>,
 
     /// Inner hits
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    pub inner_hits: Option<InnerHitsResponse<IH>>,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
+    pub inner_hits: HashMap<String, InnerHitsItemsHits>,
 
     /// Matched queries
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
@@ -101,23 +149,26 @@ pub struct Hit<H, IH> {
     pub fields: std::collections::BTreeMap<String, Value>,
 }
 
-/// Represents inner hits
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct InnerHitsResponse<IH> {
-    /// Inner hits items
-    pub items: InnerHitsItems<IH>,
+impl Hit {
+    /// Parses document source into a concrete type
+    pub fn source<T>(&self) -> Result<T, serde_json::Error>
+    where
+        T: DeserializeOwned,
+    {
+        self.source.parse()
+    }
 }
 
 /// Represents inner hits
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct InnerHitsItems<IH> {
+pub struct InnerHitsItems {
     /// The actual inner hits
-    pub hits: InnerHitsItemsHits<IH>,
+    pub hits: InnerHitsItemsHits,
 }
 
 /// Matched inner hits
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct InnerHitsItemsHits<IH> {
+pub struct InnerHitsItemsHits {
     /// Total number of matched documents
     #[serde(default)]
     pub total: Option<Total>,
@@ -129,12 +180,12 @@ pub struct InnerHitsItemsHits<IH> {
 
     /// Matched hits
     #[serde(default = "Vec::new")]
-    pub hits: Vec<InnerHit<IH>>,
+    pub hits: Vec<InnerHit>,
 }
 
 /// Represents a single matched inner hit document
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct InnerHit<IH> {
+pub struct InnerHit {
     /// Document index
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_index")]
     pub index: Option<String>,
@@ -153,8 +204,12 @@ pub struct InnerHit<IH> {
     pub nested: Option<Nested>,
 
     /// Document source
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_source")]
-    pub source: Option<IH>,
+    #[serde(
+        skip_serializing_if = "ShouldSkip::should_skip",
+        rename = "_source",
+        default
+    )]
+    pub source: Source,
 
     /// Matched queries
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
@@ -163,6 +218,16 @@ pub struct InnerHit<IH> {
     /// Values document was sorted by
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
     pub sort: Vec<Value>,
+}
+
+impl InnerHit {
+    /// Parses document source into a concrete type
+    pub fn source<T>(&self) -> Result<T, serde_json::Error>
+    where
+        T: DeserializeOwned,
+    {
+        self.source.parse()
+    }
 }
 
 /// Total number of matched documents
@@ -263,9 +328,9 @@ mod tests {
                     index: Some("_index".into()),
                     id: "123".into(),
                     score: Some(1.0),
-                    source: None,
+                    source: Source::from_string("null".to_string()).unwrap(),
                     highlight: Default::default(),
-                    inner_hits: None,
+                    inner_hits: Default::default(),
                     matched_queries: Default::default(),
                     sort: Default::default(),
                     fields: Default::default(),
