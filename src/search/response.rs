@@ -258,6 +258,10 @@ pub struct Nested {
 
     /// Offset
     pub offset: u64,
+
+    /// Nested document metadata
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_nested")]
+    pub nested: Option<Box<Nested>>,
 }
 
 /// Relation to total number of matched documents

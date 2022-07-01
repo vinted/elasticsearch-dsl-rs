@@ -81,7 +81,7 @@ impl FunctionScoreQuery {
         let function = function.into();
 
         if let Some(function) = function {
-            let _ = self.inner.functions.push(function);
+            self.inner.functions.push(function);
         }
 
         self
