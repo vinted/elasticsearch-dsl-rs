@@ -1,6 +1,12 @@
 /// Matched fields logic with type conversions
-#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize)]
+#[derive(Clone, Default, PartialEq, Eq, Serialize)]
 pub struct MatchedFields(Vec<String>);
+
+impl std::fmt::Debug for MatchedFields {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 
 impl<T> From<T> for MatchedFields
 where
