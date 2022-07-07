@@ -1,20 +1,12 @@
 use serde::ser::{Serialize, SerializeMap, Serializer};
 
 #[derive(Clone, PartialEq, Eq)]
-pub(crate) struct KeyValuePair<K, V>
-where
-    K: Serialize,
-    V: Serialize,
-{
+pub(crate) struct KeyValuePair<K, V> {
     pub(crate) key: K,
     pub(crate) value: V,
 }
 
-impl<K, V> KeyValuePair<K, V>
-where
-    K: Serialize,
-    V: Serialize,
-{
+impl<K, V> KeyValuePair<K, V> {
     /// Creates an instance of [`KeyValuePair`]
     pub(crate) fn new(key: K, value: V) -> Self {
         Self { key, value }
@@ -23,8 +15,8 @@ where
 
 impl<K, V> std::fmt::Debug for KeyValuePair<K, V>
 where
-    K: Serialize + std::fmt::Debug,
-    V: Serialize + std::fmt::Debug,
+    K: std::fmt::Debug,
+    V: std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_map().entry(&self.key, &self.value).finish()
