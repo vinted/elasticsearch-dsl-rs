@@ -26,6 +26,7 @@ pub struct ErrorCause {
     #[serde(rename = "type")]
     pub ty: Option<String>,
 
+    /// Additional fields that are not part of the strongly typed error cause
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default, flatten)]
-    additional_details: HashMap<String, Value>,
+    pub additional_details: HashMap<String, Value>,
 }

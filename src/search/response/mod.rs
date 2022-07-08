@@ -1,3 +1,4 @@
+mod cluster_statistics;
 mod error_cause;
 mod explanation;
 mod hit;
@@ -11,6 +12,7 @@ mod source;
 mod total_hits;
 mod total_hits_relation;
 
+pub use self::cluster_statistics::*;
 pub use self::error_cause::*;
 pub use self::explanation::*;
 pub use self::hit::*;

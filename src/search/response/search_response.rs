@@ -1,7 +1,8 @@
-use super::{HitsMetadata, ShardStatistics};
+use super::{ClusterStatistics, HitsMetadata, ShardStatistics};
 use crate::util::ShouldSkip;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
+use std::collections::HashMap;
 
 /// Search response
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -11,6 +12,35 @@ pub struct SearchResponse {
 
     /// Indicates whether there have been timed-out shards, if `true` - responses are partial
     pub timed_out: bool,
+
+    /// Indicates if search has been terminated early
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    pub terminated_early: Option<bool>,
+
+    /// Scroll Id
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    pub scroll_id: Option<String>,
+
+    /// Dynamically fetched fields
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
+    pub fields: HashMap<String, Value>,
+
+    /// Point in time Id
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    pub pit_id: Option<String>,
+
+    /// Number of reduce phases
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    pub num_reduce_phases: Option<u64>,
+
+    /// Maximum document score. [`None`] when documents are implicitly sorted
+    /// by a field other than `_score`
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    pub max_score: Option<f32>,
+
+    /// Number of clusters touched with their states
+    #[serde(rename = "_clusters")]
+    pub clusters: Option<ClusterStatistics>,
 
     /// Number of shards touched with their states
     #[serde(rename = "_shards")]
@@ -100,6 +130,13 @@ mod tests {
                 }],
             },
             aggregations: None,
+            terminated_early: None,
+            scroll_id: None,
+            fields: Default::default(),
+            pit_id: None,
+            num_reduce_phases: None,
+            max_score: None,
+            clusters: None,
         };
 
         assert_eq!(actual, expected);
