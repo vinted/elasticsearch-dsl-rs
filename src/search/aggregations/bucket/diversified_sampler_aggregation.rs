@@ -98,7 +98,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::diversified_sampler("catalog_id").shard_size(50),
             json!({
                 "diversified_sampler": {
@@ -108,7 +108,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::diversified_sampler("catalog_id")
                 .shard_size(50)
                 .max_docs_per_value(2)

@@ -51,12 +51,12 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::max("test_field"),
             json!({ "max": { "field": "test_field" } }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::max("test_field").missing(100.1),
             json!({
                 "max": {

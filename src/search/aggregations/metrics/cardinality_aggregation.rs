@@ -59,12 +59,12 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::cardinality("test_field"),
             json!({ "cardinality": { "field": "test_field" } }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::cardinality("test_field")
                 .precision_threshold(100u16)
                 .missing("N/A"),

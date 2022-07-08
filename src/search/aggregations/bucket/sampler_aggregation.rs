@@ -48,14 +48,14 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(Aggregation::sampler(), json!({ "sampler": {} }));
+        assert_serialize_aggregation(Aggregation::sampler(), json!({ "sampler": {} }));
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::sampler().shard_size(100),
             json!({ "sampler": { "shard_size": 100 } }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::sampler()
                 .shard_size(50)
                 .aggregate("catalog", Aggregation::terms("catalog_id"))

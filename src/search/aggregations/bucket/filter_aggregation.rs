@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::filter(Query::term("type", "t-shirt"))
                 .aggregate("sizes", Aggregation::terms("size")),
             json!({
