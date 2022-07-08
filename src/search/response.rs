@@ -60,7 +60,7 @@ pub struct SearchResponse {
     pub shards: Shards,
 
     /// Search hits
-    pub hits: Hits,
+    pub hits: HitsMetadata,
 
     /// Search aggregations
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -89,10 +89,10 @@ pub struct Shards {
 
 /// Matched hits
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Hits {
+pub struct HitsMetadata {
     /// Total number of matched documents
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    pub total: Option<Total>,
+    pub total: Option<TotalHits>,
 
     /// Maximum document score. [`None`] when documents are implicitly sorted
     /// by a field other than `_score`
@@ -171,7 +171,7 @@ pub struct InnerHitsItems {
 pub struct InnerHitsItemsHits {
     /// Total number of matched documents
     #[serde(default)]
-    pub total: Option<Total>,
+    pub total: Option<TotalHits>,
 
     /// Maximum document score. [`None`] when documents are implicitly sorted
     /// by a field other than `_score`
@@ -201,7 +201,7 @@ pub struct InnerHit {
 
     /// Nested document metadata
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_nested")]
-    pub nested: Option<Nested>,
+    pub nested: Option<NestedIdentity>,
 
     /// Document source
     #[serde(
@@ -232,27 +232,27 @@ impl InnerHit {
 
 /// Total number of matched documents
 #[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Total {
+pub struct TotalHits {
     /// Number of total documents
     pub value: u64,
 
     /// Relation to total number of matched documents
-    pub relation: Relation,
+    pub relation: TotalHitsRelation,
 }
 
-impl Total {
+impl TotalHits {
     /// Create default Total instance
     pub fn new(value: Option<u64>) -> Self {
-        Total {
+        Self {
             value: value.unwrap_or(0),
-            relation: Relation::Equal,
+            relation: TotalHitsRelation::Equal,
         }
     }
 }
 
 /// Nested document metadata
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct Nested {
+pub struct NestedIdentity {
     /// Field
     pub field: String,
 
@@ -261,12 +261,12 @@ pub struct Nested {
 
     /// Nested document metadata
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_nested")]
-    pub nested: Option<Box<Nested>>,
+    pub nested: Option<Box<NestedIdentity>>,
 }
 
 /// Relation to total number of matched documents
 #[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq)]
-pub enum Relation {
+pub enum TotalHitsRelation {
     /// When `track_total_hits` is `false` (default), Elasticsearch returns that
     /// there have been more than 10,000 documents
     #[serde(rename = "gte")]
@@ -322,10 +322,10 @@ mod tests {
                 failed: 2,
                 failures: Default::default(),
             },
-            hits: Hits {
-                total: Some(Total {
+            hits: HitsMetadata {
+                total: Some(TotalHits {
                     value: 10_000,
-                    relation: Relation::GreaterThanOrEqualTo,
+                    relation: TotalHitsRelation::GreaterThanOrEqualTo,
                 }),
                 max_score: Some(1.0),
                 hits: vec![Hit {
