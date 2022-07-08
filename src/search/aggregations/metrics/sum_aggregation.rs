@@ -22,7 +22,10 @@ impl Aggregation {
     /// Creates an instance of [`SumAggregation`]
     ///
     /// - `field` - field to aggregate
-    pub fn sum(field: impl Into<String>) -> SumAggregation {
+    pub fn sum<T>(field: T) -> SumAggregation
+    where
+        T: Into<String>,
+    {
         SumAggregation {
             sum: SumAggregationInner {
                 field: field.into(),
@@ -36,7 +39,10 @@ impl SumAggregation {
     /// The `missing` parameter defines how documents that are missing a value should be treated. By
     /// default documents missing the value will be ignored but it is also possible to treat them
     /// as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Number>) -> Self {
+    pub fn missing<T>(mut self, missing: T) -> Self
+    where
+        T: Into<Number>,
+    {
         self.sum.missing = Some(missing.into());
         self
     }

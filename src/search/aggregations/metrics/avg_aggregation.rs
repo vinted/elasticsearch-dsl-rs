@@ -23,7 +23,10 @@ impl Aggregation {
     /// Creates an instance of [`AvgAggregation`]
     ///
     /// - `field` - field to aggregate
-    pub fn avg(field: impl Into<String>) -> AvgAggregation {
+    pub fn avg<T>(field: T) -> AvgAggregation
+    where
+        T: Into<String>,
+    {
         AvgAggregation {
             avg: AvgAggregationInner {
                 field: field.into(),
@@ -36,7 +39,10 @@ impl Aggregation {
 impl AvgAggregation {
     /// The missing parameter defines how documents that are missing a value should be treated. By
     /// default they will be ignored but it is also possible to treat them as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Number>) -> Self {
+    pub fn missing<T>(mut self, missing: T) -> Self
+    where
+        T: Into<Number>,
+    {
         self.avg.missing = Some(missing.into());
         self
     }

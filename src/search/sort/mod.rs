@@ -158,7 +158,10 @@ struct SortInner {
 
 impl Sort {
     /// Creates an instance of [`Sort`]
-    pub fn new(field: impl Into<SortField>) -> Self {
+    pub fn new<T>(field: T) -> Self
+    where
+        T: Into<SortField>,
+    {
         Self(KeyValuePair::new(field.into(), Default::default()))
     }
 
@@ -181,7 +184,10 @@ impl Sort {
     /// Fallback type if mapping is not defined
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_ignoring_unmapped_fields>
-    pub fn unmapped_type(mut self, unmapped_type: impl Into<String>) -> Self {
+    pub fn unmapped_type<T>(mut self, unmapped_type: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.0.value.unmapped_type = Some(unmapped_type.into());
         self
     }
@@ -189,7 +195,10 @@ impl Sort {
     /// The missing parameter specifies how docs which are missing the sort field should be treated
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_missing_values>
-    pub fn missing(mut self, missing: impl Into<SortMissing>) -> Self {
+    pub fn missing<T>(mut self, missing: T) -> Self
+    where
+        T: Into<SortMissing>,
+    {
         self.0.value.missing = Some(missing.into());
         self
     }

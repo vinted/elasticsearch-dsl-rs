@@ -26,7 +26,10 @@ impl Aggregation {
     /// Creates an instance of [`MaxAggregation`]
     ///
     /// - `field` - field to aggregate
-    pub fn max(field: impl Into<String>) -> MaxAggregation {
+    pub fn max<T>(field: T) -> MaxAggregation
+    where
+        T: Into<String>,
+    {
         MaxAggregation {
             max: MaxAggregationInner {
                 field: field.into(),
@@ -39,7 +42,10 @@ impl Aggregation {
 impl MaxAggregation {
     /// The `missing` parameter defines how documents that are missing a value should be treated. By
     /// default they will be ignored but it is also possible to treat them as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Number>) -> Self {
+    pub fn missing<T>(mut self, missing: T) -> Self
+    where
+        T: Into<Number>,
+    {
         self.max.missing = Some(missing.into());
         self
     }

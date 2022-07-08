@@ -52,13 +52,16 @@ impl Aggregation {
 
 impl TopHitsAggregation {
     /// Indicates which source fields are returned for matching documents
-    pub fn source(mut self, source: impl Into<SourceFilter>) -> Self {
+    pub fn source<T>(mut self, source: T) -> Self
+    where
+        T: Into<SourceFilter>,
+    {
         self.top_hits._source = Some(source.into());
         self
     }
 
     /// The offset from the first result you want to fetch.
-    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
+    pub fn from(mut self, from: u64) -> Self {
         if let Ok(from) = from.try_into() {
             self.top_hits.from = Some(from);
         }
@@ -68,7 +71,7 @@ impl TopHitsAggregation {
     /// The maximum number of top matching hits to return per bucket.
     ///
     /// By default the top three matching hits are returned.
-    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
+    pub fn size(mut self, size: u64) -> Self {
         if let Ok(size) = size.try_into() {
             self.top_hits.size = Some(size);
         }
@@ -76,7 +79,10 @@ impl TopHitsAggregation {
     }
 
     /// A collection of sorting fields
-    pub fn sort(mut self, sort: impl Into<Vec<Sort>>) -> Self {
+    pub fn sort<T>(mut self, sort: T) -> Self
+    where
+        T: Into<Vec<Sort>>,
+    {
         self.top_hits.sort.extend(sort.into());
         self
     }
@@ -93,8 +99,8 @@ mod tests {
         assert_serialize_aggregation(
             Aggregation::top_hits()
                 .source(false)
-                .from(2u8)
-                .size(10u8)
+                .from(2)
+                .size(10)
                 .sort(Sort::new("sort_field").order(SortOrder::Desc)),
             json!({
                 "top_hits": {
