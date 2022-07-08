@@ -78,12 +78,12 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::boxplot("test_field"),
             json!({ "boxplot": { "field": "test_field" } }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::boxplot("test_field")
                 .compression(100)
                 .missing(10),

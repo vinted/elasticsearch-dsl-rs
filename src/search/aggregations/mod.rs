@@ -66,7 +66,8 @@ aggregation!(
     Rate(RateAggregation),
     Sampler(SamplerAggregation),
     Filter(FilterAggregation),
-    DiversifiedSampler(DiversifiedSamplerAggregation)
+    DiversifiedSampler(DiversifiedSamplerAggregation),
+    Boxplot(BoxplotAggregation)
 );
 
 /// Type alias for a collection of aggregations

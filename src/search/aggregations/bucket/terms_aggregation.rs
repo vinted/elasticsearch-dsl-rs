@@ -140,12 +140,12 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::terms("test_field"),
             json!({ "terms": { "field": "test_field" } }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::terms("test_field")
                 .size(5u16)
                 .min_doc_count(2u16)
@@ -166,7 +166,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::terms("test_field")
                 .size(0u16)
                 .order(("test_order", SortOrder::Asc))

@@ -48,12 +48,12 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::avg("test_field"),
             json!({ "avg": { "field": "test_field" } }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::avg("test_field").missing(100.1),
             json!({
                 "avg": {

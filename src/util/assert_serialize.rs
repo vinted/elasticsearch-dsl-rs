@@ -21,3 +21,15 @@ where
 
     assert_serialize(subject, expectation)
 }
+
+/// Tests if an aggregation is serialized to correct JSON [`Value`]
+#[cfg(test)]
+pub(crate) fn assert_serialize_aggregation<S>(subject: S, expectation: serde_json::Value)
+where
+    S: Into<crate::Aggregation>,
+{
+    let subject = crate::Search::new().aggregate("aggregation_name", subject);
+    let expectation = json!({ "aggs": { "aggregation_name": expectation } });
+
+    assert_serialize(subject, expectation)
+}

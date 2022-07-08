@@ -51,12 +51,12 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::min("test_field"),
             json!({ "min": { "field": "test_field" } }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::min("test_field").missing(100.1),
             json!({
                 "min": {

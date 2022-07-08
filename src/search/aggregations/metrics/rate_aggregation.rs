@@ -74,9 +74,9 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(Aggregation::rate(), json!({ "rate": { } }));
+        assert_serialize_aggregation(Aggregation::rate(), json!({ "rate": { } }));
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::rate()
                 .field("price")
                 .unit(CalendarInterval::Day)

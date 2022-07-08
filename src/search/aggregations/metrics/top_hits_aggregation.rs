@@ -88,9 +88,9 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(Aggregation::top_hits(), json!({ "top_hits": { } }));
+        assert_serialize_aggregation(Aggregation::top_hits(), json!({ "top_hits": { } }));
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::top_hits()
                 .source(false)
                 .from(2u8)

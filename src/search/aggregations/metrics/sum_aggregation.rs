@@ -48,12 +48,12 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::sum("test_field"),
             json!({ "sum": { "field": "test_field" } }),
         );
 
-        assert_serialize(
+        assert_serialize_aggregation(
             Aggregation::sum("test_field").missing(100.1),
             json!({
                 "sum": {
