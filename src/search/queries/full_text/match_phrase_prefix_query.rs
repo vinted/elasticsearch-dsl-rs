@@ -54,10 +54,11 @@ impl Query {
     /// query analyzes any provided text into tokens before performing a search. The last term of
     /// this text is treated as a [prefix](crate::PrefixQuery), matching any words that begin with
     /// that term.
-    pub fn match_phrase_prefix(
-        field: impl Into<String>,
-        query: impl Into<Text>,
-    ) -> MatchPhrasePrefixQuery {
+    pub fn match_phrase_prefix<T, U>(field: T, query: U) -> MatchPhrasePrefixQuery
+    where
+        T: Into<String>,
+        U: Into<Text>,
+    {
         MatchPhrasePrefixQuery {
             field: field.into(),
             inner: Inner {
@@ -78,7 +79,10 @@ impl MatchPhrasePrefixQuery {
     /// used to convert the text in the `query` value into tokens. Defaults to the
     /// [index-time analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/specify-analyzer.html#specify-index-time-analyzer)
     /// mapped for the `<field>`. If no analyzer is mapped, the index’s default analyzer is used.
-    pub fn analyzer(mut self, analyzer: impl Into<String>) -> Self {
+    pub fn analyzer<T>(mut self, analyzer: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.inner.analyzer = Some(analyzer.into());
         self
     }

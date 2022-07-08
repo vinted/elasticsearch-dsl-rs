@@ -30,10 +30,11 @@ impl Query {
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - A series of vertex coordinates of a geo bounding box
-    pub fn geo_bounding_box(
-        field: impl Into<String>,
-        value: impl Into<GeoBoundingBox>,
-    ) -> GeoBoundingBoxQuery {
+    pub fn geo_bounding_box<T, U>(field: T, value: U) -> GeoBoundingBoxQuery
+    where
+        T: Into<String>,
+        U: Into<GeoBoundingBox>,
+    {
         GeoBoundingBoxQuery {
             inner: Inner {
                 pair: KeyValuePair::new(field.into(), value.into()),
@@ -48,8 +49,8 @@ impl Query {
 impl GeoBoundingBoxQuery {
     /// Set to `IGNORE_MALFORMED` to accept geo points with invalid latitude or longitude, set to
     /// `COERCE` to also try to infer correct latitude or longitude. (default is `STRICT`).
-    pub fn validation_method(mut self, validation_method: impl Into<ValidationMethod>) -> Self {
-        self.inner.validation_method = Some(validation_method.into());
+    pub fn validation_method(mut self, validation_method: ValidationMethod) -> Self {
+        self.inner.validation_method = Some(validation_method);
         self
     }
 

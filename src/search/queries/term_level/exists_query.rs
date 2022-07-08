@@ -44,7 +44,10 @@ impl Query {
     ///   - Empty strings, such as `""` or `"-"`
     ///   - Arrays containing `null` and another value, such as `[null, "foo"]`
     ///   - A custom [`null-value`](https://www.elastic.co/guide/en/elasticsearch/reference/current/null-value.html), defined in field mapping
-    pub fn exists(field: impl Into<String>) -> ExistsQuery {
+    pub fn exists<T>(field: T) -> ExistsQuery
+    where
+        T: Into<String>,
+    {
         ExistsQuery {
             inner: Inner {
                 field: field.into(),

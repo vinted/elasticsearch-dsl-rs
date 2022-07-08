@@ -40,7 +40,11 @@ impl Query {
     /// - `type` - Name of the child relationship mapped for the join field
     /// - `id` - ID of the parent document. The query will return child documents of this
     /// parent document.
-    pub fn parent_id(r#type: impl ToString, id: impl ToString) -> ParentIdQuery {
+    pub fn parent_id<T, U>(r#type: T, id: U) -> ParentIdQuery
+    where
+        T: ToString,
+        U: ToString,
+    {
         ParentIdQuery {
             inner: Inner {
                 r#type: r#type.to_string(),

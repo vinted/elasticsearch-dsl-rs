@@ -186,7 +186,10 @@ impl QueryStringQuery {
     /// [index-time analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/specify-analyzer.html#specify-index-time-analyzer)
     /// mapped for the `default_field`. If no analyzer is mapped, the index’s
     /// default analyzer is used.
-    pub fn analyzer(mut self, analyzer: impl Into<String>) -> Self {
+    pub fn analyzer<T>(mut self, analyzer: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.inner.analyzer = Some(analyzer.into());
         self
     }
@@ -301,10 +304,10 @@ impl QueryStringQuery {
     /// See the
     /// [`minimum_should_match` parameter](crate::MinimumShouldMatch)
     /// for valid values and more information.
-    pub fn minimum_should_match(
-        mut self,
-        minimum_should_match: impl Into<MinimumShouldMatch>,
-    ) -> Self {
+    pub fn minimum_should_match<T>(mut self, minimum_should_match: T) -> Self
+    where
+        T: Into<MinimumShouldMatch>,
+    {
         self.inner.minimum_should_match = Some(minimum_should_match.into());
         self
     }

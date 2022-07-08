@@ -91,13 +91,19 @@ impl Origin for GeoPoint {
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-distance-feature-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct DistanceFeatureQuery<O: Origin> {
+pub struct DistanceFeatureQuery<O>
+where
+    O: Origin,
+{
     #[serde(rename = "distance_feature")]
     inner: Inner<O>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner<O: Origin> {
+struct Inner<O>
+where
+    O: Origin,
+{
     field: String,
 
     origin: O,
@@ -145,11 +151,15 @@ impl Query {
     /// field, the `pivot` value must be a
     /// [distance unit](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#distance-units)
     /// , such as `1km` or `12m`.
-    pub fn distance_feature<O: Origin>(
-        field: impl Into<String>,
+    pub fn distance_feature<T, O>(
+        field: T,
         origin: O,
         pivot: <O as Origin>::Pivot,
-    ) -> DistanceFeatureQuery<O> {
+    ) -> DistanceFeatureQuery<O>
+    where
+        T: Into<String>,
+        O: Origin,
+    {
         DistanceFeatureQuery {
             inner: Inner {
                 field: field.into(),
@@ -162,11 +172,14 @@ impl Query {
     }
 }
 
-impl<O: Origin> DistanceFeatureQuery<O> {
+impl<O> DistanceFeatureQuery<O>
+where
+    O: Origin,
+{
     add_boost_and_name!();
 }
 
-impl<O: Origin> ShouldSkip for DistanceFeatureQuery<O> {}
+impl<O> ShouldSkip for DistanceFeatureQuery<O> where O: Origin {}
 
 #[cfg(test)]
 mod tests {

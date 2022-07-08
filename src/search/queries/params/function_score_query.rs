@@ -125,7 +125,10 @@ impl Function {
     /// Creates an instance of [FieldValueFactor](FieldValueFactor)
     ///
     /// - `field` - Field to be extracted from the document.
-    pub fn field_value_factor(field: impl Into<String>) -> FieldValueFactor {
+    pub fn field_value_factor<T>(field: T) -> FieldValueFactor
+    where
+        T: Into<String>,
+    {
         FieldValueFactor::new(field)
     }
 
@@ -141,19 +144,26 @@ impl Function {
     /// computed score will equal `decay` parameter. For geo fields: Can be defined as number+unit
     /// (1km, 12m,…​). Default unit is meters. For date fields: Can to be defined as a number+unit
     /// ("1h", "10d",…​). Default unit is milliseconds. For numeric field: Any number.
-    pub fn decay<T: Origin>(
+    pub fn decay<T, O>(
         function: DecayFunction,
-        field: impl Into<String>,
-        origin: T,
-        scale: <T as Origin>::Scale,
-    ) -> Decay<T> {
+        field: T,
+        origin: O,
+        scale: <O as Origin>::Scale,
+    ) -> Decay<O>
+    where
+        T: Into<String>,
+        O: Origin,
+    {
         Decay::new(function, field, origin, scale)
     }
 
     /// Creates an instance of script
     ///
     /// - `source` - script source
-    pub fn script(source: impl Into<String>) -> Script {
+    pub fn script<T>(source: T) -> Script
+    where
+        T: Into<String>,
+    {
         Script::new(source)
     }
 }
@@ -210,13 +220,19 @@ impl RandomScore {
     }
 
     /// Sets seed value
-    pub fn seed(mut self, seed: impl Into<Term>) -> Self {
+    pub fn seed<T>(mut self, seed: T) -> Self
+    where
+        T: Into<Term>,
+    {
         self.random_score.seed = seed.into();
         self
     }
 
     /// Sets field value
-    pub fn field(mut self, field: impl Into<String>) -> Self {
+    pub fn field<T>(mut self, field: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.random_score.field = Some(field.into());
         self
     }
@@ -266,7 +282,10 @@ impl FieldValueFactor {
     /// Creates an instance of [FieldValueFactor](FieldValueFactor)
     ///
     /// - `field` - Field to be extracted from the document.
-    pub fn new(field: impl Into<String>) -> Self {
+    pub fn new<T>(field: T) -> Self
+    where
+        T: Into<String>,
+    {
         Self {
             field_value_factor: FieldValueFactorInner {
                 field: field.into(),
@@ -393,19 +412,25 @@ struct DecayFieldInner<T: Origin> {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct DecayInner<T: Origin> {
-    origin: T,
+struct DecayInner<O>
+where
+    O: Origin,
+{
+    origin: O,
 
-    scale: <T as Origin>::Scale,
+    scale: <O as Origin>::Scale,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    offset: Option<<T as Origin>::Offset>,
+    offset: Option<<O as Origin>::Offset>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     decay: Option<f32>,
 }
 
-impl<T: Origin> Decay<T> {
+impl<O> Decay<O>
+where
+    O: Origin,
+{
     /// Creates an instance of [Decay](Decay)
     ///
     /// - `function` - Decay function variant
@@ -418,12 +443,10 @@ impl<T: Origin> Decay<T> {
     /// computed score will equal `decay` parameter. For geo fields: Can be defined as number+unit
     /// (1km, 12m,…​). Default unit is meters. For date fields: Can to be defined as a number+unit
     /// ("1h", "10d",…​). Default unit is milliseconds. For numeric field: Any number.
-    pub fn new(
-        function: DecayFunction,
-        field: impl Into<String>,
-        origin: T,
-        scale: <T as Origin>::Scale,
-    ) -> Self {
+    pub fn new<T>(function: DecayFunction, field: T, origin: O, scale: <O as Origin>::Scale) -> Self
+    where
+        T: Into<String>,
+    {
         Self {
             function,
             inner: DecayFieldInner {
@@ -442,7 +465,7 @@ impl<T: Origin> Decay<T> {
     /// documents with a distance greater than the defined `offset`.
     ///
     /// The default is `0`.
-    pub fn offset(mut self, offset: <T as Origin>::Offset) -> Self {
+    pub fn offset(mut self, offset: <O as Origin>::Offset) -> Self {
         self.inner.inner.offset = Some(offset);
         self
     }
@@ -522,7 +545,10 @@ impl Script {
     /// Creates an instance of [Script]
     ///
     /// - `source` - script source
-    pub fn new(source: impl Into<String>) -> Self {
+    pub fn new<T>(source: T) -> Self
+    where
+        T: Into<String>,
+    {
         Self {
             script_score: ScriptInnerWrapper {
                 script: ScriptInner {

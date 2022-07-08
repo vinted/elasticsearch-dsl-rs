@@ -51,7 +51,11 @@ impl Query {
     /// `match_phrase` query can search
     /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
     /// fields for analyzed tokens rather than an exact term.
-    pub fn match_phrase(field: impl Into<String>, query: impl Into<Text>) -> MatchPhraseQuery {
+    pub fn match_phrase<T, U>(field: T, query: U) -> MatchPhraseQuery
+    where
+        T: Into<String>,
+        U: Into<Text>,
+    {
         MatchPhraseQuery {
             field: field.into(),
             inner: Inner {
@@ -70,7 +74,10 @@ impl MatchPhraseQuery {
     /// used to convert the text in the `query` value into tokens. Defaults to the
     /// [index-time analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/specify-analyzer.html#specify-index-time-analyzer)
     /// mapped for the `<field>`. If no analyzer is mapped, the index’s default analyzer is used.
-    pub fn analyzer(mut self, analyzer: impl Into<String>) -> Self {
+    pub fn analyzer<T>(mut self, analyzer: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.inner.analyzer = Some(analyzer.into());
         self
     }

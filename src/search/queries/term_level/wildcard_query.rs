@@ -45,7 +45,11 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `value` - Wildcard you wish to find in the provided field.
     /// To return a document, the wildcard must exactly match the field value, including whitespace and capitalization.
-    pub fn wildcard(field: impl Into<String>, value: impl Into<Term>) -> WildcardQuery {
+    pub fn wildcard<T, U>(field: T, value: U) -> WildcardQuery
+    where
+        T: Into<String>,
+        U: Into<Term>,
+    {
         WildcardQuery {
             field: field.into(),
             inner: Inner {

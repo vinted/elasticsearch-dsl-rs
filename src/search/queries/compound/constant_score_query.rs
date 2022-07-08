@@ -41,7 +41,10 @@ impl Query {
     /// Filter queries do not calculate
     /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores).
     /// To speed up performance, Elasticsearch automatically caches frequently used filter queries.
-    pub fn constant_score(filter: impl Into<Query>) -> ConstantScoreQuery {
+    pub fn constant_score<T>(filter: T) -> ConstantScoreQuery
+    where
+        T: Into<Query>,
+    {
         ConstantScoreQuery {
             inner: Inner {
                 filter: Box::new(filter.into()),

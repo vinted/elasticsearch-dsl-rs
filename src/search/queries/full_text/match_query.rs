@@ -81,7 +81,11 @@ impl Query {
     /// query can search
     /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
     /// fields for analyzed tokens rather than an exact term.
-    pub fn r#match(field: impl Into<String>, query: impl Into<Text>) -> MatchQuery {
+    pub fn r#match<T, U>(field: T, query: U) -> MatchQuery
+    where
+        T: Into<String>,
+        U: Into<Text>,
+    {
         MatchQuery {
             field: field.into(),
             inner: Inner {
@@ -109,7 +113,10 @@ impl MatchQuery {
     /// used to convert the text in the `query` value into tokens. Defaults to the
     /// [index-time analyzer](https://www.elastic.co/guide/en/elasticsearch/reference/current/specify-analyzer.html#specify-index-time-analyzer)
     /// mapped for the `<field>`. If no analyzer is mapped, the index’s default analyzer is used.
-    pub fn analyzer(mut self, analyzer: impl Into<String>) -> Self {
+    pub fn analyzer<T>(mut self, analyzer: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.inner.analyzer = Some(analyzer.into());
         self
     }
@@ -133,7 +140,10 @@ impl MatchQuery {
     /// for valid values and more information. See
     /// [Fuzziness in the match query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html#query-dsl-match-query-fuzziness)
     /// for an example.
-    pub fn fuzziness(mut self, fuzziness: impl Into<Fuzziness>) -> Self {
+    pub fn fuzziness<T>(mut self, fuzziness: T) -> Self
+    where
+        T: Into<Fuzziness>,
+    {
         self.inner.fuzziness = Some(fuzziness.into());
         self
     }
@@ -190,10 +200,10 @@ impl MatchQuery {
     /// See the
     /// [`minimum_should_match` parameter](MinimumShouldMatch)
     /// for valid values and more information.
-    pub fn minimum_should_match(
-        mut self,
-        minimum_should_match: impl Into<MinimumShouldMatch>,
-    ) -> Self {
+    pub fn minimum_should_match<T>(mut self, minimum_should_match: T) -> Self
+    where
+        T: Into<MinimumShouldMatch>,
+    {
         self.inner.minimum_should_match = Some(minimum_should_match.into());
         self
     }

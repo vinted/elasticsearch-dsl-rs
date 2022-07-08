@@ -69,7 +69,11 @@ impl Query {
     /// nesting level, rather than root, if it exists within another nested
     /// query.<br>
     /// Multi-level nested queries are also supported.
-    pub fn nested(path: impl Into<String>, query: impl Into<Query>) -> NestedQuery {
+    pub fn nested<T, U>(path: T, query: U) -> NestedQuery
+    where
+        T: Into<String>,
+        U: Into<Query>,
+    {
         NestedQuery {
             inner: Inner {
                 path: path.into(),

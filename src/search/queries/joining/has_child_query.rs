@@ -49,10 +49,14 @@ impl Query {
     /// - `type` - Name of the child relationship mapped for the join field.
     /// - `query` - Query you wish to run on child documents of the `type` field. If a child
     /// document matches the search, the query returns the parent document.
-    pub fn has_child(r#type: impl ToString, query: impl Into<Query>) -> HasChildQuery {
+    pub fn has_child<T, U>(r#type: T, query: U) -> HasChildQuery
+    where
+        T: Into<String>,
+        U: Into<Query>,
+    {
         HasChildQuery {
             inner: Inner {
-                r#type: r#type.to_string(),
+                r#type: r#type.into(),
                 query: Box::new(query.into()),
                 ignore_unmapped: None,
                 max_children: None,
@@ -79,16 +83,16 @@ impl HasChildQuery {
 
     /// Maximum number of child documents that match the `query` allowed for a returned parent
     /// document. If the parent document exceeds this limit, it is excluded from the search results.
-    pub fn max_children(mut self, max_children: impl Into<u32>) -> Self {
-        self.inner.max_children = Some(max_children.into());
+    pub fn max_children(mut self, max_children: u32) -> Self {
+        self.inner.max_children = Some(max_children);
         self
     }
 
     /// Minimum number of child documents that match the `query` required to match the query for a
     /// returned parent document. If the parent document does not meet this limit, it is excluded
     /// from the search results.
-    pub fn min_children(mut self, min_children: impl Into<u32>) -> Self {
-        self.inner.min_children = Some(min_children.into());
+    pub fn min_children(mut self, min_children: u32) -> Self {
+        self.inner.min_children = Some(min_children);
         self
     }
 

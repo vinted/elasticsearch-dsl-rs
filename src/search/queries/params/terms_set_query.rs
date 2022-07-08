@@ -67,7 +67,10 @@ impl<'a> From<&'a str> for TermsSetScript {
 
 impl TermsSetScript {
     /// Creates an instance of [TermsSetScript]
-    pub fn new(source: impl Into<String>) -> Self {
+    pub fn new<T>(source: T) -> Self
+    where
+        T: Into<String>,
+    {
         Self {
             source: source.into(),
             params: None,
