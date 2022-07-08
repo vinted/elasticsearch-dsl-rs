@@ -67,6 +67,20 @@ pub struct SearchResponse {
     pub aggregations: Option<Value>,
 }
 
+impl SearchResponse {
+    /// A shorthand for retrieving the _source for each hit
+    pub fn documents<T>(&self) -> Result<Vec<T>, serde_json::Error>
+    where
+        T: DeserializeOwned,
+    {
+        self.hits
+            .hits
+            .iter()
+            .map(|hit| hit.source.parse())
+            .collect()
+    }
+}
+
 /// Number of shards touched with their states
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Shards {
@@ -284,7 +298,7 @@ mod tests {
 
     #[test]
     fn deserializes_successfully() {
-        let json = serde_json::json!({
+        let json = json!({
           "took": 6,
           "timed_out": false,
           "_shards": {
@@ -344,5 +358,57 @@ mod tests {
         };
 
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn parses_documents() {
+        let json = json!({
+          "took": 6,
+          "timed_out": false,
+          "_shards": {
+            "total": 10,
+            "successful": 5,
+            "skipped": 3,
+            "failed": 2
+          },
+          "hits": {
+            "total": {
+              "value": 10000,
+              "relation": "gte"
+            },
+            "max_score": 1.0,
+            "hits": [
+              {
+                "_index": "_index",
+                "_type": "_doc",
+                "_id": "123",
+                "_score": 1.0,
+                "_source": {
+                    "id": 123,
+                    "title": "test",
+                    "user_id": 456,
+                }
+              }
+            ]
+          }
+        });
+
+        #[derive(Debug, PartialEq, Deserialize)]
+        struct Document {
+            id: i32,
+            title: String,
+            user_id: Option<i32>,
+        }
+
+        let subject: SearchResponse = serde_json::from_value(json).unwrap();
+        let subject = subject.documents::<Document>().unwrap();
+
+        let expectation = [Document {
+            id: 123,
+            title: "test".to_string(),
+            user_id: Some(456),
+        }];
+
+        assert_eq!(subject, expectation);
     }
 }
