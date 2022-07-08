@@ -73,11 +73,7 @@ impl SearchResponse {
     where
         T: DeserializeOwned,
     {
-        self.hits
-            .hits
-            .iter()
-            .map(|hit| hit.source.parse())
-            .collect()
+        self.hits.hits.iter().map(|hit| hit.source()).collect()
     }
 }
 
@@ -121,6 +117,13 @@ pub struct HitsMetadata {
 /// Represents a single matched document
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Hit {
+    /// Search explanation
+    #[serde(
+        skip_serializing_if = "ShouldSkip::should_skip",
+        rename = "_explanation"
+    )]
+    pub explanation: Option<Explanation>,
+
     /// Document index
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_index")]
     pub index: Option<String>,
@@ -171,6 +174,20 @@ impl Hit {
     {
         self.source.parse()
     }
+}
+
+/// Score explanation
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct Explanation {
+    /// Cumulative score description
+    pub description: String,
+
+    /// Cumulative score
+    pub value: f64,
+
+    /// Score details
+    #[serde(default)]
+    pub details: Vec<Explanation>,
 }
 
 /// Represents inner hits
@@ -343,6 +360,7 @@ mod tests {
                 }),
                 max_score: Some(1.0),
                 hits: vec![Hit {
+                    explanation: None,
                     index: Some("_index".into()),
                     id: "123".into(),
                     score: Some(1.0),
