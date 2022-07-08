@@ -104,7 +104,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::wildcard("test", "value*"),
             json!({
                 "wildcard": {
@@ -115,7 +115,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::wildcard("test", "value*")
                 .rewrite(Rewrite::ConstantScore)
                 .case_insensitive(true)
@@ -134,7 +134,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::bool().filter(Query::wildcard("test", None::<String>)),
             json!({ "bool": {} }),
         )

@@ -107,7 +107,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::dis_max()
                 .query(Query::r#match("t1", "text"))
                 .query(Query::r#match("t2", "text")),
@@ -133,7 +133,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::dis_max().query([Query::r#match("t1", "text"), Query::r#match("t2", "text")]),
             json!({
                 "dis_max": {
@@ -157,7 +157,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::dis_max()
                 .query(Query::r#match("t1", "text"))
                 .query(Query::r#match("t2", "text"))

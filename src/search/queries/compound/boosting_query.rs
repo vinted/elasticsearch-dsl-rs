@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::boosting(Query::term("test1", 123), Query::term("test2", 456), 0.2),
             json!({
                 "boosting": {
@@ -106,7 +106,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::boosting(Query::term("test1", 123), Query::term("test2", 456), 0.2)
                 .boost(3)
                 .name("test"),

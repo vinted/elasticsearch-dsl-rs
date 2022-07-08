@@ -114,7 +114,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::has_child("child", Query::term("tag", "elasticsearch")),
             json!({
                 "has_child": {
@@ -130,7 +130,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::has_child("child", Query::term("tag", "elasticsearch"))
                 .boost(2)
                 .name("test")

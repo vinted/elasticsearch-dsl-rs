@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::ids(vec![1, 3, 2, 5, 4, 6]),
             json!({
                 "ids": {
@@ -77,7 +77,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::ids(vec![1, 3, 2, 5, 4, 6]).boost(1.3).name("test"),
             json!({
                 "ids": {

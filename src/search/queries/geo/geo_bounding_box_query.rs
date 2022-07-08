@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::geo_bounding_box(
                 "pin.location",
                 GeoBoundingBox::WellKnownText {
@@ -84,7 +84,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::geo_bounding_box(
                 "pin.location",
                 GeoBoundingBox::MainDiagonal {
@@ -112,7 +112,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::geo_bounding_box(
                 "pin.location",
                 GeoBoundingBox::Vertices {

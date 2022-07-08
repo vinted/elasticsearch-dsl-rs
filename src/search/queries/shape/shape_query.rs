@@ -93,7 +93,7 @@ mod tests {
 
     #[test]
     fn test_serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::shape("pin.location", Shape::point([2.2, 1.1])),
             json!({
                 "shape": {
@@ -107,7 +107,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::shape("pin.location", Shape::point([2.2, 1.1]))
                 .boost(2)
                 .name("test")

@@ -139,7 +139,7 @@ mod tests {
 
     #[test]
     fn test_serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::shape_lookup("pin.location", "id"),
             json!({
                 "shape": {
@@ -152,7 +152,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::shape_lookup("pin.location", "id")
                 .boost(2)
                 .name("test")

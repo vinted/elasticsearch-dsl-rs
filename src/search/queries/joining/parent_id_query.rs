@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::parent_id("my-child", 1),
             json!({
                 "parent_id": {
@@ -90,7 +90,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::parent_id("my-child", 1)
                 .boost(2)
                 .name("test")

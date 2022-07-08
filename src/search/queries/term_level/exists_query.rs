@@ -67,7 +67,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::exists("test"),
             json!({
                 "exists": {
@@ -76,7 +76,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::exists("test").boost(2).name("test"),
             json!({
                 "exists": {

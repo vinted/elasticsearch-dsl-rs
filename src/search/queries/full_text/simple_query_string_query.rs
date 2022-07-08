@@ -256,7 +256,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::simple_query_string("search text"),
             json!({
                 "simple_query_string": {
@@ -265,7 +265,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::simple_query_string("search text")
                 .fields(["database"])
                 .default_operator(Operator::And)

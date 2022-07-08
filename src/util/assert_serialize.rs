@@ -9,3 +9,15 @@ where
 
     assert_eq!(result, expectation)
 }
+
+/// Tests if a query is serialized to correct JSON [`Value`]
+#[cfg(test)]
+pub(crate) fn assert_serialize_query<S>(subject: S, expectation: serde_json::Value)
+where
+    S: Into<crate::Query>,
+{
+    let subject = crate::Search::new().query(subject);
+    let expectation = json!({ "query": expectation });
+
+    assert_serialize(subject, expectation)
+}

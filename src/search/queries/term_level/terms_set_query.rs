@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::terms_set("test", [123], "required_matches"),
             json!({
                 "terms_set": {
@@ -113,7 +113,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::terms_set(
                 "programming_languages",
                 ["c++", "java", "php"],

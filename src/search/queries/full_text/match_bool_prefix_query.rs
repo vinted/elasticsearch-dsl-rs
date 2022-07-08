@@ -124,7 +124,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::match_bool_prefix("test", "search text"),
             json!({
                 "match_bool_prefix": {
@@ -135,7 +135,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::match_bool_prefix("test", "search text")
                 .analyzer("search_time_analyzer")
                 .minimum_should_match("12")

@@ -361,7 +361,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::more_like_this(["test"]).fields(["title"]),
             json!({
                 "more_like_this": {
@@ -373,7 +373,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::more_like_this(["test"])
                 .fields(["title", "description"])
                 .min_term_freq(1)
@@ -393,7 +393,7 @@ mod tests {
                 }
             }),
         );
-        assert_serialize(
+        assert_serialize_query(
             Query::more_like_this([Document::new("123")]).fields(["title"]),
             json!({
                 "more_like_this": {
@@ -407,7 +407,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::more_like_this([Document::new("123")])
                 .fields(["title", "description"])
                 .min_term_freq(1)
@@ -429,7 +429,7 @@ mod tests {
                 }
             }),
         );
-        assert_serialize(
+        assert_serialize_query(
             Query::more_like_this([Like::from(Document::new("123")), Like::from("test")])
                 .fields(["title"]),
             json!({
@@ -445,7 +445,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::more_like_this([
                 Like::from(
                     Document::new("123")

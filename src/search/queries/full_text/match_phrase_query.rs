@@ -111,7 +111,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::match_phrase("test", "search text"),
             json!({
                 "match_phrase": {
@@ -122,7 +122,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::match_phrase("test", "search text")
                 .analyzer("search_time_analyzer")
                 .slop(1u8)

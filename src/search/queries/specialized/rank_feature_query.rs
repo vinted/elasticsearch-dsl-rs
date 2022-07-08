@@ -371,7 +371,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::rank_feature("test"),
             json!({
                 "rank_feature": {
@@ -380,7 +380,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::rank_feature("test").boost(2).name("query"),
             json!({
                 "rank_feature": {
@@ -391,7 +391,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::rank_feature("test")
                 .saturation()
                 .boost(2)
@@ -406,7 +406,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::rank_feature("test")
                 .saturation()
                 .pivot(2.2)
@@ -424,7 +424,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::rank_feature("test")
                 .logarithm(2.2)
                 .boost(2)
@@ -441,7 +441,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::rank_feature("test")
                 .sigmoid(2.2, 3.3)
                 .boost(2)
@@ -459,7 +459,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::rank_feature("test").linear().boost(2).name("query"),
             json!({
                 "rank_feature": {
