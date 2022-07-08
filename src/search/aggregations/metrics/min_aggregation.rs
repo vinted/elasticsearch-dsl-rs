@@ -26,7 +26,10 @@ impl Aggregation {
     /// Creates an instance of [`MinAggregation`]
     ///
     /// - `field` - field to aggregate
-    pub fn min(field: impl Into<String>) -> MinAggregation {
+    pub fn min<T>(field: T) -> MinAggregation
+    where
+        T: Into<String>,
+    {
         MinAggregation {
             min: MinAggregationInner {
                 field: field.into(),
@@ -39,7 +42,10 @@ impl Aggregation {
 impl MinAggregation {
     /// The `missing` parameter defines how documents that are missing a value should be treated. By
     /// default they will be ignored but it is also possible to treat them as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Number>) -> Self {
+    pub fn missing<T>(mut self, missing: T) -> Self
+    where
+        T: Into<Number>,
+    {
         self.min.missing = Some(missing.into());
         self
     }

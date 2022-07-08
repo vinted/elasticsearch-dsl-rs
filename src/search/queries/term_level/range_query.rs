@@ -56,7 +56,10 @@ impl Query {
     /// Creates an instance of [`RangeQuery`]
     ///
     /// - `field` - Field you wish to search.
-    pub fn range(field: impl Into<String>) -> RangeQuery {
+    pub fn range<T>(field: T) -> RangeQuery
+    where
+        T: Into<String>,
+    {
         RangeQuery {
             field: field.into(),
             inner: Inner {
@@ -76,25 +79,37 @@ impl Query {
 
 impl RangeQuery {
     /// Greater than.
-    pub fn gt(mut self, gt: impl Into<Term>) -> Self {
+    pub fn gt<T>(mut self, gt: T) -> Self
+    where
+        T: Into<Term>,
+    {
         self.inner.gt = gt.into();
         self
     }
 
     /// Greater than or equal to.
-    pub fn gte(mut self, gte: impl Into<Term>) -> Self {
+    pub fn gte<T>(mut self, gte: T) -> Self
+    where
+        T: Into<Term>,
+    {
         self.inner.gte = gte.into();
         self
     }
 
     /// Less than.
-    pub fn lt(mut self, lt: impl Into<Term>) -> Self {
+    pub fn lt<T>(mut self, lt: T) -> Self
+    where
+        T: Into<Term>,
+    {
         self.inner.lt = lt.into();
         self
     }
 
     /// Less than or equal to.
-    pub fn lte(mut self, lte: impl Into<Term>) -> Self {
+    pub fn lte<T>(mut self, lte: T) -> Self
+    where
+        T: Into<Term>,
+    {
         self.inner.lte = lte.into();
         self
     }
@@ -111,7 +126,10 @@ impl RangeQuery {
     /// >If a format or date value is incomplete, the range query replaces
     /// any missing components with default values. See
     /// [Missing date components](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html#missing-date-components).
-    pub fn format(mut self, format: impl Into<String>) -> Self {
+    pub fn format<T>(mut self, format: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.inner.format = Some(format.into());
         self
     }
@@ -131,7 +149,10 @@ impl RangeQuery {
     ///
     /// For an example query using the `time_zone` parameter, see
     /// [Time zone in `range` queries](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html#range-query-time-zone).
-    pub fn time_zone(mut self, time_zone: impl Into<String>) -> Self {
+    pub fn time_zone<T>(mut self, time_zone: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.inner.time_zone = Some(time_zone.into());
         self
     }

@@ -39,11 +39,12 @@ impl Query {
     /// - `field` - Field you wish to search
     /// - `origin` - GeoPoint to measure distance to
     /// - `distance` - Distance threshold
-    pub fn geo_distance(
-        field: impl Into<String>,
-        origin: impl Into<GeoPoint>,
-        distance: impl Into<Distance>,
-    ) -> GeoDistanceQuery {
+    pub fn geo_distance<T, U, V>(field: T, origin: U, distance: V) -> GeoDistanceQuery
+    where
+        T: Into<String>,
+        U: Into<GeoPoint>,
+        V: Into<Distance>,
+    {
         GeoDistanceQuery {
             inner: Inner {
                 pair: KeyValuePair::new(field.into(), origin.into()),
@@ -60,15 +61,15 @@ impl Query {
 impl GeoDistanceQuery {
     /// Set to `IGNORE_MALFORMED` to accept geo points with invalid latitude or longitude, set to
     /// `COERCE` to also try to infer correct latitude or longitude. (default is `STRICT`).
-    pub fn validation_method(mut self, validation_method: impl Into<ValidationMethod>) -> Self {
-        self.inner.validation_method = Some(validation_method.into());
+    pub fn validation_method(mut self, validation_method: ValidationMethod) -> Self {
+        self.inner.validation_method = Some(validation_method);
         self
     }
 
     /// How to compute the distance. Can either be `Arc` (default),
     /// or `Plane` (faster, but inaccurate on long distances and close to the poles).
-    pub fn distance_type(mut self, distance_type: impl Into<DistanceType>) -> Self {
-        self.inner.distance_type = Some(distance_type.into());
+    pub fn distance_type(mut self, distance_type: DistanceType) -> Self {
+        self.inner.distance_type = Some(distance_type);
         self
     }
 

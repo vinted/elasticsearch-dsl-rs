@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use std::convert::TryInto;
 
 /// The [parent-join](https://www.elastic.co/guide/en/elasticsearch/reference/current/parent-join.html)
 /// and [nested](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html)
@@ -45,7 +44,10 @@ impl InnerHits {
     }
 
     /// Indicates which source fields are returned for matching documents
-    pub fn source(mut self, source: impl Into<SourceFilter>) -> Self {
+    pub fn source<T>(mut self, source: T) -> Self
+    where
+        T: Into<SourceFilter>,
+    {
         self._source = Some(source.into());
         self
     }
@@ -53,31 +55,33 @@ impl InnerHits {
     /// Starting document offset.
     ///
     /// Defaults to `0`.
-    pub fn from(mut self, from: impl TryInto<u64>) -> Self {
-        if let Ok(from) = from.try_into() {
-            self.from = Some(from);
-        }
+    pub fn from(mut self, from: u64) -> Self {
+        self.from = Some(from);
         self
     }
 
     /// The number of hits to return.
     ///
     /// Defaults to `10`.
-    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
-        if let Ok(size) = size.try_into() {
-            self.size = Some(size);
-        }
+    pub fn size(mut self, size: u64) -> Self {
+        self.size = Some(size);
         self
     }
 
     /// A collection of sorting fields
-    pub fn sort(mut self, sort: impl Into<Vec<Sort>>) -> Self {
+    pub fn sort<T>(mut self, sort: T) -> Self
+    where
+        T: Into<Vec<Sort>>,
+    {
         self.sort.extend(sort.into());
         self
     }
 
     /// Highlight
-    pub fn highlight(mut self, highlight: impl Into<Highlight>) -> Self {
+    pub fn highlight<T>(mut self, highlight: T) -> Self
+    where
+        T: Into<Highlight>,
+    {
         self.highlight = Some(highlight.into());
         self
     }

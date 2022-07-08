@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use std::convert::TryInto;
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 /// A multi-bucket value source based aggregation where buckets are dynamically built - one per unique value.
@@ -42,7 +41,10 @@ impl TermsAggregationOrder {
     ///
     /// - `field` - Field to sort by
     /// - `order` - Ordering direction
-    pub fn new(field: impl Into<SortField>, order: SortOrder) -> Self {
+    pub fn new<T>(field: T, order: SortOrder) -> Self
+    where
+        T: Into<SortField>,
+    {
         Self(KeyValuePair::new(field.into(), order))
     }
 }
@@ -60,7 +62,10 @@ impl Aggregation {
     /// Creates an instance of [`TermsAggregation`]
     ///
     /// - `field` - field to group by
-    pub fn terms(field: impl Into<String>) -> TermsAggregation {
+    pub fn terms<T>(field: T) -> TermsAggregation
+    where
+        T: Into<String>,
+    {
         TermsAggregation {
             terms: TermsAggregationInner {
                 field: field.into(),
@@ -83,10 +88,8 @@ impl TermsAggregation {
     ///
     /// This means that if the number of unique terms is greater than `size`, the returned list is slightly off and not accurate
     /// (it could be that the term counts are slightly off and it could even be that a term that should have been in the top `size` buckets was not returned).
-    pub fn size(mut self, size: impl TryInto<u64>) -> Self {
-        if let Ok(size) = size.try_into() {
-            self.terms.size = Some(size);
-        }
+    pub fn size(mut self, size: u64) -> Self {
+        self.terms.size = Some(size);
         self
     }
 
@@ -111,7 +114,10 @@ impl TermsAggregation {
     /// [min](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html) or
     /// [max](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html)
     /// aggregation: counts will not be accurate but at least the top buckets will be correctly picked.
-    pub fn order(mut self, order: impl Into<TermsAggregationOrder>) -> Self {
+    pub fn order<T>(mut self, order: T) -> Self
+    where
+        T: Into<TermsAggregationOrder>,
+    {
         self.terms.order.push(order.into());
         self
     }
@@ -119,14 +125,17 @@ impl TermsAggregation {
     /// Only returns terms that match more than a configured number of hits using the `min_doc_count`
     ///
     /// Default value is `1`
-    pub fn min_doc_count(mut self, min_doc_count: impl Into<u16>) -> Self {
-        self.terms.min_doc_count = Some(min_doc_count.into());
+    pub fn min_doc_count(mut self, min_doc_count: u16) -> Self {
+        self.terms.min_doc_count = Some(min_doc_count);
         self
     }
 
     /// The missing parameter defines how documents that are missing a value should be treated.
     /// By default they will be ignored but it is also possible to treat them as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Term>) -> Self {
+    pub fn missing<T>(mut self, missing: T) -> Self
+    where
+        T: Into<Term>,
+    {
         self.terms.missing = Some(missing.into());
         self
     }
@@ -147,7 +156,7 @@ mod tests {
 
         assert_serialize_aggregation(
             Aggregation::terms("test_field")
-                .size(5u16)
+                .size(5)
                 .min_doc_count(2u16)
                 .show_term_doc_count_error(false)
                 .missing("N/A")
@@ -168,12 +177,12 @@ mod tests {
 
         assert_serialize_aggregation(
             Aggregation::terms("test_field")
-                .size(0u16)
+                .size(0)
                 .order(("test_order", SortOrder::Asc))
                 .missing(123)
                 .aggregate(
                     "test_sub_agg",
-                    Aggregation::terms("test_field2").size(3u16).missing(false),
+                    Aggregation::terms("test_field2").size(3).missing(false),
                 ),
             json!({
                 "terms": {

@@ -68,7 +68,11 @@ impl Query {
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - Fuzzy you wish to find in the provided field.
-    pub fn fuzzy(field: impl Into<String>, value: impl Into<Term>) -> FuzzyQuery {
+    pub fn fuzzy<T, U>(field: T, value: U) -> FuzzyQuery
+    where
+        T: Into<String>,
+        U: Into<Term>,
+    {
         FuzzyQuery {
             field: field.into(),
             inner: Inner {
@@ -91,7 +95,10 @@ impl FuzzyQuery {
     /// for valid values and more information. See
     /// [Fuzziness in the match query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html#query-dsl-match-query-fuzziness)
     /// for an example.
-    pub fn fuzziness(mut self, fuzziness: impl Into<Fuzziness>) -> Self {
+    pub fn fuzziness<T>(mut self, fuzziness: T) -> Self
+    where
+        T: Into<Fuzziness>,
+    {
         self.inner.fuzziness = Some(fuzziness.into());
         self
     }

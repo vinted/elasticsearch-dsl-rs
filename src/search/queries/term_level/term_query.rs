@@ -46,7 +46,11 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `value` - Term you wish to find in the provided field.
     /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
-    pub fn term(field: impl Into<String>, value: impl Into<Term>) -> TermQuery {
+    pub fn term<T, U>(field: T, value: U) -> TermQuery
+    where
+        T: Into<String>,
+        U: Into<Term>,
+    {
         TermQuery {
             field: field.into(),
             inner: Inner {

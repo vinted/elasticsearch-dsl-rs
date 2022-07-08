@@ -59,7 +59,10 @@ struct Inner {
 
 impl Query {
     /// Creates an instance of [`FunctionScoreQuery`]
-    pub fn function_score(query: impl Into<Query>) -> FunctionScoreQuery {
+    pub fn function_score<T>(query: T) -> FunctionScoreQuery
+    where
+        T: Into<Query>,
+    {
         FunctionScoreQuery {
             inner: Inner {
                 query: Box::new(query.into()),
@@ -77,7 +80,10 @@ impl Query {
 
 impl FunctionScoreQuery {
     /// Push function to the list
-    pub fn function(mut self, function: impl Into<Option<Function>>) -> Self {
+    pub fn function<T>(mut self, function: T) -> Self
+    where
+        T: Into<Option<Function>>,
+    {
         let function = function.into();
 
         if let Some(function) = function {
@@ -88,7 +94,10 @@ impl FunctionScoreQuery {
     }
 
     /// Maximum score value after applying all the functions
-    pub fn max_boost(mut self, max_boost: impl std::convert::TryInto<Boost>) -> Self {
+    pub fn max_boost<T>(mut self, max_boost: T) -> Self
+    where
+        T: std::convert::TryInto<Boost>,
+    {
         if let Ok(max_boost) = max_boost.try_into() {
             self.inner.max_boost = Some(max_boost);
         }
@@ -99,7 +108,10 @@ impl FunctionScoreQuery {
 
     /// that do not meet a certain score threshold the `min_score` parameter can be set to the
     /// desired score threshold.
-    pub fn min_score(mut self, min_score: impl Into<f32>) -> Self {
+    pub fn min_score<T>(mut self, min_score: T) -> Self
+    where
+        T: Into<f32>,
+    {
         self.inner.min_score = Some(min_score.into());
         self
     }

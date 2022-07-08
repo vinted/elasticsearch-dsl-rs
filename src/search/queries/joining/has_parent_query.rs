@@ -43,10 +43,14 @@ impl Query {
     /// - `parent-type` - Name of the parent relationship mapped for the join field.
     /// - `query` - Query you wish to run on parent documents of the `parent_type` field. If a
     /// parent document matches the search, the query returns its child documents.
-    pub fn has_parent(parent_type: impl ToString, query: impl Into<Query>) -> HasParentQuery {
+    pub fn has_parent<T, U>(parent_type: T, query: U) -> HasParentQuery
+    where
+        T: Into<String>,
+        U: Into<Query>,
+    {
         HasParentQuery {
             inner: Inner {
-                parent_type: parent_type.to_string(),
+                parent_type: parent_type.into(),
                 query: Box::new(query.into()),
                 score: None,
                 ignore_unmapped: None,

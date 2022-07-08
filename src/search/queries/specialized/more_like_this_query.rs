@@ -159,7 +159,10 @@ impl Document {
     /// Creates an instance of [Document](Document)
     ///
     /// - `id` - document id as string.
-    pub fn new(id: impl Into<String>) -> Self {
+    pub fn new<T>(id: T) -> Self
+    where
+        T: Into<String>,
+    {
         Self {
             _id: id.into(),
             _stored_fields: BTreeSet::new(),
@@ -170,33 +173,39 @@ impl Document {
     }
 
     /// The index that contains the document. Required if no index is specified in the request URI.
-    pub fn index(mut self, index: impl Into<String>) -> Self {
+    pub fn index<T>(mut self, index: T) -> Self
+    where
+        T: Into<String>,
+    {
         self._index = Some(index.into());
         self
     }
 
     /// The key for the primary shard the document resides on. Required if routing is used during indexing.
-    pub fn routing(mut self, routing: impl Into<String>) -> Self {
+    pub fn routing<T>(mut self, routing: T) -> Self
+    where
+        T: Into<String>,
+    {
         self._routing = Some(routing.into());
         self
     }
 
     /// If `false`, excludes all `_source` fields. Defaults to `true`.
-    pub fn source(mut self, source: impl Into<SourceFilter>) -> Self {
+    pub fn source<T>(mut self, source: T) -> Self
+    where
+        T: Into<SourceFilter>,
+    {
         self._source = Some(source.into());
         self
     }
 
     /// The stored fields you want to retrieve.
-    pub fn stored_fields<I>(mut self, stored_fields: I) -> Self
+    pub fn stored_fields<T>(mut self, stored_fields: T) -> Self
     where
-        I: IntoIterator,
-        I::Item: ToString,
+        T: IntoIterator,
+        T::Item: Into<String>,
     {
-        self._stored_fields = stored_fields
-            .into_iter()
-            .map(|value| value.to_string())
-            .collect();
+        self._stored_fields = stored_fields.into_iter().map(Into::into).collect();
         self
     }
 }
@@ -261,52 +270,52 @@ impl MoreLikeThisQuery {
     /// The maximum number of query terms that will be selected.
     /// Increasing this value gives greater accuracy at the expense of query execution speed.
     /// Defaults to 25.
-    pub fn max_query_terms(mut self, max_query_terms: impl Into<i64>) -> Self {
-        self.inner.max_query_terms = Some(max_query_terms.into());
+    pub fn max_query_terms(mut self, max_query_terms: i64) -> Self {
+        self.inner.max_query_terms = Some(max_query_terms);
         self
     }
 
     /// The minimum term frequency below which the terms will be ignored from the input document.
     /// Defaults to 2.
-    pub fn min_term_freq(mut self, min_term_freq: impl Into<i64>) -> Self {
-        self.inner.min_term_freq = Some(min_term_freq.into());
+    pub fn min_term_freq(mut self, min_term_freq: i64) -> Self {
+        self.inner.min_term_freq = Some(min_term_freq);
         self
     }
 
     /// The minimum document frequency below which the terms will be ignored from the input document.
     /// Defaults to 5.
-    pub fn min_doc_freq(mut self, min_doc_freq: impl Into<i64>) -> Self {
-        self.inner.min_doc_freq = Some(min_doc_freq.into());
+    pub fn min_doc_freq(mut self, min_doc_freq: i64) -> Self {
+        self.inner.min_doc_freq = Some(min_doc_freq);
         self
     }
 
     /// The maximum document frequency above which the terms will be ignored from the input document.
     /// This could be useful in order to ignore highly frequent words such as stop words.
     /// Defaults to unbounded (Integer.MAX_VALUE, which is 2^31-1 or 2147483647).
-    pub fn max_doc_freq(mut self, max_doc_freq: impl Into<i64>) -> Self {
-        self.inner.max_doc_freq = Some(max_doc_freq.into());
+    pub fn max_doc_freq(mut self, max_doc_freq: i64) -> Self {
+        self.inner.max_doc_freq = Some(max_doc_freq);
         self
     }
 
     /// The minimum word length below which the terms will be ignored. Defaults to 0.
-    pub fn min_word_length(mut self, min_word_length: impl Into<i64>) -> Self {
-        self.inner.min_word_length = Some(min_word_length.into());
+    pub fn min_word_length(mut self, min_word_length: i64) -> Self {
+        self.inner.min_word_length = Some(min_word_length);
         self
     }
 
     /// The maximum word length above which the terms will be ignored. Defaults to unbounded (0).
-    pub fn max_word_length(mut self, max_word_length: impl Into<i64>) -> Self {
-        self.inner.max_word_length = Some(max_word_length.into());
+    pub fn max_word_length(mut self, max_word_length: i64) -> Self {
+        self.inner.max_word_length = Some(max_word_length);
         self
     }
 
     /// An array of stop words. Any word in this set is considered "uninteresting" and ignored.
     /// If the analyzer allows for stop words, you might want to tell MLT to explicitly ignore them,
     /// as for the purposes of document similarity it seems reasonable to assume that "a stop word is never interesting".
-    pub fn stop_words<I>(mut self, stop_words: I) -> Self
+    pub fn stop_words<T>(mut self, stop_words: T) -> Self
     where
-        I: IntoIterator,
-        I::Item: Into<String>,
+        T: IntoIterator,
+        T::Item: Into<String>,
     {
         self.inner.stop_words = Some(stop_words.into_iter().map(Into::into).collect());
         self
@@ -314,35 +323,44 @@ impl MoreLikeThisQuery {
 
     /// The analyzer that is used to analyze the free form text.
     /// Defaults to the analyzer associated with the first field in `fields`.
-    pub fn analyzer(mut self, analyzer: impl Into<String>) -> Self {
+    pub fn analyzer<T>(mut self, analyzer: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.inner.analyzer = Some(analyzer.into());
         self
     }
 
     /// After the disjunctive query has been formed, this parameter controls the number of terms that must match.
     /// The syntax is the same as the `minimum should match`. (Defaults to "30%").
-    pub fn minimum_should_match(mut self, minimum_should_match: impl Into<String>) -> Self {
+    pub fn minimum_should_match<T>(mut self, minimum_should_match: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.inner.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
     /// Controls whether the query should fail (throw an exception) if any of the specified fields are not of the supported types (text or keyword).
     /// Set this to false to ignore the field and continue processing. Defaults to true.
-    pub fn fail_on_unsupported_field(mut self, fail_on_unsupported_field: impl Into<bool>) -> Self {
-        self.inner.fail_on_unsupported_field = Some(fail_on_unsupported_field.into());
+    pub fn fail_on_unsupported_field(mut self, fail_on_unsupported_field: bool) -> Self {
+        self.inner.fail_on_unsupported_field = Some(fail_on_unsupported_field);
         self
     }
 
     /// Each term in the formed query could be further boosted by their tf-idf score. This sets the boost factor to use when using this feature.
     /// Defaults to deactivated (0). Any other positive value activates terms boosting with the given boost factor.
-    pub fn boost_terms(mut self, boost_terms: impl Into<f64>) -> Self {
+    pub fn boost_terms<T>(mut self, boost_terms: T) -> Self
+    where
+        T: Into<f64>,
+    {
         self.inner.boost_terms = Some(boost_terms.into());
         self
     }
 
     /// Specifies whether the input documents should also be included in the search results returned. Defaults to `false`.
-    pub fn include(mut self, include: impl Into<bool>) -> Self {
-        self.inner.include = Some(include.into());
+    pub fn include(mut self, include: bool) -> Self {
+        self.inner.include = Some(include);
         self
     }
 

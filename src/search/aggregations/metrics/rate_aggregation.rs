@@ -37,7 +37,10 @@ impl Aggregation {
 
 impl RateAggregation {
     /// Calculate sum or number of values of the `field`
-    pub fn field(mut self, field: impl Into<String>) -> Self {
+    pub fn field<T>(mut self, field: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.rate.field = Some(field.into());
         self
     }
@@ -53,8 +56,8 @@ impl RateAggregation {
     /// if the date histogram is month based, only rate intervals of month, quarter or year are
     /// supported. If the date histogram is `day` based, only `second`, ` minute`, `hour`, `day,
     /// and `week` rate intervals are supported.
-    pub fn unit(mut self, unit: impl Into<CalendarInterval>) -> Self {
-        self.rate.unit = Some(unit.into());
+    pub fn unit(mut self, unit: CalendarInterval) -> Self {
+        self.rate.unit = Some(unit);
         self
     }
 
@@ -62,8 +65,8 @@ impl RateAggregation {
     ///
     /// By adding the `mode` parameter with the value `value_count`, we can change the calculation from
     /// `sum` to the number of values of the field.
-    pub fn mode(mut self, mode: impl Into<RateMode>) -> Self {
-        self.rate.mode = Some(mode.into());
+    pub fn mode(mut self, mode: RateMode) -> Self {
+        self.rate.mode = Some(mode);
         self
     }
 }

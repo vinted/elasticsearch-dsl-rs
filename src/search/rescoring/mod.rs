@@ -3,7 +3,6 @@
 
 use crate::search::*;
 use crate::util::*;
-use std::convert::TryInto;
 
 /// Rescoring can help to improve precision by reordering just the top (eg 100 - 500)
 /// documents returned by the [query](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#request-body-search-query)
@@ -57,7 +56,10 @@ impl Rescore {
     /// Creates a new instance of [`Rescore`]
     ///
     /// - `query` - Second query which will be execute on top-k results returned by original query.
-    pub fn new(query: impl Into<Option<Query>>) -> Self {
+    pub fn new<T>(query: T) -> Self
+    where
+        T: Into<Option<Query>>,
+    {
         Self {
             query: Inner {
                 rescore_query: query.into(),
@@ -69,21 +71,25 @@ impl Rescore {
     }
 
     /// The number of docs which will be examined on each shard can be controlled by the `window_size` parameter, which defaults to 10.
-    pub fn window_size(mut self, window_size: impl TryInto<u64>) -> Self {
-        if let Ok(window_size) = window_size.try_into() {
-            self.window_size = Some(window_size);
-        }
+    pub fn window_size(mut self, window_size: u64) -> Self {
+        self.window_size = Some(window_size);
         self
     }
 
     /// The relative importance of the rescore query can be controlled with the `rescore_query_weight` respectively. Both default to 1.
-    pub fn rescore_query_weight(mut self, rescore_query_weight: impl Into<f64>) -> Self {
+    pub fn rescore_query_weight<T>(mut self, rescore_query_weight: T) -> Self
+    where
+        T: Into<f64>,
+    {
         self.query.rescore_query_weight = Some(rescore_query_weight.into());
         self
     }
 
     /// The relative importance of the original query can be controlled with the `query_weight` respectively. Both default to 1.
-    pub fn query_weight(mut self, query_weight: impl Into<f64>) -> Self {
+    pub fn query_weight<T>(mut self, query_weight: T) -> Self
+    where
+        T: Into<f64>,
+    {
         self.query.query_weight = Some(query_weight.into());
         self
     }

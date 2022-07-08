@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use std::convert::TryInto;
 
 /// A filtering aggregation used to limit any sub aggregations' processing to a sample of the top-scoring documents.
 ///
@@ -32,10 +31,8 @@ impl Aggregation {
 impl SamplerAggregation {
     /// The shard_size parameter limits how many top-scoring documents are
     /// collected in the sample processed on each shard. The default value is 100.
-    pub fn shard_size(mut self, shard_size: impl TryInto<u64>) -> Self {
-        if let Ok(shard_size) = shard_size.try_into() {
-            self.sampler.shard_size = Some(shard_size);
-        }
+    pub fn shard_size(mut self, shard_size: u64) -> Self {
+        self.sampler.shard_size = Some(shard_size);
         self
     }
 

@@ -381,7 +381,10 @@ impl From<UnifiedHighlighter> for Highlighter {
 macro_rules! add_highlighter_methods {
     () => {
         /// A string that contains each boundary character. Defaults to `.,!? \t\n`.
-        pub fn boundary_chars(mut self, boundary_chars: impl Into<String>) -> Self {
+        pub fn boundary_chars<T>(mut self, boundary_chars: T) -> Self
+        where
+            T: Into<String>,
+        {
             self.boundary_chars = Some(boundary_chars.into());
             self
         }
@@ -418,7 +421,10 @@ macro_rules! add_highlighter_methods {
         /// > Elasticsearch does not validate that `highlight_query` contains the search query in any
         /// way so it is possible to define it so legitimate query results are not highlighted.
         /// Generally, you should include the search query as part of the `highlight_query`.
-        pub fn highlight_query(mut self, highlight_query: impl Into<Query>) -> Self {
+        pub fn highlight_query<T>(mut self, highlight_query: T) -> Self
+        where
+            T: Into<Query>,
+        {
             self.highlight_query = Some(highlight_query.into());
             self
         }
@@ -460,7 +466,10 @@ macro_rules! add_highlighter_methods {
         }
 
         /// Set to `styled` to use the built-in tag schema or use custom tags
-        pub fn tags(mut self, tags: impl Into<Tags>) -> Self {
+        pub fn tags<T>(mut self, tags: T) -> Self
+        where
+            T: Into<Tags>,
+        {
             self.tags = Some(tags.into());
             self
         }
@@ -527,7 +536,10 @@ impl FastVectorHighlighter {
     /// multi-fields that analyze the same string in different ways. All `matched_fields` must have
     /// `term_vector` set to `with_positions_offsets`, but only the field to which the matches are
     /// combined is loaded so only that field benefits from having store set to yes.
-    pub fn matched_fields(mut self, matched_fields: impl Into<MatchedFields>) -> Self {
+    pub fn matched_fields<T>(mut self, matched_fields: T) -> Self
+    where
+        T: Into<MatchedFields>,
+    {
         self.matched_fields = Some(matched_fields.into());
         self
     }

@@ -104,10 +104,10 @@ impl CombinedFieldsQuery {
     /// See the
     /// [`minimum_should_match` parameter](crate::MinimumShouldMatch)
     /// for valid values and more information.
-    pub fn minimum_should_match(
-        mut self,
-        minimum_should_match: impl Into<MinimumShouldMatch>,
-    ) -> Self {
+    pub fn minimum_should_match<T>(mut self, minimum_should_match: T) -> Self
+    where
+        T: Into<MinimumShouldMatch>,
+    {
         self.inner.minimum_should_match = Some(minimum_should_match.into());
         self
     }

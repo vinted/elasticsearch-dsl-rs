@@ -249,7 +249,10 @@ impl Query {
     /// Creates an instance of [`RankFeatureQuery`]
     ///
     /// - `field` - `rank_feature` or `rank_features` field used to boost relevance scores
-    pub fn rank_feature(field: impl Into<String>) -> RankFeatureQuery {
+    pub fn rank_feature<T>(field: T) -> RankFeatureQuery
+    where
+        T: Into<String>,
+    {
         RankFeatureQuery {
             inner: Inner {
                 field: field.into(),
@@ -339,8 +342,11 @@ impl RankFeatureQuery {
 
 impl RankFeatureSaturationQuery {
     /// Sets pivot value
-    pub fn pivot(mut self, pivot: impl Into<Option<f64>>) -> Self {
-        self.inner.saturation.pivot = pivot.into();
+    pub fn pivot<T>(mut self, pivot: T) -> Self
+    where
+        T: Into<f64>,
+    {
+        self.inner.saturation.pivot = Some(pivot.into());
         self
     }
 

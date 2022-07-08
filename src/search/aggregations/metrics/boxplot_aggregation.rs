@@ -33,7 +33,10 @@ impl Aggregation {
     /// Creates an instance of [`BoxplotAggregation`]
     ///
     /// - `field` - field to aggregate
-    pub fn boxplot(field: impl Into<String>) -> BoxplotAggregation {
+    pub fn boxplot<T>(field: T) -> BoxplotAggregation
+    where
+        T: Into<String>,
+    {
         BoxplotAggregation {
             boxplot: BoxplotAggregationInner {
                 field: field.into(),
@@ -59,14 +62,20 @@ impl BoxplotAggregation {
     /// A "node" uses roughly 32 bytes of memory, so under worst-case scenarios (large amount of
     /// data which arrives sorted and in-order) the default settings will produce a TDigest roughly
     /// 64KB in size. In practice data tends to be more random and the TDigest will use less memory.
-    pub fn compression(mut self, compression: impl Into<Number>) -> Self {
+    pub fn compression<T>(mut self, compression: T) -> Self
+    where
+        T: Into<Number>,
+    {
         self.boxplot.compression = Some(compression.into());
         self
     }
 
     /// The `missing` parameter defines how documents that are missing a value should be treated.
     /// By default they will be ignored but it is also possible to treat them as if they had a value.
-    pub fn missing(mut self, missing: impl Into<Number>) -> Self {
+    pub fn missing<T>(mut self, missing: T) -> Self
+    where
+        T: Into<Number>,
+    {
         self.boxplot.missing = Some(missing.into());
         self
     }

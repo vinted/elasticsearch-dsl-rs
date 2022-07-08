@@ -24,7 +24,10 @@ impl Aggregation {
     /// Creates an instance of [`CardinalityAggregation`]
     ///
     /// - `field` - field to aggregate
-    pub fn cardinality(field: impl Into<String>) -> CardinalityAggregation {
+    pub fn cardinality<T>(field: T) -> CardinalityAggregation
+    where
+        T: Into<String>,
+    {
         CardinalityAggregation {
             cardinality: CardinalityAggregationInner {
                 field: field.into(),
@@ -40,14 +43,17 @@ impl CardinalityAggregation {
     /// which counts are expected to be close to accurate. Above this value, counts might become a bit more fuzzy.
     /// The maximum supported value is 40000, thresholds above this number will have the same effect as a threshold
     /// of 40000. The default value is 3000
-    pub fn precision_threshold(mut self, precision_threshold: impl Into<u16>) -> Self {
-        self.cardinality.precision_threshold = Some(precision_threshold.into());
+    pub fn precision_threshold(mut self, precision_threshold: u16) -> Self {
+        self.cardinality.precision_threshold = Some(precision_threshold);
         self
     }
 
     /// The `missing` parameter defines how documents that are missing a value should be treated. By default they will
     /// be ignored but it is also possible to treat them as if they had a value.
-    pub fn missing(mut self, missing: impl Into<String>) -> Self {
+    pub fn missing<T>(mut self, missing: T) -> Self
+    where
+        T: Into<String>,
+    {
         self.cardinality.missing = Some(missing.into());
         self
     }
