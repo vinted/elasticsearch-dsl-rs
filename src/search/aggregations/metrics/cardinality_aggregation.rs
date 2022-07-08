@@ -44,7 +44,7 @@ impl CardinalityAggregation {
     /// The maximum supported value is 40000, thresholds above this number will have the same effect as a threshold
     /// of 40000. The default value is 3000
     pub fn precision_threshold(mut self, precision_threshold: u16) -> Self {
-        self.cardinality.precision_threshold = Some(precision_threshold.into());
+        self.cardinality.precision_threshold = Some(precision_threshold);
         self
     }
 

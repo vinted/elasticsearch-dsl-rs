@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use std::convert::TryInto;
 
 /// A `top_hits` metric aggregation keeps track of the most relevant document being aggregated.
 /// This aggregation is intended to be used as a sub aggregation,
@@ -62,9 +61,7 @@ impl TopHitsAggregation {
 
     /// The offset from the first result you want to fetch.
     pub fn from(mut self, from: u64) -> Self {
-        if let Ok(from) = from.try_into() {
-            self.top_hits.from = Some(from);
-        }
+        self.top_hits.from = Some(from);
         self
     }
 
@@ -72,9 +69,7 @@ impl TopHitsAggregation {
     ///
     /// By default the top three matching hits are returned.
     pub fn size(mut self, size: u64) -> Self {
-        if let Ok(size) = size.try_into() {
-            self.top_hits.size = Some(size);
-        }
+        self.top_hits.size = Some(size);
         self
     }
 
