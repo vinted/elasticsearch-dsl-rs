@@ -49,9 +49,9 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(Query::match_all(), json!({ "match_all": {} }));
+        assert_serialize_query(Query::match_all(), json!({ "match_all": {} }));
 
-        assert_serialize(
+        assert_serialize_query(
             Query::match_all().boost(2).name("test"),
             json!({ "match_all": { "boost": 2, "_name": "test" } }),
         );

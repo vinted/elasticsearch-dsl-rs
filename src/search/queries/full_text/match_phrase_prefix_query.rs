@@ -133,7 +133,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::match_phrase_prefix("test", "search text"),
             json!({
                 "match_phrase_prefix": {
@@ -144,7 +144,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::match_phrase_prefix("test", "search text")
                 .analyzer("search_time_analyzer")
                 .max_expansions(20)

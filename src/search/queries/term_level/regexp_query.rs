@@ -150,7 +150,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::regexp("test", "regexp"),
             json!({
                 "regexp": {
@@ -161,7 +161,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::regexp("test", "regexp")
                 .flags([RegexpFlag::Complement, RegexpFlag::Interval])
                 .case_insensitive(false)

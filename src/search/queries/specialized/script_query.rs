@@ -59,7 +59,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::script(
                 Script::source("doc['numberOfCommits'].value > params.param1").param("param1", 50),
             )

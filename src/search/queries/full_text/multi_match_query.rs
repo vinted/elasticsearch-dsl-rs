@@ -246,7 +246,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::multi_match(["test"], "search text"),
             json!({
                 "multi_match": {
@@ -256,7 +256,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::multi_match(["test"], "search text")
                 .r#type(MultiMatchQueryType::BestFields(
                     TieBreaker::try_from(0.2).ok(),

@@ -115,7 +115,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::terms_lookup("test", "index_value", "id_value", "path_value"),
             json!({
                 "terms": {
@@ -128,7 +128,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::terms_lookup("test", "index_value", "id_value", "path_value")
                 .routing("routing_value")
                 .boost(2)

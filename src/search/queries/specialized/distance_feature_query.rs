@@ -175,7 +175,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7)),
             json!({
                 "distance_feature": {
@@ -186,7 +186,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7))
                 .boost(1.5)
                 .name("test"),
@@ -200,7 +200,7 @@ mod tests {
                 }
             }),
         );
-        assert_serialize(
+        assert_serialize_query(
             Query::distance_feature(
                 "test",
                 GeoPoint::coordinates(12.0, 13.0),
@@ -215,7 +215,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::distance_feature(
                 "test",
                 GeoPoint::coordinates(12.0, 13.0),

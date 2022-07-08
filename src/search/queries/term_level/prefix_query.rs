@@ -109,7 +109,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::prefix("test", 123),
             json!({
                 "prefix": {
@@ -120,7 +120,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::prefix("test", 123)
                 .rewrite(Rewrite::ConstantScore)
                 .case_insensitive(true)
@@ -139,7 +139,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::bool().filter(Query::prefix("test", None::<String>)),
             json!({ "bool": {} }),
         )

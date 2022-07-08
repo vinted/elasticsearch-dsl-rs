@@ -117,7 +117,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::percolate_lookup("field_name", "index_name", "document_id"),
             json!({
                 "percolate": {
@@ -128,7 +128,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::percolate_lookup("field_name", "index_name", "document_id")
                 .name("toast")
                 .routing("routing_value")

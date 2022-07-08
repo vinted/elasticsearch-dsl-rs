@@ -234,7 +234,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::r#match("test", "search text"),
             json!({
                 "match": {
@@ -245,7 +245,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::r#match("test", "search text")
                 .analyzer("search_time_analyzer")
                 .auto_generate_synonyms_phrase_query(true)

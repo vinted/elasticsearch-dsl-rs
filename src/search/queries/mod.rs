@@ -183,6 +183,12 @@ query!(
     Wrapper(WrapperQuery),
     Script(ScriptQuery),
     ScriptScore(ScriptScoreQuery),
+    ParentId(ParentIdQuery),
+    HasParent(HasParentQuery),
+    HasChild(HasChildQuery),
+    SimpleQueryString(SimpleQueryStringQuery),
+    QueryString(QueryStringQuery),
+    CombinedFields(CombinedFieldsQuery),
 );
 
 /// A collection of queries

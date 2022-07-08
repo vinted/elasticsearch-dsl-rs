@@ -87,7 +87,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::geo_distance(
                 "pin.location",
                 GeoPoint::Coordinates {
@@ -104,7 +104,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::geo_distance(
                 "pin.location",
                 GeoPoint::Geohash("drm3btev3e86".into()),
@@ -118,7 +118,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::geo_distance(
                 "pin.location",
                 GeoPoint::Coordinates {

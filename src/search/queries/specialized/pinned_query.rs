@@ -69,7 +69,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::pinned(PinnedQueryValues::ids([1]), Query::term("user_id", 2)),
             json!({
                 "pinned": {
@@ -85,7 +85,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::pinned(
                 PinnedQueryValues::docs([PinnedDocument::new("index", 1)]),
                 Query::term("user_id", 2),
@@ -104,7 +104,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::pinned(PinnedQueryValues::ids([1]), Query::term("user_id", 2))
                 .boost(2)
                 .name("test"),
@@ -124,7 +124,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::pinned(
                 PinnedQueryValues::docs([PinnedDocument::new("index", 1)]),
                 Query::term("user_id", 2),

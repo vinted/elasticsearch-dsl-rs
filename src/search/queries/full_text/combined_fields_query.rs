@@ -134,7 +134,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::combined_fields(["test"], "search text"),
             json!({
                 "combined_fields": {
@@ -144,7 +144,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::combined_fields(["test"], "search text")
                 .auto_generate_synonyms_phrase_query(true)
                 .operator(Operator::And)

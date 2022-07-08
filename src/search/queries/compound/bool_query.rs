@@ -135,9 +135,9 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(Query::bool(), json!({ "bool": {} }));
+        assert_serialize_query(Query::bool(), json!({ "bool": {} }));
 
-        assert_serialize(
+        assert_serialize_query(
             Query::bool()
                 .must([Query::term("test1", 1), Query::term("test2", 2)])
                 .should([Query::term("test1", 3), Query::term("test2", 4)])
@@ -171,7 +171,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::bool()
                 .must(Query::term("test1", 1))
                 .must(Query::term("test2", 2))

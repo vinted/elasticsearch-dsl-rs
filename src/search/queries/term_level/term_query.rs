@@ -88,7 +88,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::term("test", 123),
             json!({
                 "term": {
@@ -99,7 +99,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::term("test", 123).boost(2).name("test"),
             json!({
                 "term": {
@@ -112,7 +112,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::bool().filter(Query::term("test", None::<String>)),
             json!({ "bool": {} }),
         )

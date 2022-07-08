@@ -48,7 +48,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::json(json!({ "term": { "user": "username" } })),
             json!({ "term": { "user": "username" } }),
         );

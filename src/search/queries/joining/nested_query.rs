@@ -144,7 +144,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::nested("vehicles", Query::term("vehicles.license", "ABC123")),
             json!({
                 "nested": {
@@ -160,7 +160,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::nested("vehicles", Query::term("vehicles.license", "ABC123"))
                 .boost(3)
                 .name("test"),
@@ -180,7 +180,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::nested(
                 "driver",
                 Query::nested(

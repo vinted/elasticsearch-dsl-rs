@@ -82,12 +82,12 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::terms("test", vec![123, 12, 13]),
             json!({"terms": { "test": [12, 13, 123] } }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::terms("test", vec![123]).boost(2).name("test"),
             json!({
                 "terms": {

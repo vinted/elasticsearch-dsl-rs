@@ -170,7 +170,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::range("test_field"),
             json!({
                 "range": {
@@ -179,7 +179,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::range("test_field")
                 .gt(Option::<i32>::None)
                 .lt(Option::<i32>::None)
@@ -192,7 +192,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::range("test_numeric_field")
                 .gt(1)
                 .gte(2)
@@ -216,7 +216,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::range("test_date_field")
                 .gt(Utc.ymd(2014, 11, 28).and_hms(12, 0, 1))
                 .gte(Utc.ymd(2014, 11, 28).and_hms(12, 0, 2))

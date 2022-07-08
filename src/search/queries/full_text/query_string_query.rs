@@ -385,7 +385,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::query_string("search text"),
             json!({
                 "query_string": {
@@ -394,7 +394,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::query_string("search text")
                 .fields(["database"])
                 .default_operator(Operator::And)

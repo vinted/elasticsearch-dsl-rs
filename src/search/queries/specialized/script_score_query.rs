@@ -73,7 +73,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::script_score(
                 Query::r#match("message", "elasticsearch"),
                 Script::source("doc['my-int'].value / 10"),

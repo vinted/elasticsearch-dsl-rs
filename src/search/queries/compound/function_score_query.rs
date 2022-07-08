@@ -133,7 +133,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::function_score(Query::term("test", 1)).function(RandomScore::new()),
             json!({
                 "function_score": {
@@ -153,7 +153,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::function_score(Query::term("test", 1))
                 .function(RandomScore::new())
                 .function(Weight::new(2.0))

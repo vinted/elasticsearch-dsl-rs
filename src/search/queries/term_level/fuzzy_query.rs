@@ -153,7 +153,7 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(
+        assert_serialize_query(
             Query::fuzzy("test", 123),
             json!({
                 "fuzzy": {
@@ -164,7 +164,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::fuzzy("test", 123)
                 .fuzziness(Fuzziness::Auto)
                 .max_expansions(3)
@@ -189,7 +189,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::bool().filter(Query::fuzzy("test", None::<String>)),
             json!({ "bool": {} }),
         )

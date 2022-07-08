@@ -49,9 +49,9 @@ mod tests {
 
     #[test]
     fn serialization() {
-        assert_serialize(Query::match_none(), json!({"match_none": {} }));
+        assert_serialize_query(Query::match_none(), json!({"match_none": {} }));
 
-        assert_serialize(
+        assert_serialize_query(
             Query::match_none().boost(2).name("test"),
             json!({ "match_none": { "boost": 2, "_name": "test" } }),
         );

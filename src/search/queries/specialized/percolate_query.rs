@@ -96,7 +96,7 @@ mod tests {
             message: &'static str,
         }
 
-        assert_serialize(
+        assert_serialize_query(
             Query::percolate(
                 "field_name",
                 Source {
@@ -115,7 +115,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::percolate(
                 "field_name",
                 [Source {
@@ -136,7 +136,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::percolate("field_name", json!({"message": "lol"})),
             json!({
                 "percolate": {
@@ -148,7 +148,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::percolate("field_name", json!({"message": "lol"})).name("toast"),
             json!({
                 "percolate": {
@@ -161,7 +161,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::percolate("field_name", [json!({"message": "lol"})]),
             json!({
                 "percolate": {
@@ -175,7 +175,7 @@ mod tests {
             }),
         );
 
-        assert_serialize(
+        assert_serialize_query(
             Query::percolate("field_name", [json!({"message": "lol"})]).name("toast"),
             json!({
                 "percolate": {
