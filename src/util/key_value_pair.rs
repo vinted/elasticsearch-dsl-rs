@@ -19,7 +19,7 @@ where
     V: std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_map().entry(&self.key, &self.value).finish()
+        write!(f, "{{ {:?}: {:?} }}", self.key, self.value)
     }
 }
 
