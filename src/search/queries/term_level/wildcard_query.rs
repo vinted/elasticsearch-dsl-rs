@@ -48,12 +48,12 @@ impl Query {
     pub fn wildcard<T, U>(field: T, value: U) -> WildcardQuery
     where
         T: Into<String>,
-        U: Into<Term>,
+        U: Serialize,
     {
         WildcardQuery {
             field: field.into(),
             inner: Inner {
-                value: value.into(),
+                value: Term::new(value),
                 rewrite: None,
                 case_insensitive: None,
                 boost: None,

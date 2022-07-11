@@ -83,12 +83,12 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize_query(
-            Query::terms("test", vec![123, 12, 13]),
+            Query::terms("test", [12, 13, 123]),
             json!({"terms": { "test": [12, 13, 123] } }),
         );
 
         assert_serialize_query(
-            Query::terms("test", vec![123]).boost(2).name("test"),
+            Query::terms("test", [123]).boost(2).name("test"),
             json!({
                 "terms": {
                     "test": [123],
@@ -101,7 +101,7 @@ mod tests {
 
     #[test]
     fn should_skip_when_there_are_no_values() {
-        let values: Vec<Term> = Vec::new();
+        let values: Vec<i32> = Vec::new();
         let query = Query::terms("test", values);
 
         assert!(query.should_skip())

@@ -222,9 +222,9 @@ impl RandomScore {
     /// Sets seed value
     pub fn seed<T>(mut self, seed: T) -> Self
     where
-        T: Into<Term>,
+        T: Serialize,
     {
-        self.random_score.seed = seed.into();
+        self.random_score.seed = Term::new(seed);
         self
     }
 

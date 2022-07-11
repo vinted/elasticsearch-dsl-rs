@@ -71,12 +71,12 @@ impl Query {
     pub fn fuzzy<T, U>(field: T, value: U) -> FuzzyQuery
     where
         T: Into<String>,
-        U: Into<Term>,
+        U: Serialize,
     {
         FuzzyQuery {
             field: field.into(),
             inner: Inner {
-                value: value.into(),
+                value: Term::new(value),
                 fuzziness: None,
                 max_expansions: None,
                 prefix_length: None,

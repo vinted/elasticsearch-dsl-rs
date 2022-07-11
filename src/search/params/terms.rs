@@ -2,8 +2,8 @@ use super::*;
 use crate::util::*;
 
 /// A collection of terms
-#[derive(Clone, PartialEq, PartialOrd, Serialize)]
-pub struct Terms(std::collections::BTreeSet<Term>);
+#[derive(Clone, PartialEq, Serialize)]
+pub struct Terms(Vec<Term>);
 
 impl std::fmt::Debug for Terms {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -14,10 +14,10 @@ impl std::fmt::Debug for Terms {
 impl<T> From<T> for Terms
 where
     T: IntoIterator,
-    T::Item: Into<Term>,
+    T::Item: serde::Serialize,
 {
     fn from(value: T) -> Self {
-        Self(value.into_iter().map(Into::into).collect())
+        Self(value.into_iter().map(Term::new).collect())
     }
 }
 

@@ -49,12 +49,12 @@ impl Query {
     pub fn term<T, U>(field: T, value: U) -> TermQuery
     where
         T: Into<String>,
-        U: Into<Term>,
+        U: Serialize,
     {
         TermQuery {
             field: field.into(),
             inner: Inner {
-                value: value.into(),
+                value: Term::new(value),
                 boost: None,
                 _name: None,
             },
