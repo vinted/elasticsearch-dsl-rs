@@ -1,5 +1,6 @@
 use crate::search::*;
 use crate::util::*;
+use serde::Serialize;
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 /// A multi-bucket value source based aggregation where buckets are dynamically built - one per unique value.
@@ -29,7 +30,7 @@ struct TermsAggregationInner {
     min_doc_count: Option<u16>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    missing: Option<Term>,
+    missing: Term,
 }
 
 /// Terms Aggregation sorting struct
@@ -73,7 +74,7 @@ impl Aggregation {
                 show_term_doc_count_error: None,
                 order: vec![],
                 min_doc_count: None,
-                missing: None,
+                missing: Default::default(),
             },
             aggs: Aggregations::new(),
         }
@@ -134,9 +135,9 @@ impl TermsAggregation {
     /// By default they will be ignored but it is also possible to treat them as if they had a value.
     pub fn missing<T>(mut self, missing: T) -> Self
     where
-        T: Into<Term>,
+        T: Serialize,
     {
-        self.terms.missing = Some(missing.into());
+        self.terms.missing = Term::new(missing);
         self
     }
 

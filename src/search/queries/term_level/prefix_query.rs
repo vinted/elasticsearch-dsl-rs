@@ -53,12 +53,12 @@ impl Query {
     pub fn prefix<T, U>(field: T, value: U) -> PrefixQuery
     where
         T: Into<String>,
-        U: Into<Term>,
+        U: Serialize,
     {
         PrefixQuery {
             field: field.into(),
             inner: Inner {
-                value: value.into(),
+                value: Term::new(value),
                 rewrite: None,
                 case_insensitive: None,
                 boost: None,

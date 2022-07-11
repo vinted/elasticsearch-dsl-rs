@@ -81,36 +81,36 @@ impl RangeQuery {
     /// Greater than.
     pub fn gt<T>(mut self, gt: T) -> Self
     where
-        T: Into<Term>,
+        T: Serialize,
     {
-        self.inner.gt = gt.into();
+        self.inner.gt = Term::new(gt);
         self
     }
 
     /// Greater than or equal to.
     pub fn gte<T>(mut self, gte: T) -> Self
     where
-        T: Into<Term>,
+        T: Serialize,
     {
-        self.inner.gte = gte.into();
+        self.inner.gte = Term::new(gte);
         self
     }
 
     /// Less than.
     pub fn lt<T>(mut self, lt: T) -> Self
     where
-        T: Into<Term>,
+        T: Serialize,
     {
-        self.inner.lt = lt.into();
+        self.inner.lt = Term::new(lt);
         self
     }
 
     /// Less than or equal to.
     pub fn lte<T>(mut self, lte: T) -> Self
     where
-        T: Into<Term>,
+        T: Serialize,
     {
-        self.inner.lte = lte.into();
+        self.inner.lte = Term::new(lte);
         self
     }
 
