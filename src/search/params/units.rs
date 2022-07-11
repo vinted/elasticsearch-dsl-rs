@@ -40,7 +40,7 @@ impl Serialize for Time {
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-datehistogram-aggregation.html#calendar_intervals>
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Copy, Serialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 pub enum CalendarInterval {
     /// All minutes begin at 00 seconds. One minute is the interval between 00 seconds of the first
     /// minute and 00 seconds of the following minute in the specified time zone, compensating for
