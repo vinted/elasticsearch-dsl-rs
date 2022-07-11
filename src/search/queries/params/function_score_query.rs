@@ -7,7 +7,7 @@ use std::fmt::Debug;
 /// Each document is scored by the defined functions. The parameter `score_mode` specifies how
 /// the computed scores are combined
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 pub enum FunctionScoreMode {
     /// Scores are multiplied (default)
     Multiply,
@@ -37,7 +37,7 @@ impl Default for FunctionScoreMode {
 /// The newly computed score is combined with the score of the query. The parameter
 /// `boost_mode` defines how.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 pub enum FunctionScoreBoostMode {
     /// Query score and function score is multiplied (default)
     Multiply,
@@ -320,7 +320,7 @@ impl FieldValueFactor {
 ///
 /// Defaults to [none](FieldValueFactorModifier::None)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 pub enum FieldValueFactorModifier {
     /// Do not apply any multiplier to the field value
     None,
@@ -508,7 +508,7 @@ impl<T: Origin> Serialize for DecayFieldInner<T> {
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html#_supported_decay_functions>
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "snake_case")]
 pub enum DecayFunction {
     /// Linear decay
     Linear,
