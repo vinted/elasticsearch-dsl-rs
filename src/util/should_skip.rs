@@ -1,3 +1,5 @@
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+
 /// Trait to handle skippable queries or their values
 pub(crate) trait ShouldSkip {
     /// Whether a query or a query value can be skipped
@@ -42,55 +44,55 @@ impl<T> ShouldSkip for Vec<T> {
     }
 }
 
-impl<T> ShouldSkip for std::collections::HashSet<T> {
+impl<T> ShouldSkip for HashSet<T> {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
 }
 
-impl<T> ShouldSkip for &std::collections::HashSet<T> {
+impl<T> ShouldSkip for &HashSet<T> {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
 }
 
-impl<T> ShouldSkip for std::collections::BTreeSet<T> {
+impl<T> ShouldSkip for BTreeSet<T> {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
 }
 
-impl<T> ShouldSkip for &std::collections::BTreeSet<T> {
+impl<T> ShouldSkip for &BTreeSet<T> {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
 }
 
-impl<'a, T> ShouldSkip for &'a [T] {
+impl<T> ShouldSkip for &[T] {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
 }
 
-impl<K, V> ShouldSkip for std::collections::HashMap<K, V> {
+impl<K, V> ShouldSkip for HashMap<K, V> {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
 }
 
-impl<K, V> ShouldSkip for &std::collections::HashMap<K, V> {
+impl<K, V> ShouldSkip for &HashMap<K, V> {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
 }
 
-impl<K, V> ShouldSkip for std::collections::BTreeMap<K, V> {
+impl<K, V> ShouldSkip for BTreeMap<K, V> {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
 }
 
-impl<K, V> ShouldSkip for &std::collections::BTreeMap<K, V> {
+impl<K, V> ShouldSkip for &BTreeMap<K, V> {
     fn should_skip(&self) -> bool {
         self.is_empty()
     }
