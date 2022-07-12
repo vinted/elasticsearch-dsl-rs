@@ -30,7 +30,7 @@ struct TermsAggregationInner {
     min_doc_count: Option<u16>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    missing: Term,
+    missing: Option<Term>,
 }
 
 /// Terms Aggregation sorting struct

@@ -1,47 +1,9 @@
-use crate::util::ShouldSkip;
 use serde::ser::{self, Serialize};
-
-/// Elasticsearch term value
-#[derive(Default, Clone, PartialEq, PartialOrd, Serialize)]
-pub struct Term(Option<Inner>);
-
-impl std::fmt::Debug for Term {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.0.fmt(f)
-    }
-}
-
-impl ShouldSkip for Term {
-    fn should_skip(&self) -> bool {
-        match self.0.as_ref() {
-            None => true,
-            Some(Inner::None) => true,
-            Some(Inner::String(term)) => term.is_empty(),
-            _ => false,
-        }
-    }
-}
-
-impl Term {
-    /// Creates a new term from allowed values
-    pub fn new<T>(term: T) -> Self
-    where
-        T: Serialize,
-    {
-        Self(match Inner::new(term) {
-            Some(Inner::None) => None,
-            other => other,
-        })
-    }
-}
 
 /// Elasticsearch term value
 #[derive(Clone, PartialEq, PartialOrd, Serialize)]
 #[serde(untagged)]
-enum Inner {
-    /// None value
-    None,
-
+pub enum Term {
     /// Boolean value
     Boolean(bool),
 
@@ -61,10 +23,9 @@ enum Inner {
     String(String),
 }
 
-impl std::fmt::Debug for Inner {
+impl std::fmt::Debug for Term {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::None => "()".fmt(f),
             Self::Boolean(term) => term.fmt(f),
             Self::PositiveNumber(term) => term.fmt(f),
             Self::NegativeNumber(term) => term.fmt(f),
@@ -75,14 +36,15 @@ impl std::fmt::Debug for Inner {
     }
 }
 
-impl Inner {
-    fn new<T>(term: T) -> Option<Self>
+impl Term {
+    /// Creates a new term from a serializable value
+    pub fn new<T>(term: T) -> Option<Self>
     where
         T: Serialize,
     {
         let term = term.serialize(Serializer);
 
-        debug_assert!(term.is_ok());
+        debug_assert!(term.is_ok() || term == Err(TermSerializeError::NoTerm));
 
         term.ok()
     }
@@ -91,7 +53,7 @@ impl Inner {
 struct Serializer;
 
 impl ser::Serializer for Serializer {
-    type Ok = Inner;
+    type Ok = Term;
     type Error = TermSerializeError;
     type SerializeSeq = Self;
     type SerializeTuple = Self;
@@ -102,7 +64,7 @@ impl ser::Serializer for Serializer {
     type SerializeStructVariant = Self;
 
     fn serialize_bool(self, v: bool) -> Result<Self::Ok, Self::Error> {
-        Ok(Inner::Boolean(v))
+        Ok(Term::Boolean(v))
     }
 
     fn serialize_i8(self, v: i8) -> Result<Self::Ok, Self::Error> {
@@ -119,9 +81,9 @@ impl ser::Serializer for Serializer {
 
     fn serialize_i64(self, v: i64) -> Result<Self::Ok, Self::Error> {
         if v < 0 {
-            Ok(Inner::NegativeNumber(v))
+            Ok(Term::NegativeNumber(v))
         } else {
-            Ok(Inner::PositiveNumber(v as u64))
+            Ok(Term::PositiveNumber(v as u64))
         }
     }
 
@@ -138,23 +100,35 @@ impl ser::Serializer for Serializer {
     }
 
     fn serialize_u64(self, v: u64) -> Result<Self::Ok, Self::Error> {
-        Ok(Inner::PositiveNumber(v))
+        Ok(Term::PositiveNumber(v))
     }
 
     fn serialize_f32(self, v: f32) -> Result<Self::Ok, Self::Error> {
-        Ok(Inner::Float32(v))
+        Ok(Term::Float32(v))
     }
 
     fn serialize_f64(self, v: f64) -> Result<Self::Ok, Self::Error> {
-        Ok(Inner::Float64(v))
+        Ok(Term::Float64(v))
     }
 
     fn serialize_char(self, v: char) -> Result<Self::Ok, Self::Error> {
-        Ok(Inner::String(String::from(v)))
+        let v = String::from(v);
+
+        if v.is_empty() {
+            Err(TermSerializeError::NoTerm)
+        } else {
+            Ok(Term::String(v))
+        }
     }
 
     fn serialize_str(self, v: &str) -> Result<Self::Ok, Self::Error> {
-        Ok(Inner::String(String::from(v)))
+        let v = String::from(v);
+
+        if v.is_empty() {
+            Err(TermSerializeError::NoTerm)
+        } else {
+            Ok(Term::String(v))
+        }
     }
 
     fn serialize_bytes(self, _v: &[u8]) -> Result<Self::Ok, Self::Error> {
@@ -162,7 +136,7 @@ impl ser::Serializer for Serializer {
     }
 
     fn serialize_none(self) -> Result<Self::Ok, Self::Error> {
-        Ok(Inner::None)
+        Err(TermSerializeError::NoTerm)
     }
 
     fn serialize_some<T: ?Sized>(self, value: &T) -> Result<Self::Ok, Self::Error>
@@ -263,7 +237,7 @@ impl ser::Serializer for Serializer {
 }
 
 impl ser::SerializeSeq for Serializer {
-    type Ok = Inner;
+    type Ok = Term;
     type Error = TermSerializeError;
 
     fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
@@ -279,7 +253,7 @@ impl ser::SerializeSeq for Serializer {
 }
 
 impl ser::SerializeTuple for Serializer {
-    type Ok = Inner;
+    type Ok = Term;
     type Error = TermSerializeError;
 
     fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
@@ -295,7 +269,7 @@ impl ser::SerializeTuple for Serializer {
 }
 
 impl ser::SerializeTupleStruct for Serializer {
-    type Ok = Inner;
+    type Ok = Term;
     type Error = TermSerializeError;
 
     fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
@@ -310,7 +284,7 @@ impl ser::SerializeTupleStruct for Serializer {
     }
 }
 impl ser::SerializeTupleVariant for Serializer {
-    type Ok = Inner;
+    type Ok = Term;
     type Error = TermSerializeError;
 
     fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
@@ -326,7 +300,7 @@ impl ser::SerializeTupleVariant for Serializer {
 }
 
 impl ser::SerializeMap for Serializer {
-    type Ok = Inner;
+    type Ok = Term;
     type Error = TermSerializeError;
 
     fn serialize_key<T: ?Sized>(&mut self, _key: &T) -> Result<(), Self::Error>
@@ -349,7 +323,7 @@ impl ser::SerializeMap for Serializer {
 }
 
 impl ser::SerializeStruct for Serializer {
-    type Ok = Inner;
+    type Ok = Term;
     type Error = TermSerializeError;
 
     fn serialize_field<T: ?Sized>(
@@ -369,7 +343,7 @@ impl ser::SerializeStruct for Serializer {
 }
 
 impl ser::SerializeStructVariant for Serializer {
-    type Ok = Inner;
+    type Ok = Term;
     type Error = TermSerializeError;
 
     fn serialize_field<T: ?Sized>(
@@ -425,16 +399,16 @@ mod tests {
 
     #[test]
     fn serializes_primitives_correctly() {
-        assert_eq!(Inner::new(true), Some(Inner::Boolean(true)));
-        assert_eq!(Inner::new(12345), Some(Inner::PositiveNumber(12345)));
-        assert_eq!(Inner::new(-1234), Some(Inner::NegativeNumber(-1234)));
-        assert_eq!(Inner::new(1_f32), Some(Inner::Float32(1.0)));
-        assert_eq!(Inner::new(1_f64), Some(Inner::Float64(1.0)));
-        assert_eq!(Inner::new('s'), Some(Inner::String("s".into())));
-        assert_eq!(Inner::new("str"), Some(Inner::String("str".into())));
+        assert_eq!(Term::new(true), Some(Term::Boolean(true)));
+        assert_eq!(Term::new(12345), Some(Term::PositiveNumber(12345)));
+        assert_eq!(Term::new(-1234), Some(Term::NegativeNumber(-1234)));
+        assert_eq!(Term::new(1_f32), Some(Term::Float32(1.0)));
+        assert_eq!(Term::new(1_f64), Some(Term::Float64(1.0)));
+        assert_eq!(Term::new('s'), Some(Term::String("s".into())));
+        assert_eq!(Term::new("str"), Some(Term::String("str".into())));
         assert_eq!(
-            Inner::new(Utc.ymd(2022, 3, 21).and_hms(0, 5, 8)),
-            Some(Inner::String("2022-03-21T00:05:08Z".into()))
+            Term::new(Utc.ymd(2022, 3, 21).and_hms(0, 5, 8)),
+            Some(Term::String("2022-03-21T00:05:08Z".into()))
         );
     }
 
@@ -443,7 +417,7 @@ mod tests {
         #[derive(Serialize)]
         struct Newtype<T>(T);
 
-        assert_eq!(Inner::new(Newtype(123)), Some(Inner::PositiveNumber(123)));
+        assert_eq!(Term::new(Newtype(123)), Some(Term::PositiveNumber(123)));
     }
 
     #[test]
@@ -465,8 +439,8 @@ mod tests {
         }
 
         assert_eq!(
-            Inner::new(Wrapper { value: 123 }),
-            Some(Inner::PositiveNumber(123))
+            Term::new(Wrapper { value: 123 }),
+            Some(Term::PositiveNumber(123))
         );
     }
 }
