@@ -24,39 +24,13 @@ struct TermsAggregationInner {
     show_term_doc_count_error: Option<bool>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    order: Vec<TermsAggregationOrder>,
+    order: TermsOrderCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     min_doc_count: Option<u16>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     missing: Option<Term>,
-}
-
-/// Terms Aggregation sorting struct
-#[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct TermsAggregationOrder(KeyValuePair<SortField, SortOrder>);
-
-impl TermsAggregationOrder {
-    /// Creates an instance of [TermsAggregationOrder](TermsAggregationOrder)
-    ///
-    /// - `field` - Field to sort by
-    /// - `order` - Ordering direction
-    pub fn new<T>(field: T, order: SortOrder) -> Self
-    where
-        T: Into<SortField>,
-    {
-        Self(KeyValuePair::new(field.into(), order))
-    }
-}
-
-impl<K> From<(K, SortOrder)> for TermsAggregationOrder
-where
-    K: Into<SortField>,
-{
-    fn from((key, value): (K, SortOrder)) -> Self {
-        Self::new(key, value)
-    }
 }
 
 impl Aggregation {
@@ -72,9 +46,9 @@ impl Aggregation {
                 field: field.into(),
                 size: None,
                 show_term_doc_count_error: None,
-                order: vec![],
+                order: Default::default(),
                 min_doc_count: None,
-                missing: Default::default(),
+                missing: None,
             },
             aggs: Aggregations::new(),
         }
@@ -117,9 +91,9 @@ impl TermsAggregation {
     /// aggregation: counts will not be accurate but at least the top buckets will be correctly picked.
     pub fn order<T>(mut self, order: T) -> Self
     where
-        T: Into<TermsAggregationOrder>,
+        T: Into<TermsOrderCollection>,
     {
-        self.terms.order.push(order.into());
+        self.terms.order = order.into();
         self
     }
 
@@ -158,10 +132,10 @@ mod tests {
         assert_serialize_aggregation(
             Aggregation::terms("test_field")
                 .size(5)
-                .min_doc_count(2u16)
+                .min_doc_count(2)
                 .show_term_doc_count_error(false)
                 .missing("N/A")
-                .order(TermsAggregationOrder::new("test_order", SortOrder::Asc)),
+                .order(TermsOrder::new("test_order", SortOrder::Asc)),
             json!({
                 "terms": {
                     "field": "test_field",
@@ -179,7 +153,7 @@ mod tests {
         assert_serialize_aggregation(
             Aggregation::terms("test_field")
                 .size(0)
-                .order(("test_order", SortOrder::Asc))
+                .order(TermsOrder::ascending("test_order"))
                 .missing(123)
                 .aggregate(
                     "test_sub_agg",
