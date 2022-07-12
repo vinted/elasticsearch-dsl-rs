@@ -130,7 +130,7 @@ struct SortInner {
     unmapped_type: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    missing: Term,
+    missing: Option<Term>,
 }
 
 impl Sort {

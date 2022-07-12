@@ -25,16 +25,16 @@ pub struct RangeQuery {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    gt: Term,
+    gt: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    gte: Term,
+    gte: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    lt: Term,
+    lt: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    lte: Term,
+    lte: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     format: Option<String>,
@@ -184,7 +184,6 @@ impl Serialize for RangeQuery {
 }
 
 #[cfg(test)]
-#[allow(unused_qualifications)]
 mod tests {
     use super::*;
     use chrono::prelude::*;
@@ -202,10 +201,10 @@ mod tests {
 
         assert_serialize_query(
             Query::range("test_field")
-                .gt(Option::<i32>::None)
-                .lt(Option::<i32>::None)
-                .gte(Option::<i32>::None)
-                .lte(Option::<i32>::None),
+                .gt(None::<i32>)
+                .lt(None::<i32>)
+                .gte(None::<i32>)
+                .lte(None::<i32>),
             json!({
                 "range": {
                     "test_field": {}

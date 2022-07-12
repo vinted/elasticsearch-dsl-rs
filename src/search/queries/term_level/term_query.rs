@@ -31,7 +31,7 @@ pub struct TermQuery {
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Inner {
-    value: Term,
+    value: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,

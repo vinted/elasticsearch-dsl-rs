@@ -207,7 +207,7 @@ pub struct RandomScore {
 #[derive(Debug, Default, Clone, PartialEq, Serialize)]
 struct RandomScoreInner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    seed: Term,
+    seed: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     field: Option<String>,

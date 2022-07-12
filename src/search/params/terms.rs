@@ -17,7 +17,7 @@ where
     T::Item: serde::Serialize,
 {
     fn from(value: T) -> Self {
-        Self(value.into_iter().map(Term::new).collect())
+        Self(value.into_iter().filter_map(Term::new).collect())
     }
 }
 
