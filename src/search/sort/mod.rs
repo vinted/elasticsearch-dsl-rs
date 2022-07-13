@@ -3,114 +3,20 @@
 //! The sort is defined on a per field level, with special field name for `_score` to sort by score, and `_doc` to sort by index order.
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/master/search-your-data.html>
+
+mod sort_field;
+mod sort_missing;
+mod sort_mode;
+mod sort_order;
+
+pub use self::sort_field::*;
+pub use self::sort_missing::*;
+pub use self::sort_mode::*;
+pub use self::sort_order::*;
+
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, Serializer};
-
-/// The order defaults to `desc` when sorting on the `_score`, and defaults to `asc` when sorting on anything else.
-///
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_sort_order>
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SortOrder {
-    /// Sort in ascending order
-    Asc,
-
-    /// Sort in descending order
-    Desc,
-}
-
-/// Elasticsearch supports sorting by array or multi-valued fields. The `mode` option controls what array value is picked for sorting the document it belongs to.
-///
-/// The default sort mode in the ascending sort order is `min` — the lowest value is picked. The default sort mode in the descending order is `max` — the highest value is picked.
-///
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_sort_mode_option>
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum SortMode {
-    /// Pick the lowest value.
-    Min,
-
-    /// Pick the highest value.
-    Max,
-
-    /// Use the sum of all values as sort value.\
-    /// Only applicable for number based array fields.
-    Sum,
-
-    /// Use the average of all values as sort value.\
-    /// Only applicable for number based array fields.
-    Avg,
-
-    /// Use the median of all values as sort value.\
-    /// Only applicable for number based array fields.
-    Median,
-}
-
-/// The `missing` parameter specifies how docs which are missing the sort field should be treated:
-///
-/// The `missing` value can be set to `_last`, `_first`, or a custom value (that will be used for missing docs as the sort value). The default is `_last`.
-///
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_missing_values>
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
-pub enum SortMissing {
-    /// Sorts missing fields first
-    #[serde(rename = "_first")]
-    First,
-
-    /// Sorts missing field last
-    #[serde(rename = "_last")]
-    Last,
-}
-
-/// Allows you to add one or more sorts on specific fields. Each sort can be reversed as well. The sort is defined on a per field level.
-///
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#sort-search-results>
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum SortField {
-    /// Sort by `_id` field
-    Id,
-
-    /// Sort by `_score`
-    Score,
-
-    /// Sort by key within aggregations
-    Key,
-
-    /// Sort by count within aggregations,
-    Count,
-
-    /// Sort by index order
-    Doc,
-
-    /// Sorts by a given field name
-    Field(String),
-}
-
-impl Serialize for SortField {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match self {
-            Self::Id => "_id".serialize(serializer),
-            Self::Score => "_score".serialize(serializer),
-            Self::Key => "_key".serialize(serializer),
-            Self::Count => "_count".serialize(serializer),
-            Self::Doc => "_doc".serialize(serializer),
-            Self::Field(field) => field.serialize(serializer),
-        }
-    }
-}
-
-impl<T> From<T> for SortField
-where
-    T: ToString,
-{
-    fn from(value: T) -> Self {
-        Self::Field(value.to_string())
-    }
-}
+use serde::Serialize;
 
 /// Sorts search hits by other field values
 ///
