@@ -116,3 +116,35 @@ macro_rules! serialize_query {
         }
     };
 }
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! serialize_keyed {
+    ($inner:ty : $field:ident) => {
+        impl $crate::serde::Serialize for $inner {
+            fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+            where
+                S: $crate::serde::ser::Serializer,
+            {
+                use $crate::serde::ser::SerializeMap;
+
+                struct Wrapper<'a> {
+                    root: &'a $inner,
+                }
+
+                impl<'a> $crate::serde::Serialize for Wrapper<'a> {
+                    fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+                    where
+                        S: $crate::serde::Serializer,
+                    {
+                        <$inner>::serialize(&self.root, serializer)
+                    }
+                }
+
+                let mut state = serializer.serialize_map(Some(1))?;
+                state.serialize_entry(&self.$field, &Wrapper { root: self })?;
+                state.end()
+            }
+        }
+    };
+}

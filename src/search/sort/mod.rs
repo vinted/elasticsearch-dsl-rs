@@ -24,10 +24,11 @@ use serde::Serialize;
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#sort-search-results>
 #[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct Sort(KeyValuePair<SortField, SortInner>);
+#[serde(remote = "Self")]
+pub struct Sort {
+    #[serde(skip)]
+    field: SortField,
 
-#[derive(Debug, Default, Clone, PartialEq, Serialize)]
-struct SortInner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     order: Option<SortOrder>,
 
@@ -47,14 +48,20 @@ impl Sort {
     where
         T: Into<SortField>,
     {
-        Self(KeyValuePair::new(field.into(), Default::default()))
+        Self {
+            field: field.into(),
+            order: None,
+            mode: None,
+            unmapped_type: None,
+            missing: None,
+        }
     }
 
     /// Explicit order
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_sort_order>
     pub fn order(mut self, order: SortOrder) -> Self {
-        self.0.value.order = Some(order);
+        self.order = Some(order);
         self
     }
 
@@ -62,7 +69,7 @@ impl Sort {
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#_sort_mode_option>
     pub fn mode(mut self, mode: SortMode) -> Self {
-        self.0.value.mode = Some(mode);
+        self.mode = Some(mode);
         self
     }
 
@@ -73,7 +80,7 @@ impl Sort {
     where
         T: Into<String>,
     {
-        self.0.value.unmapped_type = Some(unmapped_type.into());
+        self.unmapped_type = Some(unmapped_type.into());
         self
     }
 
@@ -84,7 +91,7 @@ impl Sort {
     where
         T: Serialize,
     {
-        self.0.value.missing = Term::new(missing);
+        self.missing = Term::new(missing);
         self
     }
 }
@@ -94,6 +101,8 @@ impl From<Sort> for Vec<Sort> {
         vec![sort]
     }
 }
+
+serialize_keyed!(Sort: field);
 
 #[cfg(test)]
 mod tests {
