@@ -17,14 +17,9 @@ use crate::util::*;
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html>
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct QueryStringQuery {
-    #[serde(rename = "query_string")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     query: Text,
 
@@ -105,31 +100,29 @@ impl Query {
         S: Into<Text>,
     {
         QueryStringQuery {
-            inner: Inner {
-                query: query.into(),
-                fields: vec![],
-                default_operator: None,
-                analyze_wildcard: None,
-                analyzer: None,
-                auto_generate_synonyms_phrase_query: None,
-                fuzzy_transpositions: None,
-                fuzzy_max_expansions: None,
-                fuzzy_prefix_length: None,
-                quote_field_suffix: None,
-                lenient: None,
-                minimum_should_match: None,
-                allow_leading_wildcard: None,
-                default_field: None,
-                enable_position_increments: None,
-                fuzziness: None,
-                max_determinized_states: None,
-                phrase_slop: None,
-                quote_analyzer: None,
-                rewrite: None,
-                time_zone: None,
-                boost: None,
-                _name: None,
-            },
+            query: query.into(),
+            fields: vec![],
+            default_operator: None,
+            analyze_wildcard: None,
+            analyzer: None,
+            auto_generate_synonyms_phrase_query: None,
+            fuzzy_transpositions: None,
+            fuzzy_max_expansions: None,
+            fuzzy_prefix_length: None,
+            quote_field_suffix: None,
+            lenient: None,
+            minimum_should_match: None,
+            allow_leading_wildcard: None,
+            default_field: None,
+            enable_position_increments: None,
+            fuzziness: None,
+            max_determinized_states: None,
+            phrase_slop: None,
+            quote_analyzer: None,
+            rewrite: None,
+            time_zone: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -159,7 +152,7 @@ impl QueryStringQuery {
     where
         S: ToString,
     {
-        self.inner.default_field = Some(default_field.to_string());
+        self.default_field = Some(default_field.to_string());
         self
     }
 
@@ -168,7 +161,7 @@ impl QueryStringQuery {
     ///
     /// Defaults to `true`.
     pub fn allow_leading_wildcard(mut self, allow_leading_wildcard: bool) -> Self {
-        self.inner.allow_leading_wildcard = Some(allow_leading_wildcard);
+        self.allow_leading_wildcard = Some(allow_leading_wildcard);
         self
     }
 
@@ -177,7 +170,7 @@ impl QueryStringQuery {
     ///
     /// Defaults to `false`.
     pub fn analyze_wildcard(mut self, analyze_wildcard: bool) -> Self {
-        self.inner.analyze_wildcard = Some(analyze_wildcard);
+        self.analyze_wildcard = Some(analyze_wildcard);
         self
     }
 
@@ -190,7 +183,7 @@ impl QueryStringQuery {
     where
         T: Into<String>,
     {
-        self.inner.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.into());
         self
     }
 
@@ -205,14 +198,14 @@ impl QueryStringQuery {
         mut self,
         auto_generate_synonyms_phrase_query: bool,
     ) -> Self {
-        self.inner.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
+        self.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
         self
     }
 
     /// Default boolean logic used to interpret text in the query string if no
     /// operators are specified.
     pub fn default_operator(mut self, default_operator: Operator) -> Self {
-        self.inner.default_operator = Some(default_operator);
+        self.default_operator = Some(default_operator);
         self
     }
 
@@ -221,7 +214,7 @@ impl QueryStringQuery {
     ///
     /// Defaults to `true`.
     pub fn enable_position_increments(mut self, enable_position_increments: bool) -> Self {
-        self.inner.enable_position_increments = Some(enable_position_increments);
+        self.enable_position_increments = Some(enable_position_increments);
         self
     }
 
@@ -234,14 +227,14 @@ impl QueryStringQuery {
         I: IntoIterator,
         I::Item: ToString,
     {
-        self.inner.fields = fields.into_iter().map(|x| x.to_string()).collect();
+        self.fields = fields.into_iter().map(|x| x.to_string()).collect();
         self
     }
 
     /// Maximum edit distance allowed for fuzzy matching. For fuzzy syntax, see
     /// [`Fuzziness`].
     pub fn fuzziness(mut self, fuzziness: Fuzziness) -> Self {
-        self.inner.fuzziness = Some(fuzziness);
+        self.fuzziness = Some(fuzziness);
         self
     }
 
@@ -249,7 +242,7 @@ impl QueryStringQuery {
     ///
     /// Defaults to `50`.
     pub fn fuzzy_max_expansions(mut self, fuzzy_max_expansions: u32) -> Self {
-        self.inner.fuzzy_max_expansions = Some(fuzzy_max_expansions);
+        self.fuzzy_max_expansions = Some(fuzzy_max_expansions);
         self
     }
 
@@ -257,7 +250,7 @@ impl QueryStringQuery {
     ///
     /// Defaults to `0`.
     pub fn fuzzy_prefix_length(mut self, fuzzy_prefix_length: u32) -> Self {
-        self.inner.fuzzy_prefix_length = Some(fuzzy_prefix_length);
+        self.fuzzy_prefix_length = Some(fuzzy_prefix_length);
         self
     }
 
@@ -266,7 +259,7 @@ impl QueryStringQuery {
     ///
     /// Defaults to `true`.
     pub fn fuzzy_transpositions(mut self, fuzzy_transpositions: bool) -> Self {
-        self.inner.fuzzy_transpositions = Some(fuzzy_transpositions);
+        self.fuzzy_transpositions = Some(fuzzy_transpositions);
         self
     }
 
@@ -277,7 +270,7 @@ impl QueryStringQuery {
     ///
     /// Defaults to `false`.
     pub fn lenient(mut self, lenient: bool) -> Self {
-        self.inner.lenient = Some(lenient);
+        self.lenient = Some(lenient);
         self
     }
 
@@ -296,7 +289,7 @@ impl QueryStringQuery {
     /// unintentionally consuming too many resources. You may need to increase
     /// this limit to run complex regular expressions.
     pub fn max_determinized_states(mut self, max_determinized_states: u32) -> Self {
-        self.inner.max_determinized_states = Some(max_determinized_states);
+        self.max_determinized_states = Some(max_determinized_states);
         self
     }
 
@@ -308,7 +301,7 @@ impl QueryStringQuery {
     where
         T: Into<MinimumShouldMatch>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
@@ -325,7 +318,7 @@ impl QueryStringQuery {
     where
         S: ToString,
     {
-        self.inner.quote_analyzer = Some(quote_analyzer.to_string());
+        self.quote_analyzer = Some(quote_analyzer.to_string());
         self
     }
 
@@ -335,7 +328,7 @@ impl QueryStringQuery {
     /// Defaults to `0`. If `0`, exact phrase matches are required. Transposed
     /// terms have a slop of `2`.
     pub fn phrase_slop(mut self, phrase_slop: u32) -> Self {
-        self.inner.phrase_slop = Some(phrase_slop);
+        self.phrase_slop = Some(phrase_slop);
         self
     }
 
@@ -348,14 +341,14 @@ impl QueryStringQuery {
     where
         S: ToString,
     {
-        self.inner.quote_field_suffix = Some(quote_field_suffix.to_string());
+        self.quote_field_suffix = Some(quote_field_suffix.to_string());
         self
     }
 
     /// Method used to rewrite the query. For valid values and more
     /// information, see the [`rewrite` parameter](Rewrite).
     pub fn rewrite(mut self, rewrite: Rewrite) -> Self {
-        self.inner.rewrite = Some(rewrite);
+        self.rewrite = Some(rewrite);
         self
     }
 
@@ -369,7 +362,7 @@ impl QueryStringQuery {
     where
         S: ToString,
     {
-        self.inner.time_zone = Some(time_zone.to_string());
+        self.time_zone = Some(time_zone.to_string());
         self
     }
 
@@ -378,9 +371,11 @@ impl QueryStringQuery {
 
 impl ShouldSkip for QueryStringQuery {
     fn should_skip(&self) -> bool {
-        self.inner.query.should_skip()
+        self.query.should_skip()
     }
 }
+
+serialize_query!("query_string": QueryStringQuery);
 
 #[cfg(test)]
 mod tests {

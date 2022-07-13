@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// Returns documents that match a provided text, number, date or boolean value.
 /// The provided text is analyzed before matching.
@@ -18,14 +17,12 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct MatchQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct MatchQuery {
+    #[serde(skip)]
+    field: String,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     query: Text,
 
@@ -88,22 +85,20 @@ impl Query {
     {
         MatchQuery {
             field: field.into(),
-            inner: Inner {
-                query: query.into(),
-                analyzer: None,
-                auto_generate_synonyms_phrase_query: None,
-                fuzziness: None,
-                max_expansions: None,
-                prefix_length: None,
-                fuzzy_transpositions: None,
-                fuzzy_rewrite: None,
-                lenient: None,
-                operator: None,
-                minimum_should_match: None,
-                zero_terms_query: None,
-                boost: None,
-                _name: None,
-            },
+            query: query.into(),
+            analyzer: None,
+            auto_generate_synonyms_phrase_query: None,
+            fuzziness: None,
+            max_expansions: None,
+            prefix_length: None,
+            fuzzy_transpositions: None,
+            fuzzy_rewrite: None,
+            lenient: None,
+            operator: None,
+            minimum_should_match: None,
+            zero_terms_query: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -117,7 +112,7 @@ impl MatchQuery {
     where
         T: Into<String>,
     {
-        self.inner.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.into());
         self
     }
 
@@ -131,7 +126,7 @@ impl MatchQuery {
         mut self,
         auto_generate_synonyms_phrase_query: bool,
     ) -> Self {
-        self.inner.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
+        self.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
         self
     }
 
@@ -144,28 +139,28 @@ impl MatchQuery {
     where
         T: Into<Fuzziness>,
     {
-        self.inner.fuzziness = Some(fuzziness.into());
+        self.fuzziness = Some(fuzziness.into());
         self
     }
 
     /// Maximum number of terms to which the query will expand.
     /// Defaults to `50`.
     pub fn max_expansions(mut self, max_expansions: u8) -> Self {
-        self.inner.max_expansions = Some(max_expansions);
+        self.max_expansions = Some(max_expansions);
         self
     }
 
     /// Number of beginning characters left unchanged for fuzzy matching.
     /// Defaults to `0`.
     pub fn prefix_length(mut self, prefix_length: u8) -> Self {
-        self.inner.prefix_length = Some(prefix_length);
+        self.prefix_length = Some(prefix_length);
         self
     }
 
     /// If `true`, edits for fuzzy matching include transpositions of two
     /// adjacent characters (ab → ba). Defaults to `true`.
     pub fn fuzzy_transpositions(mut self, fuzzy_transpositions: bool) -> Self {
-        self.inner.fuzzy_transpositions = Some(fuzzy_transpositions);
+        self.fuzzy_transpositions = Some(fuzzy_transpositions);
         self
     }
 
@@ -177,7 +172,7 @@ impl MatchQuery {
     /// `fuzzy_rewrite` method of `top_terms_blended_freqs_${max_expansions}`
     /// by default.
     pub fn fuzzy_rewrite(mut self, fuzzy_rewrite: Rewrite) -> Self {
-        self.inner.fuzzy_rewrite = Some(fuzzy_rewrite);
+        self.fuzzy_rewrite = Some(fuzzy_rewrite);
         self
     }
 
@@ -186,13 +181,13 @@ impl MatchQuery {
     /// [numeric](https://www.elastic.co/guide/en/elasticsearch/reference/current/number.html)
     /// field, are ignored. Defaults to `false`.
     pub fn lenient(mut self, lenient: bool) -> Self {
-        self.inner.lenient = Some(lenient);
+        self.lenient = Some(lenient);
         self
     }
 
     /// Boolean logic used to interpret text in the `query` value
     pub fn operator(mut self, operator: Operator) -> Self {
-        self.inner.operator = Some(operator);
+        self.operator = Some(operator);
         self
     }
 
@@ -204,14 +199,14 @@ impl MatchQuery {
     where
         T: Into<MinimumShouldMatch>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
     /// Indicates whether no documents are returned if the `analyzer` removes
     /// all tokens, such as when using a `stop` filter.
     pub fn zero_terms_query(mut self, zero_terms_query: ZeroTermsQuery) -> Self {
-        self.inner.zero_terms_query = Some(zero_terms_query);
+        self.zero_terms_query = Some(zero_terms_query);
         self
     }
 
@@ -220,23 +215,11 @@ impl MatchQuery {
 
 impl ShouldSkip for MatchQuery {
     fn should_skip(&self) -> bool {
-        self.inner.query.should_skip()
+        self.query.should_skip()
     }
 }
 
-impl Serialize for MatchQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_struct("MatchQuery", 1)?;
-        map.serialize_field("match", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "match": MatchQuery);
 
 #[cfg(test)]
 mod tests {

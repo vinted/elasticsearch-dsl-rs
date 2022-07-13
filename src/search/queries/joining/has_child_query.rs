@@ -13,13 +13,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-HasChild-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct HasChildQuery {
-    #[serde(rename = "has_child")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     r#type: String,
 
     query: Box<Query>,
@@ -55,16 +50,14 @@ impl Query {
         U: Into<Query>,
     {
         HasChildQuery {
-            inner: Inner {
-                r#type: r#type.into(),
-                query: Box::new(query.into()),
-                ignore_unmapped: None,
-                max_children: None,
-                min_children: None,
-                score_mode: None,
-                boost: None,
-                _name: None,
-            },
+            r#type: r#type.into(),
+            query: Box::new(query.into()),
+            ignore_unmapped: None,
+            max_children: None,
+            min_children: None,
+            score_mode: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -77,14 +70,14 @@ impl HasChildQuery {
     ///
     /// You can use this parameter to query multiple indices that may not contain the `type`.
     pub fn ignore_unmapped(mut self, ignore_unmapped: bool) -> Self {
-        self.inner.ignore_unmapped = Some(ignore_unmapped);
+        self.ignore_unmapped = Some(ignore_unmapped);
         self
     }
 
     /// Maximum number of child documents that match the `query` allowed for a returned parent
     /// document. If the parent document exceeds this limit, it is excluded from the search results.
     pub fn max_children(mut self, max_children: u32) -> Self {
-        self.inner.max_children = Some(max_children);
+        self.max_children = Some(max_children);
         self
     }
 
@@ -92,14 +85,14 @@ impl HasChildQuery {
     /// returned parent document. If the parent document does not meet this limit, it is excluded
     /// from the search results.
     pub fn min_children(mut self, min_children: u32) -> Self {
-        self.inner.min_children = Some(min_children);
+        self.min_children = Some(min_children);
         self
     }
 
     /// Indicates how scores for matching child documents affect the root parent document’s
     /// relevance score.
     pub fn score_mode(mut self, score_mode: HasChildScoreMode) -> Self {
-        self.inner.score_mode = Some(score_mode);
+        self.score_mode = Some(score_mode);
         self
     }
 
@@ -108,9 +101,11 @@ impl HasChildQuery {
 
 impl ShouldSkip for HasChildQuery {
     fn should_skip(&self) -> bool {
-        self.inner.r#type.should_skip() || self.inner.query.should_skip()
+        self.r#type.should_skip() || self.query.should_skip()
     }
 }
+
+serialize_query!("has_child": HasChildQuery);
 
 #[cfg(test)]
 mod tests {

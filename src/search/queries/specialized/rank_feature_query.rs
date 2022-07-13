@@ -29,9 +29,15 @@ use serde::Serialize;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-rank-feature-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct RankFeatureQuery {
-    #[serde(rename = "rank_feature")]
-    inner: Inner,
+    field: String,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    boost: Option<Boost>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    _name: Option<String>,
 }
 
 /// Boosts the relevance score of documents based on the numeric value of a `rank_feature` or
@@ -61,9 +67,17 @@ pub struct RankFeatureQuery {
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-rank-feature-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct RankFeatureSaturationQuery {
-    #[serde(rename = "rank_feature")]
-    inner: InnerSaturation,
+    field: String,
+
+    saturation: Saturation,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    boost: Option<Boost>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    _name: Option<String>,
 }
 
 /// Boosts the relevance score of documents based on the numeric value of a `rank_feature` or
@@ -93,9 +107,17 @@ pub struct RankFeatureSaturationQuery {
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-rank-feature-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct RankFeatureLogarithmQuery {
-    #[serde(rename = "rank_feature")]
-    inner: InnerLogarithm,
+    field: String,
+
+    log: Logarithm,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    boost: Option<Boost>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    _name: Option<String>,
 }
 
 /// Boosts the relevance score of documents based on the numeric value of a `rank_feature` or
@@ -125,9 +147,17 @@ pub struct RankFeatureLogarithmQuery {
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-rank-feature-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct RankFeatureSigmoidQuery {
-    #[serde(rename = "rank_feature")]
-    inner: InnerSigmoid,
+    field: String,
+
+    sigmoid: Sigmoid,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    boost: Option<Boost>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    _name: Option<String>,
 }
 
 /// Boosts the relevance score of documents based on the numeric value of a `rank_feature` or
@@ -157,9 +187,17 @@ pub struct RankFeatureSigmoidQuery {
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-rank-feature-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct RankFeatureLinearQuery {
-    #[serde(rename = "rank_feature")]
-    inner: InnerLinear,
+    field: String,
+
+    linear: Linear,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    boost: Option<Boost>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    _name: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -182,69 +220,6 @@ struct Sigmoid {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 struct Linear {}
 
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
-    field: String,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    _name: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct InnerSaturation {
-    field: String,
-
-    saturation: Saturation,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    _name: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct InnerLogarithm {
-    field: String,
-
-    log: Logarithm,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    _name: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct InnerSigmoid {
-    field: String,
-
-    sigmoid: Sigmoid,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    _name: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct InnerLinear {
-    field: String,
-
-    linear: Linear,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    _name: Option<String>,
-}
-
 impl Query {
     /// Creates an instance of [`RankFeatureQuery`]
     ///
@@ -254,11 +229,9 @@ impl Query {
         T: Into<String>,
     {
         RankFeatureQuery {
-            inner: Inner {
-                field: field.into(),
-                boost: None,
-                _name: None,
-            },
+            field: field.into(),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -277,12 +250,10 @@ impl RankFeatureQuery {
     /// default value if you haven’t had the opportunity to train a good pivot value.
     pub fn saturation(self) -> RankFeatureSaturationQuery {
         RankFeatureSaturationQuery {
-            inner: InnerSaturation {
-                field: self.inner.field,
-                boost: self.inner.boost,
-                _name: self.inner._name,
-                saturation: Saturation { pivot: None },
-            },
+            field: self.field,
+            boost: self.boost,
+            _name: self._name,
+            saturation: Saturation { pivot: None },
         }
     }
 
@@ -293,12 +264,10 @@ impl RankFeatureQuery {
     /// This function only supports rank features that have a positive score impact.
     pub fn logarithm(self, scaling_factor: f64) -> RankFeatureLogarithmQuery {
         RankFeatureLogarithmQuery {
-            inner: InnerLogarithm {
-                field: self.inner.field,
-                boost: self.inner.boost,
-                _name: self.inner._name,
-                log: Logarithm { scaling_factor },
-            },
+            field: self.field,
+            boost: self.boost,
+            _name: self._name,
+            log: Logarithm { scaling_factor },
         }
     }
 
@@ -311,12 +280,10 @@ impl RankFeatureQuery {
     /// `saturation` function instead.
     pub fn sigmoid(self, pivot: f64, exponent: f64) -> RankFeatureSigmoidQuery {
         RankFeatureSigmoidQuery {
-            inner: InnerSigmoid {
-                field: self.inner.field,
-                boost: self.inner.boost,
-                _name: self.inner._name,
-                sigmoid: Sigmoid { pivot, exponent },
-            },
+            field: self.field,
+            boost: self.boost,
+            _name: self._name,
+            sigmoid: Sigmoid { pivot, exponent },
         }
     }
 
@@ -328,12 +295,10 @@ impl RankFeatureQuery {
     /// preserve only 9 significant bits for the precision.
     pub fn linear(self) -> RankFeatureLinearQuery {
         RankFeatureLinearQuery {
-            inner: InnerLinear {
-                field: self.inner.field,
-                boost: self.inner.boost,
-                _name: self.inner._name,
-                linear: Linear {},
-            },
+            field: self.field,
+            boost: self.boost,
+            _name: self._name,
+            linear: Linear {},
         }
     }
 
@@ -346,7 +311,7 @@ impl RankFeatureSaturationQuery {
     where
         T: Into<f64>,
     {
-        self.inner.saturation.pivot = Some(pivot.into());
+        self.saturation.pivot = Some(pivot.into());
         self
     }
 
@@ -370,6 +335,12 @@ impl ShouldSkip for RankFeatureSaturationQuery {}
 impl ShouldSkip for RankFeatureLogarithmQuery {}
 impl ShouldSkip for RankFeatureSigmoidQuery {}
 impl ShouldSkip for RankFeatureLinearQuery {}
+
+serialize_query!("rank_feature": RankFeatureQuery);
+serialize_query!("rank_feature": RankFeatureSaturationQuery);
+serialize_query!("rank_feature": RankFeatureLogarithmQuery);
+serialize_query!("rank_feature": RankFeatureSigmoidQuery);
+serialize_query!("rank_feature": RankFeatureLinearQuery);
 
 #[cfg(test)]
 mod tests {

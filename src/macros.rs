@@ -17,7 +17,7 @@ macro_rules! add_boost_and_name {
             B: std::convert::TryInto<Boost>,
         {
             if let Ok(boost) = boost.try_into() {
-                self.inner.boost = Some(boost);
+                self.boost = Some(boost);
             }
             self
         }
@@ -31,7 +31,7 @@ macro_rules! add_boost_and_name {
         where
             S: ToString,
         {
-            self.inner._name = Some(name.to_string());
+            self._name = Some(name.to_string());
             self
         }
     };
@@ -50,6 +50,69 @@ macro_rules! add_aggregate {
             let a = aggregation.into();
             let _ = self.aggs.entry(aggregation_name.into()).or_insert(a);
             self
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
+macro_rules! serialize_query {
+    ($root:tt : $inner:ty) => {
+        impl $crate::serde::Serialize for $inner {
+            fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+            where
+                S: $crate::serde::ser::Serializer,
+            {
+                use $crate::serde::ser::SerializeStruct;
+
+                struct Wrapper<'a> {
+                    root: &'a $inner,
+                }
+
+                impl<'a> $crate::serde::Serialize for Wrapper<'a> {
+                    fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+                    where
+                        S: $crate::serde::Serializer,
+                    {
+                        <$inner>::serialize(&self.root, serializer)
+                    }
+                }
+
+                let mut state = serializer.serialize_struct("Wrapper", 1)?;
+                state.serialize_field($root, &Wrapper { root: self })?;
+                state.end()
+            }
+        }
+    };
+
+    (keyed, $root:tt : $inner:ty) => {
+        impl $crate::serde::Serialize for $inner {
+            fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+            where
+                S: $crate::serde::ser::Serializer,
+            {
+                use $crate::serde::ser::SerializeStruct;
+
+                struct Wrapper<'a> {
+                    root: &'a $inner,
+                }
+
+                impl<'a> $crate::serde::Serialize for Wrapper<'a> {
+                    fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+                    where
+                        S: $crate::serde::Serializer,
+                    {
+                        <$inner>::serialize(&self.root, serializer)
+                    }
+                }
+
+                let mut state = serializer.serialize_struct("Wrapper", 1)?;
+                state.serialize_field(
+                    $root,
+                    &KeyValuePair::new(&self.field, &Wrapper { root: self }),
+                )?;
+                state.end()
+            }
         }
     };
 }

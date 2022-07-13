@@ -16,13 +16,8 @@ use serde::Serialize;
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-shape-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct GeoShapeQuery {
-    #[serde(rename = "geo_shape")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(flatten)]
     pair: KeyValuePair<String, InlineShape>,
 
@@ -55,18 +50,16 @@ impl Query {
         T: Into<GeoShape>,
     {
         GeoShapeQuery {
-            inner: Inner {
-                pair: KeyValuePair::new(
-                    field.to_string(),
-                    InlineShape {
-                        shape: shape.into(),
-                        relation: None,
-                    },
-                ),
-                ignore_unmapped: None,
-                boost: None,
-                _name: None,
-            },
+            pair: KeyValuePair::new(
+                field.to_string(),
+                InlineShape {
+                    shape: shape.into(),
+                    relation: None,
+                },
+            ),
+            ignore_unmapped: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -76,7 +69,7 @@ impl GeoShapeQuery {
     /// mapping parameter determines which spatial relation operators may be
     /// used at search time.
     pub fn relation(mut self, relation: SpatialRelation) -> Self {
-        self.inner.pair.value.relation = Some(relation);
+        self.pair.value.relation = Some(relation);
         self
     }
 
@@ -86,7 +79,7 @@ impl GeoShapeQuery {
     /// mappings. When set to `false` (the default value) the query will throw
     /// an exception if the field is not mapped.
     pub fn ignore_unmapped(mut self, ignore_unmapped: bool) -> Self {
-        self.inner.ignore_unmapped = Some(ignore_unmapped);
+        self.ignore_unmapped = Some(ignore_unmapped);
         self
     }
 
@@ -94,6 +87,8 @@ impl GeoShapeQuery {
 }
 
 impl ShouldSkip for GeoShapeQuery {}
+
+serialize_query!("geo_shape": GeoShapeQuery);
 
 #[cfg(test)]
 mod tests {

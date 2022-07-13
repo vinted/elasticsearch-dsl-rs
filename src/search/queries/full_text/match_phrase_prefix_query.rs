@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// Returns documents that contain the words of a provided text, in the **same order** as provided.
 /// The last term of the provided text is treated as a [prefix](crate::PrefixQuery), matching any
@@ -16,14 +15,12 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-query-phrase-prefix.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct MatchPhrasePrefixQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct MatchPhrasePrefixQuery {
+    #[serde(skip)]
+    field: String,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     query: Text,
 
@@ -61,15 +58,13 @@ impl Query {
     {
         MatchPhrasePrefixQuery {
             field: field.into(),
-            inner: Inner {
-                query: query.into(),
-                analyzer: None,
-                max_expansions: None,
-                slop: None,
-                zero_terms_query: None,
-                boost: None,
-                _name: None,
-            },
+            query: query.into(),
+            analyzer: None,
+            max_expansions: None,
+            slop: None,
+            zero_terms_query: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -83,28 +78,28 @@ impl MatchPhrasePrefixQuery {
     where
         T: Into<String>,
     {
-        self.inner.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.into());
         self
     }
 
     /// Maximum number of terms to which the query will expand.
     /// Defaults to `50`.
     pub fn max_expansions(mut self, max_expansions: u8) -> Self {
-        self.inner.max_expansions = Some(max_expansions);
+        self.max_expansions = Some(max_expansions);
         self
     }
 
     /// The maximum number of intervening unmatched positions, as well as
     /// whether matches are required to be in-order.
     pub fn slop(mut self, slop: u8) -> Self {
-        self.inner.slop = Some(slop);
+        self.slop = Some(slop);
         self
     }
 
     /// Indicates whether no documents are returned if the `analyzer` removes
     /// all tokens, such as when using a `stop` filter.
     pub fn zero_terms_query(mut self, zero_terms_query: ZeroTermsQuery) -> Self {
-        self.inner.zero_terms_query = Some(zero_terms_query);
+        self.zero_terms_query = Some(zero_terms_query);
         self
     }
 
@@ -113,23 +108,11 @@ impl MatchPhrasePrefixQuery {
 
 impl ShouldSkip for MatchPhrasePrefixQuery {
     fn should_skip(&self) -> bool {
-        self.inner.query.should_skip()
+        self.query.should_skip()
     }
 }
 
-impl Serialize for MatchPhrasePrefixQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_struct("MatchPhrasePrefixQuery", 1)?;
-        map.serialize_field("match_phrase_prefix", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "match_phrase_prefix": MatchPhrasePrefixQuery);
 
 #[cfg(test)]
 mod tests {

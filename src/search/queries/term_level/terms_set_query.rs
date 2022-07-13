@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeMap, Serializer};
+use serde::Serialize;
 
 /// Returns documents that contain an **exact** terms_set in a provided field.
 ///
@@ -27,14 +27,12 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 /// );
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-set-query.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct TermsSetQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct TermsSetQuery {
+    #[serde(skip)]
+    field: String,
+
     terms: Terms,
 
     #[serde(flatten)]
@@ -61,12 +59,10 @@ impl Query {
     {
         TermsSetQuery {
             field: field.to_string(),
-            inner: Inner {
-                terms: terms.into(),
-                minimum_should_match: minimum_should_match.into(),
-                boost: None,
-                _name: None,
-            },
+            terms: terms.into(),
+            minimum_should_match: minimum_should_match.into(),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -77,23 +73,11 @@ impl TermsSetQuery {
 
 impl ShouldSkip for TermsSetQuery {
     fn should_skip(&self) -> bool {
-        self.inner.terms.should_skip()
+        self.terms.should_skip()
     }
 }
 
-impl Serialize for TermsSetQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_map(Some(1))?;
-        map.serialize_entry("terms_set", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "terms_set": TermsSetQuery);
 
 #[cfg(test)]
 mod tests {

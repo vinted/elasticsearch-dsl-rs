@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// A `match_bool_prefix` query analyzes its input and constructs a
 /// [`bool` query](crate::BoolQuery) from the terms. Each term except the last is used in a
@@ -17,14 +16,12 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-bool-prefix-query.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct MatchBoolPrefixQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct MatchBoolPrefixQuery {
+    #[serde(skip)]
+    field: String,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     query: Text,
 
@@ -56,14 +53,12 @@ impl Query {
     {
         MatchBoolPrefixQuery {
             field: field.into(),
-            inner: Inner {
-                query: query.into(),
-                analyzer: None,
-                minimum_should_match: None,
-                operator: None,
-                boost: None,
-                _name: None,
-            },
+            query: query.into(),
+            analyzer: None,
+            minimum_should_match: None,
+            operator: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -77,7 +72,7 @@ impl MatchBoolPrefixQuery {
     where
         T: Into<String>,
     {
-        self.inner.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.into());
         self
     }
 
@@ -89,13 +84,13 @@ impl MatchBoolPrefixQuery {
     where
         T: Into<MinimumShouldMatch>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
     /// Boolean logic used to interpret text in the `query` value
     pub fn operator(mut self, operator: Operator) -> Self {
-        self.inner.operator = Some(operator);
+        self.operator = Some(operator);
         self
     }
 
@@ -104,23 +99,11 @@ impl MatchBoolPrefixQuery {
 
 impl ShouldSkip for MatchBoolPrefixQuery {
     fn should_skip(&self) -> bool {
-        self.inner.query.should_skip()
+        self.query.should_skip()
     }
 }
 
-impl Serialize for MatchBoolPrefixQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_struct("MatchBoolPrefixQuery", 1)?;
-        map.serialize_field("match_bool_prefix", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "match_bool_prefix": MatchBoolPrefixQuery);
 
 #[cfg(test)]
 mod tests {

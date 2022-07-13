@@ -18,13 +18,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-script-score-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct ScriptScoreQuery {
-    #[serde(rename = "script_score")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     query: Box<Query>,
 
     script: Script,
@@ -50,13 +45,11 @@ impl Query {
         Q: Into<Query>,
     {
         ScriptScoreQuery {
-            inner: Inner {
-                query: Box::new(query.into()),
-                script,
-                min_score: None,
-                boost: None,
-                _name: None,
-            },
+            query: Box::new(query.into()),
+            script,
+            min_score: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -66,6 +59,8 @@ impl ScriptScoreQuery {
 }
 
 impl ShouldSkip for ScriptScoreQuery {}
+
+serialize_query!("script_score": ScriptScoreQuery);
 
 #[cfg(test)]
 mod tests {

@@ -29,13 +29,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-nested-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct NestedQuery {
-    #[serde(rename = "nested")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     path: String,
 
     query: Box<Query>,
@@ -75,15 +70,13 @@ impl Query {
         U: Into<Query>,
     {
         NestedQuery {
-            inner: Inner {
-                path: path.into(),
-                query: Box::new(query.into()),
-                score_mode: None,
-                ignore_unmapped: None,
-                inner_hits: None,
-                boost: None,
-                _name: None,
-            },
+            path: path.into(),
+            query: Box::new(query.into()),
+            score_mode: None,
+            ignore_unmapped: None,
+            inner_hits: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -93,7 +86,7 @@ impl NestedQuery {
     /// document’s
     /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores).
     pub fn score_mode(mut self, score_mode: NestedQueryScoreMode) -> Self {
-        self.inner.score_mode = Some(score_mode);
+        self.score_mode = Some(score_mode);
         self
     }
 
@@ -106,7 +99,7 @@ impl NestedQuery {
     /// You can use this parameter to query multiple indices that may not
     /// contain the field `path`.
     pub fn ignore_unmapped(mut self, ignore_unmapped: bool) -> Self {
-        self.inner.ignore_unmapped = Some(ignore_unmapped);
+        self.ignore_unmapped = Some(ignore_unmapped);
         self
     }
 
@@ -129,7 +122,7 @@ impl NestedQuery {
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/inner-hits.html>
     pub fn inner_hits(mut self, inner_hits: InnerHits) -> Self {
-        self.inner.inner_hits = Some(Box::new(inner_hits));
+        self.inner_hits = Some(Box::new(inner_hits));
         self
     }
 
@@ -138,9 +131,11 @@ impl NestedQuery {
 
 impl ShouldSkip for NestedQuery {
     fn should_skip(&self) -> bool {
-        self.inner.query.should_skip()
+        self.query.should_skip()
     }
 }
+
+serialize_query!("nested": NestedQuery);
 
 #[cfg(test)]
 mod tests {

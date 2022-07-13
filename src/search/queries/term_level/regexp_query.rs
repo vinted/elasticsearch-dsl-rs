@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeMap, Serializer};
+use serde::Serialize;
 
 /// Returns documents that contain terms matching a
 /// [regular expression](https://en.wikipedia.org/wiki/Regular_expression).
@@ -17,14 +17,12 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 /// Query::regexp("test", "username");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-regexp-query.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct RegexpQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct RegexpQuery {
+    #[serde(skip)]
+    field: String,
+
     value: String,
 
     #[serde(
@@ -66,15 +64,13 @@ impl Query {
     {
         RegexpQuery {
             field: field.into(),
-            inner: Inner {
-                value: value.into(),
-                flags: vec![],
-                case_insensitive: None,
-                max_determinized_states: None,
-                rewrite: None,
-                boost: None,
-                _name: None,
-            },
+            value: value.into(),
+            flags: vec![],
+            case_insensitive: None,
+            max_determinized_states: None,
+            rewrite: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -87,7 +83,7 @@ impl RegexpQuery {
     where
         I: IntoIterator<Item = RegexpFlag>,
     {
-        self.inner.flags.extend(flags.into_iter());
+        self.flags.extend(flags.into_iter());
         self
     }
 
@@ -95,7 +91,7 @@ impl RegexpQuery {
     /// values when set to `true`. Default is `false` which means the case sensitivity of matching
     /// depends on the underlying field’s mapping.
     pub fn case_insensitive(mut self, case_insensitive: bool) -> Self {
-        self.inner.case_insensitive = Some(case_insensitive);
+        self.case_insensitive = Some(case_insensitive);
         self
     }
 
@@ -110,14 +106,14 @@ impl RegexpQuery {
     /// You can use this parameter to prevent that conversion from unintentionally consuming too
     /// many resources. You may need to increase this limit to run complex regular expressions.
     pub fn max_determinized_states(mut self, max_determinized_states: u64) -> Self {
-        self.inner.max_determinized_states = Some(max_determinized_states);
+        self.max_determinized_states = Some(max_determinized_states);
         self
     }
 
     /// Method used to rewrite the query. For valid values and more information, see the
     /// [rewrite](Rewrite) parameter.
     pub fn rewrite(mut self, rewrite: Rewrite) -> Self {
-        self.inner.rewrite = Some(rewrite);
+        self.rewrite = Some(rewrite);
         self
     }
 
@@ -126,23 +122,11 @@ impl RegexpQuery {
 
 impl ShouldSkip for RegexpQuery {
     fn should_skip(&self) -> bool {
-        self.inner.value.should_skip()
+        self.value.should_skip()
     }
 }
 
-impl Serialize for RegexpQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_map(Some(1))?;
-        map.serialize_entry("regexp", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "regexp": RegexpQuery);
 
 #[cfg(test)]
 mod tests {

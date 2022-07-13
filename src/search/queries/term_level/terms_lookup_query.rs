@@ -27,13 +27,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct TermsLookupQuery {
-    #[serde(rename = "terms")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(flatten)]
     pair: KeyValuePair<String, TermsLookup>,
 
@@ -72,19 +67,17 @@ impl Query {
         V: ToString,
     {
         TermsLookupQuery {
-            inner: Inner {
-                pair: KeyValuePair::new(
-                    field.to_string(),
-                    TermsLookup {
-                        index: index.to_string(),
-                        id: id.to_string(),
-                        path: path.to_string(),
-                        routing: None,
-                    },
-                ),
-                boost: None,
-                _name: None,
-            },
+            pair: KeyValuePair::new(
+                field.to_string(),
+                TermsLookup {
+                    index: index.to_string(),
+                    id: id.to_string(),
+                    path: path.to_string(),
+                    routing: None,
+                },
+            ),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -102,12 +95,14 @@ impl TermsLookupQuery {
     where
         S: ToString,
     {
-        self.inner.pair.value.routing = Some(routing.to_string());
+        self.pair.value.routing = Some(routing.to_string());
         self
     }
 }
 
 impl ShouldSkip for TermsLookupQuery {}
+
+serialize_query!("terms": TermsLookupQuery);
 
 #[cfg(test)]
 mod tests {

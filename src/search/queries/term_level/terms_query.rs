@@ -22,13 +22,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-terms-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct TermsQuery {
-    #[serde(rename = "terms")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(flatten)]
     pair: KeyValuePair<String, Terms>,
 
@@ -57,11 +52,9 @@ impl Query {
         I: Into<Terms>,
     {
         TermsQuery {
-            inner: Inner {
-                pair: KeyValuePair::new(field.into(), values.into()),
-                boost: None,
-                _name: None,
-            },
+            pair: KeyValuePair::new(field.into(), values.into()),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -72,9 +65,11 @@ impl TermsQuery {
 
 impl ShouldSkip for TermsQuery {
     fn should_skip(&self) -> bool {
-        self.inner.pair.value.should_skip()
+        self.pair.value.should_skip()
     }
 }
+
+serialize_query!("terms": TermsQuery);
 
 #[cfg(test)]
 mod tests {

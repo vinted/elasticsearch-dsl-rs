@@ -17,14 +17,9 @@ use crate::util::*;
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-combined-fields-query.html>
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Default, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct CombinedFieldsQuery {
-    #[serde(rename = "combined_fields")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     fields: Vec<String>,
 
@@ -65,16 +60,14 @@ impl Query {
         S: Into<Text>,
     {
         CombinedFieldsQuery {
-            inner: Inner {
-                fields: fields.into_iter().map(|s| s.to_string()).collect(),
-                query: query.into(),
-                auto_generate_synonyms_phrase_query: None,
-                operator: None,
-                minimum_should_match: None,
-                zero_terms_query: None,
-                boost: None,
-                _name: None,
-            },
+            fields: fields.into_iter().map(|s| s.to_string()).collect(),
+            query: query.into(),
+            auto_generate_synonyms_phrase_query: None,
+            operator: None,
+            minimum_should_match: None,
+            zero_terms_query: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -90,13 +83,13 @@ impl CombinedFieldsQuery {
         mut self,
         auto_generate_synonyms_phrase_query: bool,
     ) -> Self {
-        self.inner.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
+        self.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
         self
     }
 
     /// Boolean logic used to interpret text in the `query` value
     pub fn operator(mut self, operator: Operator) -> Self {
-        self.inner.operator = Some(operator);
+        self.operator = Some(operator);
         self
     }
 
@@ -108,14 +101,14 @@ impl CombinedFieldsQuery {
     where
         T: Into<MinimumShouldMatch>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
     /// Indicates whether no documents are returned if the `analyzer` removes
     /// all tokens, such as when using a `stop` filter.
     pub fn zero_terms_query(mut self, zero_terms_query: ZeroTermsQuery) -> Self {
-        self.inner.zero_terms_query = Some(zero_terms_query);
+        self.zero_terms_query = Some(zero_terms_query);
         self
     }
 
@@ -124,9 +117,11 @@ impl CombinedFieldsQuery {
 
 impl ShouldSkip for CombinedFieldsQuery {
     fn should_skip(&self) -> bool {
-        self.inner.fields.should_skip() || self.inner.query.should_skip()
+        self.fields.should_skip() || self.query.should_skip()
     }
 }
+
+serialize_query!("combined_fields": CombinedFieldsQuery);
 
 #[cfg(test)]
 mod tests {

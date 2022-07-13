@@ -117,6 +117,7 @@ extern crate serde_json;
 mod macros;
 
 // Crate modules
+#[macro_use]
 pub(crate) mod util;
 
 // Public modules

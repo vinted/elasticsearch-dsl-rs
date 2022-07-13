@@ -8,23 +8,20 @@ use serde::Serialize;
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-bounding-box-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct GeoBoundingBoxQuery {
-    #[serde(rename = "geo_bounding_box")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(flatten)]
     pair: KeyValuePair<String, GeoBoundingBox>,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     validation_method: Option<ValidationMethod>,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
 }
-
 impl Query {
     /// Creates an instance of [`GeoBoundingBoxQuery`]
     ///
@@ -36,12 +33,10 @@ impl Query {
         U: Into<GeoBoundingBox>,
     {
         GeoBoundingBoxQuery {
-            inner: Inner {
-                pair: KeyValuePair::new(field.into(), value.into()),
-                validation_method: None,
-                boost: None,
-                _name: None,
-            },
+            pair: KeyValuePair::new(field.into(), value.into()),
+            validation_method: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -50,7 +45,7 @@ impl GeoBoundingBoxQuery {
     /// Set to `IGNORE_MALFORMED` to accept geo points with invalid latitude or longitude, set to
     /// `COERCE` to also try to infer correct latitude or longitude. (default is `STRICT`).
     pub fn validation_method(mut self, validation_method: ValidationMethod) -> Self {
-        self.inner.validation_method = Some(validation_method);
+        self.validation_method = Some(validation_method);
         self
     }
 
@@ -59,9 +54,11 @@ impl GeoBoundingBoxQuery {
 
 impl ShouldSkip for GeoBoundingBoxQuery {
     fn should_skip(&self) -> bool {
-        self.inner.pair.key.should_skip()
+        self.pair.key.should_skip()
     }
 }
+
+serialize_query!("geo_bounding_box": GeoBoundingBoxQuery);
 
 #[cfg(test)]
 mod tests {

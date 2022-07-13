@@ -13,13 +13,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-HasParent-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct HasParentQuery {
-    #[serde(rename = "has_parent")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     parent_type: String,
 
     query: Box<Query>,
@@ -49,14 +44,12 @@ impl Query {
         U: Into<Query>,
     {
         HasParentQuery {
-            inner: Inner {
-                parent_type: parent_type.into(),
-                query: Box::new(query.into()),
-                score: None,
-                ignore_unmapped: None,
-                boost: None,
-                _name: None,
-            },
+            parent_type: parent_type.into(),
+            query: Box::new(query.into()),
+            score: None,
+            ignore_unmapped: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -72,7 +65,7 @@ impl HasParentQuery {
     /// If `true`, the relevance score of the matching parent document is aggregated into its child
     /// documents' relevance scores.
     pub fn score(mut self, score: bool) -> Self {
-        self.inner.score = Some(score);
+        self.score = Some(score);
         self
     }
 
@@ -83,7 +76,7 @@ impl HasParentQuery {
     ///
     /// You can use this parameter to query multiple indices that may not contain the `parent_type`.
     pub fn ignore_unmapped(mut self, ignore_unmapped: bool) -> Self {
-        self.inner.ignore_unmapped = Some(ignore_unmapped);
+        self.ignore_unmapped = Some(ignore_unmapped);
         self
     }
 
@@ -92,9 +85,11 @@ impl HasParentQuery {
 
 impl ShouldSkip for HasParentQuery {
     fn should_skip(&self) -> bool {
-        self.inner.parent_type.should_skip() || self.inner.query.should_skip()
+        self.parent_type.should_skip() || self.query.should_skip()
     }
 }
+
+serialize_query!("has_parent": HasParentQuery);
 
 #[cfg(test)]
 mod tests {

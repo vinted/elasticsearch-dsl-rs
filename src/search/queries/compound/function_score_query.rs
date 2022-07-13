@@ -26,13 +26,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct FunctionScoreQuery {
-    #[serde(rename = "function_score")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     query: Box<Query>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -64,16 +59,14 @@ impl Query {
         T: Into<Query>,
     {
         FunctionScoreQuery {
-            inner: Inner {
-                query: Box::new(query.into()),
-                functions: Default::default(),
-                max_boost: None,
-                min_score: None,
-                score_mode: None,
-                boost_mode: None,
-                boost: None,
-                _name: None,
-            },
+            query: Box::new(query.into()),
+            functions: Default::default(),
+            max_boost: None,
+            min_score: None,
+            score_mode: None,
+            boost_mode: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -87,7 +80,7 @@ impl FunctionScoreQuery {
         let function = function.into();
 
         if let Some(function) = function {
-            self.inner.functions.push(function);
+            self.functions.push(function);
         }
 
         self
@@ -99,7 +92,7 @@ impl FunctionScoreQuery {
         T: std::convert::TryInto<Boost>,
     {
         if let Ok(max_boost) = max_boost.try_into() {
-            self.inner.max_boost = Some(max_boost);
+            self.max_boost = Some(max_boost);
         }
         self
     }
@@ -112,21 +105,21 @@ impl FunctionScoreQuery {
     where
         T: Into<f32>,
     {
-        self.inner.min_score = Some(min_score.into());
+        self.min_score = Some(min_score.into());
         self
     }
 
     /// Each document is scored by the defined functions. The parameter `score_mode` specifies how
     /// the computed scores are combined
     pub fn score_mode(mut self, score_mode: FunctionScoreMode) -> Self {
-        self.inner.score_mode = Some(score_mode);
+        self.score_mode = Some(score_mode);
         self
     }
 
     /// The newly computed score is combined with the score of the query. The parameter
     /// `boost_mode` defines how.
     pub fn boost_mode(mut self, boost_mode: FunctionScoreBoostMode) -> Self {
-        self.inner.boost_mode = Some(boost_mode);
+        self.boost_mode = Some(boost_mode);
         self
     }
 
@@ -135,9 +128,11 @@ impl FunctionScoreQuery {
 
 impl ShouldSkip for FunctionScoreQuery {
     fn should_skip(&self) -> bool {
-        self.inner.query.should_skip() || self.inner.functions.should_skip()
+        self.query.should_skip() || self.functions.should_skip()
     }
 }
+
+serialize_query!("function_score": FunctionScoreQuery);
 
 #[cfg(test)]
 mod tests {

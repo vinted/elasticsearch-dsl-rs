@@ -17,14 +17,9 @@ use crate::util::*;
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html>
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct SimpleQueryStringQuery {
-    #[serde(rename = "simple_query_string")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     query: Text,
 
@@ -84,23 +79,21 @@ impl Query {
         S: Into<Text>,
     {
         SimpleQueryStringQuery {
-            inner: Inner {
-                query: query.into(),
-                fields: vec![],
-                default_operator: None,
-                analyze_wildcard: None,
-                analyzer: None,
-                auto_generate_synonyms_phrase_query: None,
-                fuzzy_transpositions: None,
-                fuzzy_max_expansions: None,
-                flags: vec![],
-                fuzzy_prefix_length: None,
-                quote_field_suffix: None,
-                lenient: None,
-                minimum_should_match: None,
-                boost: None,
-                _name: None,
-            },
+            query: query.into(),
+            fields: vec![],
+            default_operator: None,
+            analyze_wildcard: None,
+            analyzer: None,
+            auto_generate_synonyms_phrase_query: None,
+            fuzzy_transpositions: None,
+            fuzzy_max_expansions: None,
+            flags: vec![],
+            fuzzy_prefix_length: None,
+            quote_field_suffix: None,
+            lenient: None,
+            minimum_should_match: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -123,14 +116,14 @@ impl SimpleQueryStringQuery {
         I: IntoIterator,
         I::Item: ToString,
     {
-        self.inner.fields = fields.into_iter().map(|x| x.to_string()).collect();
+        self.fields = fields.into_iter().map(|x| x.to_string()).collect();
         self
     }
 
     /// Default boolean logic used to interpret text in the query string if no
     /// operators are specified.
     pub fn default_operator(mut self, default_operator: Operator) -> Self {
-        self.inner.default_operator = Some(default_operator);
+        self.default_operator = Some(default_operator);
         self
     }
 
@@ -139,7 +132,7 @@ impl SimpleQueryStringQuery {
     ///
     /// Defaults to `false`.
     pub fn analyze_wildcard(mut self, analyze_wildcard: bool) -> Self {
-        self.inner.analyze_wildcard = Some(analyze_wildcard);
+        self.analyze_wildcard = Some(analyze_wildcard);
         self
     }
 
@@ -152,7 +145,7 @@ impl SimpleQueryStringQuery {
     where
         T: Into<String>,
     {
-        self.inner.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.into());
         self
     }
 
@@ -167,7 +160,7 @@ impl SimpleQueryStringQuery {
         mut self,
         auto_generate_synonyms_phrase_query: bool,
     ) -> Self {
-        self.inner.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
+        self.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
         self
     }
 
@@ -179,7 +172,7 @@ impl SimpleQueryStringQuery {
     where
         I: IntoIterator<Item = SimpleQueryStringQueryFlags>,
     {
-        self.inner.flags.extend(flags.into_iter());
+        self.flags.extend(flags.into_iter());
         self
     }
 
@@ -187,7 +180,7 @@ impl SimpleQueryStringQuery {
     ///
     /// Defaults to `50`.
     pub fn fuzzy_max_expansions(mut self, fuzzy_max_expansions: u32) -> Self {
-        self.inner.fuzzy_max_expansions = Some(fuzzy_max_expansions);
+        self.fuzzy_max_expansions = Some(fuzzy_max_expansions);
         self
     }
 
@@ -195,7 +188,7 @@ impl SimpleQueryStringQuery {
     ///
     /// Defaults to `0`.
     pub fn fuzzy_prefix_length(mut self, fuzzy_prefix_length: u32) -> Self {
-        self.inner.fuzzy_prefix_length = Some(fuzzy_prefix_length);
+        self.fuzzy_prefix_length = Some(fuzzy_prefix_length);
         self
     }
 
@@ -204,7 +197,7 @@ impl SimpleQueryStringQuery {
     ///
     /// Defaults to `true`.
     pub fn fuzzy_transpositions(mut self, fuzzy_transpositions: bool) -> Self {
-        self.inner.fuzzy_transpositions = Some(fuzzy_transpositions);
+        self.fuzzy_transpositions = Some(fuzzy_transpositions);
         self
     }
 
@@ -215,7 +208,7 @@ impl SimpleQueryStringQuery {
     ///
     /// Defaults to `false`.
     pub fn lenient(mut self, lenient: bool) -> Self {
-        self.inner.lenient = Some(lenient);
+        self.lenient = Some(lenient);
         self
     }
 
@@ -227,7 +220,7 @@ impl SimpleQueryStringQuery {
     where
         T: Into<MinimumShouldMatch>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
@@ -240,7 +233,7 @@ impl SimpleQueryStringQuery {
     where
         S: ToString,
     {
-        self.inner.quote_field_suffix = Some(quote_field_suffix.to_string());
+        self.quote_field_suffix = Some(quote_field_suffix.to_string());
         self
     }
 
@@ -249,9 +242,11 @@ impl SimpleQueryStringQuery {
 
 impl ShouldSkip for SimpleQueryStringQuery {
     fn should_skip(&self) -> bool {
-        self.inner.query.should_skip()
+        self.query.should_skip()
     }
 }
+
+serialize_query!("simple_query_string": SimpleQueryStringQuery);
 
 #[cfg(test)]
 mod tests {

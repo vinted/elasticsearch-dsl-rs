@@ -8,13 +8,8 @@ use serde::Serialize;
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-shape-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct ShapeQuery {
-    #[serde(rename = "shape")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(flatten)]
     pair: KeyValuePair<String, InlineShape>,
 
@@ -47,18 +42,16 @@ impl Query {
         T: Into<Shape>,
     {
         ShapeQuery {
-            inner: Inner {
-                pair: KeyValuePair::new(
-                    field.to_string(),
-                    InlineShape {
-                        shape: shape.into(),
-                        relation: None,
-                    },
-                ),
-                ignore_unmapped: None,
-                boost: None,
-                _name: None,
-            },
+            pair: KeyValuePair::new(
+                field.to_string(),
+                InlineShape {
+                    shape: shape.into(),
+                    relation: None,
+                },
+            ),
+            ignore_unmapped: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -68,7 +61,7 @@ impl ShapeQuery {
     /// mapping parameter determines which spatial relation operators may be
     /// used at search time.
     pub fn relation(mut self, relation: SpatialRelation) -> Self {
-        self.inner.pair.value.relation = Some(relation);
+        self.pair.value.relation = Some(relation);
         self
     }
 
@@ -78,7 +71,7 @@ impl ShapeQuery {
     /// mappings. When set to `false` (the default value) the query will throw
     /// an exception if the field is not mapped.
     pub fn ignore_unmapped(mut self, ignore_unmapped: bool) -> Self {
-        self.inner.ignore_unmapped = Some(ignore_unmapped);
+        self.ignore_unmapped = Some(ignore_unmapped);
         self
     }
 
@@ -86,6 +79,8 @@ impl ShapeQuery {
 }
 
 impl ShouldSkip for ShapeQuery {}
+
+serialize_query!("shape": ShapeQuery);
 
 #[cfg(test)]
 mod tests {

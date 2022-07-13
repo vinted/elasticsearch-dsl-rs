@@ -8,13 +8,8 @@ use serde::Serialize;
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct GeoDistanceQuery {
-    #[serde(rename = "geo_distance")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(flatten)]
     pair: KeyValuePair<String, GeoPoint>,
 
@@ -46,14 +41,12 @@ impl Query {
         V: Into<Distance>,
     {
         GeoDistanceQuery {
-            inner: Inner {
-                pair: KeyValuePair::new(field.into(), origin.into()),
-                distance: distance.into(),
-                distance_type: None,
-                validation_method: None,
-                boost: None,
-                _name: None,
-            },
+            pair: KeyValuePair::new(field.into(), origin.into()),
+            distance: distance.into(),
+            distance_type: None,
+            validation_method: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -62,14 +55,14 @@ impl GeoDistanceQuery {
     /// Set to `IGNORE_MALFORMED` to accept geo points with invalid latitude or longitude, set to
     /// `COERCE` to also try to infer correct latitude or longitude. (default is `STRICT`).
     pub fn validation_method(mut self, validation_method: ValidationMethod) -> Self {
-        self.inner.validation_method = Some(validation_method);
+        self.validation_method = Some(validation_method);
         self
     }
 
     /// How to compute the distance. Can either be `Arc` (default),
     /// or `Plane` (faster, but inaccurate on long distances and close to the poles).
     pub fn distance_type(mut self, distance_type: DistanceType) -> Self {
-        self.inner.distance_type = Some(distance_type);
+        self.distance_type = Some(distance_type);
         self
     }
 
@@ -78,9 +71,11 @@ impl GeoDistanceQuery {
 
 impl ShouldSkip for GeoDistanceQuery {
     fn should_skip(&self) -> bool {
-        self.inner.pair.key.should_skip()
+        self.pair.key.should_skip()
     }
 }
+
+serialize_query!("geo_distance": GeoDistanceQuery);
 
 #[cfg(test)]
 mod tests {

@@ -16,14 +16,9 @@ use crate::util::*;
 /// Query::wrapper("eyJ0ZXJtIiA6IHsgInVzZXIuaWQiIDogImtpbWNoeSIgfX0=");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wrapper-query.html>
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct WrapperQuery {
-    #[serde(rename = "wrapper")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
-struct Inner {
     query: String,
 }
 
@@ -34,14 +29,14 @@ impl Query {
         S: ToString,
     {
         WrapperQuery {
-            inner: Inner {
-                query: query.to_string(),
-            },
+            query: query.to_string(),
         }
     }
 }
 
 impl ShouldSkip for WrapperQuery {}
+
+serialize_query!("wrapper": WrapperQuery);
 
 #[cfg(test)]
 mod tests {

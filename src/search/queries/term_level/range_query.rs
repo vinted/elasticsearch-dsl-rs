@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeStruct, Serializer};
+use serde::Serialize;
 
 /// Returns documents that contain terms within a provided range.
 ///
@@ -16,14 +16,12 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 ///     .name("range_query");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct RangeQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct RangeQuery {
+    #[serde(skip)]
+    field: String,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     gt: Option<Term>,
 
@@ -62,17 +60,15 @@ impl Query {
     {
         RangeQuery {
             field: field.into(),
-            inner: Inner {
-                gt: Default::default(),
-                gte: Default::default(),
-                lt: Default::default(),
-                lte: Default::default(),
-                format: None,
-                relation: None,
-                time_zone: None,
-                boost: None,
-                _name: None,
-            },
+            gt: Default::default(),
+            gte: Default::default(),
+            lt: Default::default(),
+            lte: Default::default(),
+            format: None,
+            relation: None,
+            time_zone: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -83,7 +79,7 @@ impl RangeQuery {
     where
         T: Serialize,
     {
-        self.inner.gt = Term::new(gt);
+        self.gt = Term::new(gt);
         self
     }
 
@@ -92,7 +88,7 @@ impl RangeQuery {
     where
         T: Serialize,
     {
-        self.inner.gte = Term::new(gte);
+        self.gte = Term::new(gte);
         self
     }
 
@@ -101,7 +97,7 @@ impl RangeQuery {
     where
         T: Serialize,
     {
-        self.inner.lt = Term::new(lt);
+        self.lt = Term::new(lt);
         self
     }
 
@@ -110,7 +106,7 @@ impl RangeQuery {
     where
         T: Serialize,
     {
-        self.inner.lte = Term::new(lte);
+        self.lte = Term::new(lte);
         self
     }
 
@@ -130,13 +126,13 @@ impl RangeQuery {
     where
         T: Into<String>,
     {
-        self.inner.format = Some(format.into());
+        self.format = Some(format.into());
         self
     }
 
     /// Indicates how the range query matches values for range fields.
     pub fn relation(mut self, relation: RangeRelation) -> Self {
-        self.inner.relation = Some(relation);
+        self.relation = Some(relation);
         self
     }
 
@@ -153,7 +149,7 @@ impl RangeQuery {
     where
         T: Into<String>,
     {
-        self.inner.time_zone = Some(time_zone.into());
+        self.time_zone = Some(time_zone.into());
         self
     }
 
@@ -162,26 +158,14 @@ impl RangeQuery {
 
 impl ShouldSkip for RangeQuery {
     fn should_skip(&self) -> bool {
-        self.inner.gt.should_skip()
-            && self.inner.gte.should_skip()
-            && self.inner.lt.should_skip()
-            && self.inner.lte.should_skip()
+        self.gt.should_skip()
+            && self.gte.should_skip()
+            && self.lt.should_skip()
+            && self.lte.should_skip()
     }
 }
 
-impl Serialize for RangeQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_struct("RangeQuery", 1)?;
-        map.serialize_field("range", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "range": RangeQuery);
 
 #[cfg(test)]
 mod tests {

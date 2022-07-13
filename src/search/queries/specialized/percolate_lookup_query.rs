@@ -16,13 +16,8 @@ use std::convert::TryInto;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-percolate-query.html#_percolating_an_existing_document>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct PercolateLookupQuery {
-    #[serde(rename = "percolate")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     field: String,
 
     index: String,
@@ -55,15 +50,13 @@ impl Query {
         U: ToString,
     {
         PercolateLookupQuery {
-            inner: Inner {
-                field: field.to_string(),
-                index: index.to_string(),
-                id: id.to_string(),
-                routing: None,
-                preference: None,
-                version: None,
-                name: None,
-            },
+            field: field.to_string(),
+            index: index.to_string(),
+            id: id.to_string(),
+            routing: None,
+            preference: None,
+            version: None,
+            name: None,
         }
     }
 }
@@ -74,7 +67,7 @@ impl PercolateLookupQuery {
     where
         S: ToString,
     {
-        self.inner.routing = Some(routing.to_string());
+        self.routing = Some(routing.to_string());
         self
     }
 
@@ -83,7 +76,7 @@ impl PercolateLookupQuery {
     where
         S: ToString,
     {
-        self.inner.preference = Some(preference.to_string());
+        self.preference = Some(preference.to_string());
         self
     }
 
@@ -93,7 +86,7 @@ impl PercolateLookupQuery {
         S: TryInto<u64>,
     {
         if let Ok(version) = version.try_into() {
-            self.inner.version = Some(version);
+            self.version = Some(version);
         }
         self
     }
@@ -104,12 +97,14 @@ impl PercolateLookupQuery {
     where
         S: ToString,
     {
-        self.inner.name = Some(name.to_string());
+        self.name = Some(name.to_string());
         self
     }
 }
 
 impl ShouldSkip for PercolateLookupQuery {}
+
+serialize_query!("percolate": PercolateLookupQuery);
 
 #[cfg(test)]
 mod tests {
