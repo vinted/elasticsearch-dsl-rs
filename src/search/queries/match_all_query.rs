@@ -16,19 +16,16 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[serde(remote = "Self")]
 pub struct MatchAllQuery {
-    #[serde(rename = "match_all")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
 }
+
+serialize_query!("match_all": MatchAllQuery);
 
 impl Query {
     /// Creates an instance of [`MatchAllQuery`]

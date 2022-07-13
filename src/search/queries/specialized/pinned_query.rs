@@ -15,13 +15,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct PinnedQuery {
-    #[serde(rename = "pinned")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(flatten)]
     values: PinnedQueryValues,
 
@@ -43,12 +38,10 @@ impl Query {
         Q: Into<Query>,
     {
         PinnedQuery {
-            inner: Inner {
-                values,
-                organic: Box::new(organic.into()),
-                boost: None,
-                _name: None,
-            },
+            values,
+            organic: Box::new(organic.into()),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -59,9 +52,11 @@ impl PinnedQuery {
 
 impl ShouldSkip for PinnedQuery {
     fn should_skip(&self) -> bool {
-        self.inner.organic.should_skip()
+        self.organic.should_skip()
     }
 }
+
+serialize_query!("pinned": PinnedQuery);
 
 #[cfg(test)]
 mod tests {

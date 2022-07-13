@@ -16,13 +16,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-match-all-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[serde(remote = "Self")]
 pub struct MatchNoneQuery {
-    #[serde(rename = "match_none")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
 
@@ -40,6 +35,8 @@ impl Query {
 impl MatchNoneQuery {
     add_boost_and_name!();
 }
+
+serialize_query!("match_none": MatchNoneQuery);
 
 impl ShouldSkip for MatchNoneQuery {}
 

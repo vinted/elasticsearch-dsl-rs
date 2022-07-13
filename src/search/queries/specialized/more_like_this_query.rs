@@ -50,13 +50,8 @@ use std::collections::BTreeSet;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-mlt-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct MoreLikeThisQuery {
-    #[serde(rename = "more_like_this")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     fields: Option<Vec<String>>,
 
@@ -220,25 +215,23 @@ impl Query {
         I::Item: Into<Like>,
     {
         MoreLikeThisQuery {
-            inner: Inner {
-                like: like.into_iter().map(Into::into).collect(),
-                fields: None,
-                unlike: None,
-                min_term_freq: None,
-                max_query_terms: None,
-                min_doc_freq: None,
-                max_doc_freq: None,
-                min_word_length: None,
-                max_word_length: None,
-                stop_words: None,
-                analyzer: None,
-                minimum_should_match: None,
-                fail_on_unsupported_field: None,
-                boost_terms: None,
-                include: None,
-                boost: None,
-                _name: None,
-            },
+            like: like.into_iter().map(Into::into).collect(),
+            fields: None,
+            unlike: None,
+            min_term_freq: None,
+            max_query_terms: None,
+            min_doc_freq: None,
+            max_doc_freq: None,
+            min_word_length: None,
+            max_word_length: None,
+            stop_words: None,
+            analyzer: None,
+            minimum_should_match: None,
+            fail_on_unsupported_field: None,
+            boost_terms: None,
+            include: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -252,7 +245,7 @@ impl MoreLikeThisQuery {
         I: IntoIterator,
         I::Item: Into<String>,
     {
-        self.inner.fields = Some(fields.into_iter().map(Into::into).collect());
+        self.fields = Some(fields.into_iter().map(Into::into).collect());
         self
     }
 
@@ -263,7 +256,7 @@ impl MoreLikeThisQuery {
         I: IntoIterator,
         I::Item: Into<Like>,
     {
-        self.inner.unlike = Some(unlike.into_iter().map(Into::into).collect());
+        self.unlike = Some(unlike.into_iter().map(Into::into).collect());
         self
     }
 
@@ -271,21 +264,21 @@ impl MoreLikeThisQuery {
     /// Increasing this value gives greater accuracy at the expense of query execution speed.
     /// Defaults to 25.
     pub fn max_query_terms(mut self, max_query_terms: i64) -> Self {
-        self.inner.max_query_terms = Some(max_query_terms);
+        self.max_query_terms = Some(max_query_terms);
         self
     }
 
     /// The minimum term frequency below which the terms will be ignored from the input document.
     /// Defaults to 2.
     pub fn min_term_freq(mut self, min_term_freq: i64) -> Self {
-        self.inner.min_term_freq = Some(min_term_freq);
+        self.min_term_freq = Some(min_term_freq);
         self
     }
 
     /// The minimum document frequency below which the terms will be ignored from the input document.
     /// Defaults to 5.
     pub fn min_doc_freq(mut self, min_doc_freq: i64) -> Self {
-        self.inner.min_doc_freq = Some(min_doc_freq);
+        self.min_doc_freq = Some(min_doc_freq);
         self
     }
 
@@ -293,19 +286,19 @@ impl MoreLikeThisQuery {
     /// This could be useful in order to ignore highly frequent words such as stop words.
     /// Defaults to unbounded (Integer.MAX_VALUE, which is 2^31-1 or 2147483647).
     pub fn max_doc_freq(mut self, max_doc_freq: i64) -> Self {
-        self.inner.max_doc_freq = Some(max_doc_freq);
+        self.max_doc_freq = Some(max_doc_freq);
         self
     }
 
     /// The minimum word length below which the terms will be ignored. Defaults to 0.
     pub fn min_word_length(mut self, min_word_length: i64) -> Self {
-        self.inner.min_word_length = Some(min_word_length);
+        self.min_word_length = Some(min_word_length);
         self
     }
 
     /// The maximum word length above which the terms will be ignored. Defaults to unbounded (0).
     pub fn max_word_length(mut self, max_word_length: i64) -> Self {
-        self.inner.max_word_length = Some(max_word_length);
+        self.max_word_length = Some(max_word_length);
         self
     }
 
@@ -317,7 +310,7 @@ impl MoreLikeThisQuery {
         T: IntoIterator,
         T::Item: Into<String>,
     {
-        self.inner.stop_words = Some(stop_words.into_iter().map(Into::into).collect());
+        self.stop_words = Some(stop_words.into_iter().map(Into::into).collect());
         self
     }
 
@@ -327,7 +320,7 @@ impl MoreLikeThisQuery {
     where
         T: Into<String>,
     {
-        self.inner.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.into());
         self
     }
 
@@ -337,14 +330,14 @@ impl MoreLikeThisQuery {
     where
         T: Into<String>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
     /// Controls whether the query should fail (throw an exception) if any of the specified fields are not of the supported types (text or keyword).
     /// Set this to false to ignore the field and continue processing. Defaults to true.
     pub fn fail_on_unsupported_field(mut self, fail_on_unsupported_field: bool) -> Self {
-        self.inner.fail_on_unsupported_field = Some(fail_on_unsupported_field);
+        self.fail_on_unsupported_field = Some(fail_on_unsupported_field);
         self
     }
 
@@ -354,13 +347,13 @@ impl MoreLikeThisQuery {
     where
         T: Into<f64>,
     {
-        self.inner.boost_terms = Some(boost_terms.into());
+        self.boost_terms = Some(boost_terms.into());
         self
     }
 
     /// Specifies whether the input documents should also be included in the search results returned. Defaults to `false`.
     pub fn include(mut self, include: bool) -> Self {
-        self.inner.include = Some(include);
+        self.include = Some(include);
         self
     }
 
@@ -369,9 +362,11 @@ impl MoreLikeThisQuery {
 
 impl ShouldSkip for MoreLikeThisQuery {
     fn should_skip(&self) -> bool {
-        self.inner.like.is_empty()
+        self.like.is_empty()
     }
 }
+
+serialize_query!("more_like_this": MoreLikeThisQuery);
 
 #[cfg(test)]
 mod tests {

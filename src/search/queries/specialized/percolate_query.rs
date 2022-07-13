@@ -23,13 +23,8 @@ use serde::Serialize;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-percolate-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct PercolateQuery {
-    #[serde(rename = "percolate")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     field: String,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -57,11 +52,9 @@ impl Query {
         };
 
         PercolateQuery {
-            inner: Inner {
-                field: field.to_string(),
-                source,
-                name: None,
-            },
+            field: field.to_string(),
+            source,
+            name: None,
         }
     }
 }
@@ -73,16 +66,18 @@ impl PercolateQuery {
     where
         S: ToString,
     {
-        self.inner.name = Some(name.to_string());
+        self.name = Some(name.to_string());
         self
     }
 }
 
 impl ShouldSkip for PercolateQuery {
     fn should_skip(&self) -> bool {
-        self.inner.source.should_skip()
+        self.source.should_skip()
     }
 }
+
+serialize_query!("percolate": PercolateQuery);
 
 #[cfg(test)]
 mod tests {

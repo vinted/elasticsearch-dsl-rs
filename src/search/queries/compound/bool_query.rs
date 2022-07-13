@@ -26,26 +26,27 @@ use crate::util::*;
 ///    .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html>
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Default, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct BoolQuery {
-    #[serde(rename = "bool")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     must: Queries,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     filter: Queries,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     should: Queries,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     must_not: Queries,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     minimum_should_match: Option<MinimumShouldMatch>,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
 }
@@ -63,7 +64,7 @@ impl BoolQuery {
     where
         Q: Into<Queries>,
     {
-        self.inner.must.extend(queries);
+        self.must.extend(queries);
         self
     }
 
@@ -72,7 +73,7 @@ impl BoolQuery {
     where
         Q: Into<Queries>,
     {
-        self.inner.should.extend(queries);
+        self.should.extend(queries);
         self
     }
 
@@ -84,7 +85,7 @@ impl BoolQuery {
     where
         Q: Into<Queries>,
     {
-        self.inner.filter.extend(queries);
+        self.filter.extend(queries);
         self
     }
 
@@ -96,7 +97,7 @@ impl BoolQuery {
     where
         Q: Into<Queries>,
     {
-        self.inner.must_not.extend(queries);
+        self.must_not.extend(queries);
         self
     }
 
@@ -113,7 +114,7 @@ impl BoolQuery {
     where
         S: Into<MinimumShouldMatch>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
@@ -122,12 +123,14 @@ impl BoolQuery {
 
 impl ShouldSkip for BoolQuery {
     fn should_skip(&self) -> bool {
-        self.inner.must.should_skip()
-            && self.inner.filter.should_skip()
-            && self.inner.should.should_skip()
-            && self.inner.must_not.should_skip()
+        self.must.should_skip()
+            && self.filter.should_skip()
+            && self.should.should_skip()
+            && self.must_not.should_skip()
     }
 }
+
+serialize_query!("bool": BoolQuery);
 
 #[cfg(test)]
 mod tests {

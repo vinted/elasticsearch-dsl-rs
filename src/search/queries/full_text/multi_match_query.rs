@@ -17,13 +17,9 @@ use crate::util::*;
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html>
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct MultiMatchQuery {
-    #[serde(rename = "multi_match")]
-    inner: Inner,
-}
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     fields: Vec<String>,
 
@@ -94,25 +90,23 @@ impl Query {
         S: Into<Text>,
     {
         MultiMatchQuery {
-            inner: Inner {
-                fields: fields.into_iter().map(|s| s.to_string()).collect(),
-                r#type: None,
-                tie_breaker: None,
-                query: query.into(),
-                analyzer: None,
-                auto_generate_synonyms_phrase_query: None,
-                fuzziness: None,
-                max_expansions: None,
-                prefix_length: None,
-                fuzzy_transpositions: None,
-                fuzzy_rewrite: None,
-                lenient: None,
-                operator: None,
-                minimum_should_match: None,
-                zero_terms_query: None,
-                boost: None,
-                _name: None,
-            },
+            fields: fields.into_iter().map(|s| s.to_string()).collect(),
+            r#type: None,
+            tie_breaker: None,
+            query: query.into(),
+            analyzer: None,
+            auto_generate_synonyms_phrase_query: None,
+            fuzziness: None,
+            max_expansions: None,
+            prefix_length: None,
+            fuzzy_transpositions: None,
+            fuzzy_rewrite: None,
+            lenient: None,
+            operator: None,
+            minimum_should_match: None,
+            zero_terms_query: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -121,11 +115,11 @@ impl MultiMatchQuery {
     /// The way the multi_match query is executed internally depends on the
     /// type parameter
     pub fn r#type(mut self, r#type: MultiMatchQueryType) -> Self {
-        self.inner.r#type = Some(r#type);
+        self.r#type = Some(r#type);
 
         match r#type {
-            MultiMatchQueryType::BestFields(tie_breaker) => self.inner.tie_breaker = tie_breaker,
-            _ => self.inner.tie_breaker = None,
+            MultiMatchQueryType::BestFields(tie_breaker) => self.tie_breaker = tie_breaker,
+            _ => self.tie_breaker = None,
         }
         self
     }
@@ -138,7 +132,7 @@ impl MultiMatchQuery {
     where
         T: Into<String>,
     {
-        self.inner.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.into());
         self
     }
 
@@ -152,7 +146,7 @@ impl MultiMatchQuery {
         mut self,
         auto_generate_synonyms_phrase_query: bool,
     ) -> Self {
-        self.inner.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
+        self.auto_generate_synonyms_phrase_query = Some(auto_generate_synonyms_phrase_query);
         self
     }
 
@@ -165,28 +159,28 @@ impl MultiMatchQuery {
     where
         T: Into<Fuzziness>,
     {
-        self.inner.fuzziness = Some(fuzziness.into());
+        self.fuzziness = Some(fuzziness.into());
         self
     }
 
     /// Maximum number of terms to which the query will expand.
     /// Defaults to `50`.
     pub fn max_expansions(mut self, max_expansions: u8) -> Self {
-        self.inner.max_expansions = Some(max_expansions);
+        self.max_expansions = Some(max_expansions);
         self
     }
 
     /// Number of beginning characters left unchanged for fuzzy matching.
     /// Defaults to `0`.
     pub fn prefix_length(mut self, prefix_length: u8) -> Self {
-        self.inner.prefix_length = Some(prefix_length);
+        self.prefix_length = Some(prefix_length);
         self
     }
 
     /// If `true`, edits for fuzzy matching include transpositions of two
     /// adjacent characters (ab → ba). Defaults to `true`.
     pub fn fuzzy_transpositions(mut self, fuzzy_transpositions: bool) -> Self {
-        self.inner.fuzzy_transpositions = Some(fuzzy_transpositions);
+        self.fuzzy_transpositions = Some(fuzzy_transpositions);
         self
     }
 
@@ -198,7 +192,7 @@ impl MultiMatchQuery {
     /// `fuzzy_rewrite` method of `top_terms_blended_freqs_${max_expansions}`
     /// by default.
     pub fn fuzzy_rewrite(mut self, fuzzy_rewrite: Rewrite) -> Self {
-        self.inner.fuzzy_rewrite = Some(fuzzy_rewrite);
+        self.fuzzy_rewrite = Some(fuzzy_rewrite);
         self
     }
 
@@ -207,13 +201,13 @@ impl MultiMatchQuery {
     /// [numeric](https://www.elastic.co/guide/en/elasticsearch/reference/current/number.html)
     /// field, are ignored. Defaults to `false`.
     pub fn lenient(mut self, lenient: bool) -> Self {
-        self.inner.lenient = Some(lenient);
+        self.lenient = Some(lenient);
         self
     }
 
     /// Boolean logic used to interpret text in the `query` value
     pub fn operator(mut self, operator: Operator) -> Self {
-        self.inner.operator = Some(operator);
+        self.operator = Some(operator);
         self
     }
 
@@ -225,14 +219,14 @@ impl MultiMatchQuery {
     where
         T: Into<MinimumShouldMatch>,
     {
-        self.inner.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.into());
         self
     }
 
     /// Indicates whether no documents are returned if the `analyzer` removes
     /// all tokens, such as when using a `stop` filter.
     pub fn zero_terms_query(mut self, zero_terms_query: ZeroTermsQuery) -> Self {
-        self.inner.zero_terms_query = Some(zero_terms_query);
+        self.zero_terms_query = Some(zero_terms_query);
         self
     }
 
@@ -241,9 +235,11 @@ impl MultiMatchQuery {
 
 impl ShouldSkip for MultiMatchQuery {
     fn should_skip(&self) -> bool {
-        self.inner.query.should_skip()
+        self.query.should_skip()
     }
 }
+
+serialize_query!("multi_match": MultiMatchQuery);
 
 #[cfg(test)]
 mod tests {

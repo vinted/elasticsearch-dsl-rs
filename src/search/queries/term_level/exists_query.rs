@@ -19,13 +19,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct ExistsQuery {
-    #[serde(rename = "exists")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     field: String,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -49,11 +44,9 @@ impl Query {
         T: Into<String>,
     {
         ExistsQuery {
-            inner: Inner {
-                field: field.into(),
-                boost: None,
-                _name: None,
-            },
+            field: field.into(),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -63,6 +56,8 @@ impl ExistsQuery {
 }
 
 impl ShouldSkip for ExistsQuery {}
+
+serialize_query!("exists": ExistsQuery);
 
 #[cfg(test)]
 mod tests {

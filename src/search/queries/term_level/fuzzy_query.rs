@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeMap, Serializer};
+use serde::Serialize;
 
 /// Returns documents that contain terms similar to the search term, as measured by a
 /// [Levenshtein edit distance](https://en.wikipedia.org/wiki/Levenshtein_distance).
@@ -31,14 +31,12 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-fuzzy-query.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct FuzzyQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct FuzzyQuery {
+    #[serde(skip)]
+    field: String,
+
     value: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -75,16 +73,14 @@ impl Query {
     {
         FuzzyQuery {
             field: field.into(),
-            inner: Inner {
-                value: Term::new(value),
-                fuzziness: None,
-                max_expansions: None,
-                prefix_length: None,
-                transpositions: None,
-                rewrite: None,
-                boost: None,
-                _name: None,
-            },
+            value: Term::new(value),
+            fuzziness: None,
+            max_expansions: None,
+            prefix_length: None,
+            transpositions: None,
+            rewrite: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -99,35 +95,35 @@ impl FuzzyQuery {
     where
         T: Into<Fuzziness>,
     {
-        self.inner.fuzziness = Some(fuzziness.into());
+        self.fuzziness = Some(fuzziness.into());
         self
     }
 
     /// Maximum number of terms to which the query will expand.
     /// Defaults to `50`.
     pub fn max_expansions(mut self, max_expansions: u8) -> Self {
-        self.inner.max_expansions = Some(max_expansions);
+        self.max_expansions = Some(max_expansions);
         self
     }
 
     /// Number of beginning characters left unchanged for fuzzy matching.
     /// Defaults to `0`.
     pub fn prefix_length(mut self, prefix_length: u8) -> Self {
-        self.inner.prefix_length = Some(prefix_length);
+        self.prefix_length = Some(prefix_length);
         self
     }
 
     /// Indicates whether edits include transpositions of two adjacent characters (ab → ba).
     /// Defaults to `true`
     pub fn transpositions(mut self, transpositions: bool) -> Self {
-        self.inner.transpositions = Some(transpositions);
+        self.transpositions = Some(transpositions);
         self
     }
 
     /// Method used to rewrite the query. For valid values and more information, see the
     /// [rewrite](Rewrite) parameter.
     pub fn rewrite(mut self, rewrite: Rewrite) -> Self {
-        self.inner.rewrite = Some(rewrite);
+        self.rewrite = Some(rewrite);
         self
     }
 
@@ -136,23 +132,11 @@ impl FuzzyQuery {
 
 impl ShouldSkip for FuzzyQuery {
     fn should_skip(&self) -> bool {
-        self.inner.value.should_skip()
+        self.value.should_skip()
     }
 }
 
-impl Serialize for FuzzyQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_map(Some(1))?;
-        map.serialize_entry("fuzzy", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "fuzzy": FuzzyQuery);
 
 #[cfg(test)]
 mod tests {

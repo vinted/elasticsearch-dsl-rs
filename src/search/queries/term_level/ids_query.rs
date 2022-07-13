@@ -15,13 +15,8 @@ use std::collections::BTreeSet;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ids-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct IdsQuery {
-    #[serde(rename = "ids")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     values: BTreeSet<String>,
 
@@ -43,11 +38,9 @@ impl Query {
         I::Item: ToString,
     {
         IdsQuery {
-            inner: Inner {
-                values: values.into_iter().map(|value| value.to_string()).collect(),
-                boost: None,
-                _name: None,
-            },
+            values: values.into_iter().map(|value| value.to_string()).collect(),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -58,9 +51,11 @@ impl IdsQuery {
 
 impl ShouldSkip for IdsQuery {
     fn should_skip(&self) -> bool {
-        self.inner.values.should_skip()
+        self.values.should_skip()
     }
 }
+
+serialize_query!("ids": IdsQuery);
 
 #[cfg(test)]
 mod tests {

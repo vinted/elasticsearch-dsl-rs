@@ -18,18 +18,17 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-boosting-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct BoostingQuery {
-    #[serde(rename = "boosting")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     positive: Box<Query>,
+
     negative: Box<Query>,
+
     negative_boost: NegativeBoost,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
+
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
 }
@@ -56,13 +55,11 @@ impl Query {
         B: Into<NegativeBoost>,
     {
         BoostingQuery {
-            inner: Inner {
-                positive: Box::new(positive.into()),
-                negative: Box::new(negative.into()),
-                negative_boost: negative_boost.into(),
-                boost: None,
-                _name: None,
-            },
+            positive: Box::new(positive.into()),
+            negative: Box::new(negative.into()),
+            negative_boost: negative_boost.into(),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -73,9 +70,11 @@ impl BoostingQuery {
 
 impl ShouldSkip for BoostingQuery {
     fn should_skip(&self) -> bool {
-        self.inner.positive.should_skip() || self.inner.negative.should_skip()
+        self.positive.should_skip() || self.negative.should_skip()
     }
 }
+
+serialize_query!("boosting": BoostingQuery);
 
 #[cfg(test)]
 mod tests {

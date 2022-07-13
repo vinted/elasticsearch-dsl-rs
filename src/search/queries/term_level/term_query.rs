@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeMap, Serializer};
+use serde::Serialize;
 
 /// Returns documents that contain an **exact** term in a provided field.
 ///
@@ -23,14 +23,12 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-term-query.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct TermQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct TermQuery {
+    #[serde(skip)]
+    field: String,
+
     value: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -53,11 +51,9 @@ impl Query {
     {
         TermQuery {
             field: field.into(),
-            inner: Inner {
-                value: Term::new(value),
-                boost: None,
-                _name: None,
-            },
+            value: Term::new(value),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -68,23 +64,11 @@ impl TermQuery {
 
 impl ShouldSkip for TermQuery {
     fn should_skip(&self) -> bool {
-        self.inner.value.should_skip()
+        self.value.should_skip()
     }
 }
 
-impl Serialize for TermQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_map(Some(1))?;
-        map.serialize_entry("term", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "term": TermQuery);
 
 #[cfg(test)]
 mod tests {

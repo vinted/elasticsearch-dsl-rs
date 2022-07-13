@@ -13,13 +13,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-ParentId-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct ParentIdQuery {
-    #[serde(rename = "parent_id")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     r#type: String,
 
     id: String,
@@ -46,13 +41,11 @@ impl Query {
         U: ToString,
     {
         ParentIdQuery {
-            inner: Inner {
-                r#type: r#type.to_string(),
-                id: id.to_string(),
-                ignore_unmapped: None,
-                boost: None,
-                _name: None,
-            },
+            r#type: r#type.to_string(),
+            id: id.to_string(),
+            ignore_unmapped: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -65,7 +58,7 @@ impl ParentIdQuery {
     ///
     /// You can use this parameter to query multiple indices that may not contain the `type`.
     pub fn ignore_unmapped(mut self, ignore_unmapped: bool) -> Self {
-        self.inner.ignore_unmapped = Some(ignore_unmapped);
+        self.ignore_unmapped = Some(ignore_unmapped);
         self
     }
 
@@ -74,9 +67,11 @@ impl ParentIdQuery {
 
 impl ShouldSkip for ParentIdQuery {
     fn should_skip(&self) -> bool {
-        self.inner.r#type.should_skip() || self.inner.id.should_skip()
+        self.r#type.should_skip() || self.id.should_skip()
     }
 }
+
+serialize_query!("parent_id": ParentIdQuery);
 
 #[cfg(test)]
 mod tests {

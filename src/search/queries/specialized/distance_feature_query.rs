@@ -91,16 +91,8 @@ impl Origin for GeoPoint {
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-distance-feature-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct DistanceFeatureQuery<O>
-where
-    O: Origin,
-{
-    #[serde(rename = "distance_feature")]
-    inner: Inner<O>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner<O>
 where
     O: Origin,
 {
@@ -161,13 +153,11 @@ impl Query {
         O: Origin,
     {
         DistanceFeatureQuery {
-            inner: Inner {
-                field: field.into(),
-                origin,
-                pivot,
-                boost: None,
-                _name: None,
-            },
+            field: field.into(),
+            origin,
+            pivot,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -180,6 +170,9 @@ where
 }
 
 impl<O> ShouldSkip for DistanceFeatureQuery<O> where O: Origin {}
+
+serialize_query!("distance_feature": DistanceFeatureQuery<DateTime<Utc>>);
+serialize_query!("distance_feature": DistanceFeatureQuery<GeoPoint>);
 
 #[cfg(test)]
 mod tests {

@@ -17,13 +17,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-constant-score-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct ConstantScoreQuery {
-    #[serde(rename = "constant_score")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     filter: Box<Query>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -46,11 +41,9 @@ impl Query {
         T: Into<Query>,
     {
         ConstantScoreQuery {
-            inner: Inner {
-                filter: Box::new(filter.into()),
-                boost: None,
-                _name: None,
-            },
+            filter: Box::new(filter.into()),
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -61,9 +54,11 @@ impl ConstantScoreQuery {
 
 impl ShouldSkip for ConstantScoreQuery {
     fn should_skip(&self) -> bool {
-        self.inner.filter.should_skip()
+        self.filter.should_skip()
     }
 }
+
+serialize_query!("constant_score": ConstantScoreQuery);
 
 #[cfg(test)]
 mod tests {

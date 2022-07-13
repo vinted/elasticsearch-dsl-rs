@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use serde::ser::{Serialize, SerializeMap, Serializer};
+use serde::Serialize;
 
 /// Returns documents that contain terms matching a wildcard pattern.
 ///
@@ -16,14 +16,12 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 /// Query::wildcard("test", 123);
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-wildcard-query.html>
-#[derive(Debug, Clone, PartialEq)]
-pub struct WildcardQuery {
-    field: String,
-    inner: Inner,
-}
-
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
+#[serde(remote = "Self")]
+pub struct WildcardQuery {
+    #[serde(skip_serializing)]
+    field: String,
+
     value: Option<Term>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -52,13 +50,11 @@ impl Query {
     {
         WildcardQuery {
             field: field.into(),
-            inner: Inner {
-                value: Term::new(value),
-                rewrite: None,
-                case_insensitive: None,
-                boost: None,
-                _name: None,
-            },
+            value: Term::new(value),
+            rewrite: None,
+            case_insensitive: None,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -67,7 +63,7 @@ impl WildcardQuery {
     /// Method used to rewrite the query. For valid values and more information, see the
     /// [rewrite](Rewrite) parameter.
     pub fn rewrite(mut self, rewrite: Rewrite) -> Self {
-        self.inner.rewrite = Some(rewrite);
+        self.rewrite = Some(rewrite);
         self
     }
 
@@ -75,7 +71,7 @@ impl WildcardQuery {
     /// true. Default is false which means the case sensitivity of matching depends on the
     /// underlying field’s mapping.
     pub fn case_insensitive(mut self, case_insensitive: bool) -> Self {
-        self.inner.case_insensitive = Some(case_insensitive);
+        self.case_insensitive = Some(case_insensitive);
         self
     }
 
@@ -84,23 +80,11 @@ impl WildcardQuery {
 
 impl ShouldSkip for WildcardQuery {
     fn should_skip(&self) -> bool {
-        self.inner.value.should_skip()
+        self.value.should_skip()
     }
 }
 
-impl Serialize for WildcardQuery {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut hash = std::collections::HashMap::new();
-        let _ = hash.insert(&self.field, &self.inner);
-
-        let mut map = serializer.serialize_map(Some(1))?;
-        map.serialize_entry("wildcard", &hash)?;
-        map.end()
-    }
-}
+serialize_query!(keyed, "wildcard": WildcardQuery);
 
 #[cfg(test)]
 mod tests {

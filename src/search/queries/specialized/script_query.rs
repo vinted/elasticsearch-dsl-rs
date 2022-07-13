@@ -15,13 +15,8 @@ use crate::util::*;
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-script-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct ScriptQuery {
-    #[serde(rename = "script")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct Inner {
     script: Script,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -38,11 +33,9 @@ impl Query {
     /// return a boolean value, `true` or `false`
     pub fn script(script: Script) -> ScriptQuery {
         ScriptQuery {
-            inner: Inner {
-                script,
-                boost: None,
-                _name: None,
-            },
+            script,
+            boost: None,
+            _name: None,
         }
     }
 }
@@ -52,6 +45,8 @@ impl ScriptQuery {
 }
 
 impl ShouldSkip for ScriptQuery {}
+
+serialize_query!("script": ScriptQuery);
 
 #[cfg(test)]
 mod tests {

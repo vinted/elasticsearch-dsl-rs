@@ -24,14 +24,9 @@ use crate::util::*;
 ///     .name("test");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-dis-max-query.html>
-#[derive(Debug, Clone, Default, PartialEq, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Serialize)]
+#[serde(remote = "Self")]
 pub struct DisMaxQuery {
-    #[serde(rename = "dis_max")]
-    inner: Inner,
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Serialize)]
-struct Inner {
     queries: Queries,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -60,7 +55,7 @@ impl DisMaxQuery {
     where
         Q: Into<Queries>,
     {
-        self.inner.queries.extend(queries);
+        self.queries.extend(queries);
         self
     }
 
@@ -87,7 +82,7 @@ impl DisMaxQuery {
         T: std::convert::TryInto<TieBreaker>,
     {
         if let Ok(tie_breaker) = tie_breaker.try_into() {
-            self.inner.tie_breaker = Some(tie_breaker);
+            self.tie_breaker = Some(tie_breaker);
         }
         self
     }
@@ -97,9 +92,11 @@ impl DisMaxQuery {
 
 impl ShouldSkip for DisMaxQuery {
     fn should_skip(&self) -> bool {
-        self.inner.queries.should_skip()
+        self.queries.should_skip()
     }
 }
+
+serialize_query!("dis_max": DisMaxQuery);
 
 #[cfg(test)]
 mod tests {
