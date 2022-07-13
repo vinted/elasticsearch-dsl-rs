@@ -15,11 +15,13 @@ impl<K, V> KeyValuePair<K, V> {
 
 impl<K, V> std::fmt::Debug for KeyValuePair<K, V>
 where
-    K: std::fmt::Debug,
+    K: std::fmt::Debug + AsRef<str>,
     V: std::fmt::Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{{ {:?}: {:?} }}", self.key, self.value)
+        f.debug_struct("KeyValuePair")
+            .field(self.key.as_ref(), &self.value)
+            .finish()
     }
 }
 
