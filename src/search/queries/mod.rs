@@ -124,7 +124,7 @@ macro_rules! query {
                 }
             }
 
-            impl From<$query> for Queries {
+            impl From<$query> for QueryCollection {
                 fn from(q: $query) -> Self {
                     if q.should_skip() {
                         Default::default()
@@ -193,15 +193,15 @@ query!(
 
 /// A collection of queries
 #[derive(Default, Clone, PartialEq, Serialize)]
-pub struct Queries(Vec<Query>);
+pub struct QueryCollection(Vec<Query>);
 
-impl std::fmt::Debug for Queries {
+impl std::fmt::Debug for QueryCollection {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
     }
 }
 
-impl<T> From<T> for Queries
+impl<T> From<T> for QueryCollection
 where
     T: IntoIterator,
     T::Item: Into<Option<Query>>,
@@ -217,17 +217,17 @@ where
     }
 }
 
-impl ShouldSkip for Queries {
+impl ShouldSkip for QueryCollection {
     fn should_skip(&self) -> bool {
         self.0.should_skip()
     }
 }
 
-impl Queries {
+impl QueryCollection {
     /// Pushes multiple queries to the collection
     pub fn extend<Q>(&mut self, queries: Q)
     where
-        Q: Into<Queries>,
+        Q: Into<QueryCollection>,
     {
         self.0.extend(queries.into().0)
     }
@@ -239,7 +239,7 @@ mod tests {
 
     #[test]
     fn adds_query() {
-        let mut queries = Queries::default();
+        let mut queries = QueryCollection::default();
 
         let query = Query::terms("test", [1]);
 
@@ -250,7 +250,7 @@ mod tests {
 
     #[test]
     fn adds_queries() {
-        let mut queries = Queries::default();
+        let mut queries = QueryCollection::default();
 
         let query_1 = Query::terms("test", [1]);
         let query_2 = Query::terms("test", [2]);
@@ -262,7 +262,7 @@ mod tests {
 
     #[test]
     fn skips_queries() {
-        let mut queries = Queries::default();
+        let mut queries = QueryCollection::default();
 
         let empty_values: [i32; 0] = [];
 
@@ -277,7 +277,7 @@ mod tests {
 
     #[test]
     fn skips_query() {
-        let mut queries = Queries::default();
+        let mut queries = QueryCollection::default();
 
         let empty_values: [i32; 0] = [];
 

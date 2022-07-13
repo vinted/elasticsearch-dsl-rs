@@ -30,16 +30,16 @@ use crate::util::*;
 #[serde(remote = "Self")]
 pub struct BoolQuery {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    must: Queries,
+    must: QueryCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    filter: Queries,
+    filter: QueryCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    should: Queries,
+    should: QueryCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    must_not: Queries,
+    must_not: QueryCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     minimum_should_match: Option<MinimumShouldMatch>,
@@ -62,7 +62,7 @@ impl BoolQuery {
     /// The clause (query) must appear in matching documents and will contribute to the score.
     pub fn must<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Queries>,
+        Q: Into<QueryCollection>,
     {
         self.must.extend(queries);
         self
@@ -71,7 +71,7 @@ impl BoolQuery {
     /// The clause (query) should appear in the matching document.
     pub fn should<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Queries>,
+        Q: Into<QueryCollection>,
     {
         self.should.extend(queries);
         self
@@ -83,7 +83,7 @@ impl BoolQuery {
     /// meaning that scoring is ignored and clauses are considered for caching.
     pub fn filter<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Queries>,
+        Q: Into<QueryCollection>,
     {
         self.filter.extend(queries);
         self
@@ -95,7 +95,7 @@ impl BoolQuery {
     /// Because scoring is ignored, a score of `0` for all documents is returned.
     pub fn must_not<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Queries>,
+        Q: Into<QueryCollection>,
     {
         self.must_not.extend(queries);
         self
