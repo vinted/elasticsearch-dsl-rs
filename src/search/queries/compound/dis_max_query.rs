@@ -27,7 +27,7 @@ use crate::util::*;
 #[derive(Debug, Default, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct DisMaxQuery {
-    queries: Queries,
+    queries: QueryCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     tie_breaker: Option<TieBreaker>,
@@ -53,7 +53,7 @@ impl DisMaxQuery {
     /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
     pub fn query<Q>(mut self, queries: Q) -> Self
     where
-        Q: Into<Queries>,
+        Q: Into<QueryCollection>,
     {
         self.queries.extend(queries);
         self
