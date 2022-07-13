@@ -8,11 +8,13 @@ mod sort_field;
 mod sort_missing;
 mod sort_mode;
 mod sort_order;
+mod sort_special_field;
 
 pub use self::sort_field::*;
 pub use self::sort_missing::*;
 pub use self::sort_mode::*;
 pub use self::sort_order::*;
+pub use self::sort_special_field::*;
 
 use crate::search::*;
 use crate::util::*;
