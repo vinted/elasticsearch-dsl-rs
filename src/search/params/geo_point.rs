@@ -71,6 +71,16 @@ impl Serialize for GeoPoint {
     }
 }
 
+impl IntoIterator for GeoPoint {
+    type Item = Self;
+
+    type IntoIter = std::option::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        Some(self).into_iter()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

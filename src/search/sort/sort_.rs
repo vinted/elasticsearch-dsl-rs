@@ -1,6 +1,5 @@
-use crate::SortSpecialField;
-
 use super::FieldSort;
+use crate::{GeoDistanceSort, SortSpecialField};
 use std::borrow::Cow;
 
 /// Sorting criterion
@@ -15,6 +14,9 @@ pub enum Sort {
 
     /// Sorts by field name with finer control
     FieldSort(FieldSort),
+
+    /// Sorts by a geo distance
+    GeoDistanceSort(GeoDistanceSort),
 }
 
 impl std::fmt::Debug for Sort {
@@ -23,6 +25,7 @@ impl std::fmt::Debug for Sort {
             Self::SpecialField(sort) => sort.fmt(f),
             Self::Field(sort) => sort.fmt(f),
             Self::FieldSort(sort) => sort.fmt(f),
+            Self::GeoDistanceSort(sort) => sort.fmt(f),
         }
     }
 }
@@ -54,6 +57,12 @@ impl From<String> for Sort {
 impl From<FieldSort> for Sort {
     fn from(value: FieldSort) -> Self {
         Self::FieldSort(value)
+    }
+}
+
+impl From<GeoDistanceSort> for Sort {
+    fn from(value: GeoDistanceSort) -> Self {
+        Self::GeoDistanceSort(value)
     }
 }
 
