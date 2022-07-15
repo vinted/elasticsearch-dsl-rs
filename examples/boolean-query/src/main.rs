@@ -14,7 +14,8 @@ fn main() {
                 .should([Query::term("tags", "env1"), Query::term("tags", "deployed")])
                 .minimum_should_match("1")
                 .boost(1),
-        );
+        )
+        .rescore(Rescore::new(Query::term("field", 1)));
 
     println!("{}", serde_json::to_string_pretty(&search).unwrap());
 }

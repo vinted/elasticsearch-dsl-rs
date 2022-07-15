@@ -49,3 +49,16 @@ where
 
     assert_serialize(subject, expectation)
 }
+
+/// Tests if rescoring criteria is serialized to correct JSON [`Value`]
+#[cfg(test)]
+pub(crate) fn assert_serialize_rescore<T>(subject: T, expectation: serde_json::Value)
+where
+    T: IntoIterator,
+    T::Item: Into<crate::Rescore>,
+{
+    let subject = crate::Search::new().rescore(subject);
+    let expectation = json!({ "rescore": [expectation] });
+
+    assert_serialize(subject, expectation)
+}

@@ -45,7 +45,7 @@ pub struct Search {
     highlight: Option<Highlight>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    rescore: Vec<Rescore>,
+    rescore: RescoreCollection,
 }
 
 impl Search {
@@ -175,16 +175,12 @@ impl Search {
     }
 
     /// Rescore
-    pub fn rescore<R>(mut self, rescore: R) -> Self
+    pub fn rescore<T>(mut self, rescore: T) -> Self
     where
-        R: Into<Rescore>,
+        T: IntoIterator,
+        T::Item: Into<Rescore>,
     {
-        let rescore = rescore.into();
-
-        if !rescore.should_skip() {
-            self.rescore.push(rescore);
-        }
-
+        self.rescore.extend(rescore);
         self
     }
 
