@@ -31,7 +31,7 @@ pub struct InnerHits {
     size: Option<u64>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    sort: Vec<Sort>,
+    sort: SortCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     highlight: Option<Highlight>,
@@ -71,9 +71,10 @@ impl InnerHits {
     /// A collection of sorting fields
     pub fn sort<T>(mut self, sort: T) -> Self
     where
-        T: Into<Vec<Sort>>,
+        T: IntoIterator,
+        T::Item: Into<Sort>,
     {
-        self.sort.extend(sort.into());
+        self.sort.extend(sort);
         self
     }
 

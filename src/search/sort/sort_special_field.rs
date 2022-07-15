@@ -13,3 +13,13 @@ pub enum SortSpecialField {
     #[serde(rename = "_shard_doc")]
     ShardDocumentOrder,
 }
+
+impl ToString for SortSpecialField {
+    fn to_string(&self) -> String {
+        String::from(match self {
+            Self::Score => "_score",
+            Self::DocumentIndexOrder => "_doc",
+            Self::ShardDocumentOrder => "_shard_doc",
+        })
+    }
+}
