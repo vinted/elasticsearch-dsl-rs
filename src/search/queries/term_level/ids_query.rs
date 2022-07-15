@@ -55,7 +55,7 @@ impl ShouldSkip for IdsQuery {
     }
 }
 
-serialize_query!("ids": IdsQuery);
+serialize_with_root!("ids": IdsQuery);
 
 #[cfg(test)]
 mod tests {

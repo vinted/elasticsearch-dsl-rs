@@ -171,8 +171,8 @@ where
 
 impl<O> ShouldSkip for DistanceFeatureQuery<O> where O: Origin {}
 
-serialize_query!("distance_feature": DistanceFeatureQuery<DateTime<Utc>>);
-serialize_query!("distance_feature": DistanceFeatureQuery<GeoPoint>);
+serialize_with_root!("distance_feature": DistanceFeatureQuery<DateTime<Utc>>);
+serialize_with_root!("distance_feature": DistanceFeatureQuery<GeoPoint>);
 
 #[cfg(test)]
 mod tests {

@@ -96,7 +96,7 @@ impl ShouldSkip for DisMaxQuery {
     }
 }
 
-serialize_query!("dis_max": DisMaxQuery);
+serialize_with_root!("dis_max": DisMaxQuery);
 
 #[cfg(test)]
 mod tests {

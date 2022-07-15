@@ -88,7 +88,7 @@ impl GeoShapeQuery {
 
 impl ShouldSkip for GeoShapeQuery {}
 
-serialize_query!("geo_shape": GeoShapeQuery);
+serialize_with_root!("geo_shape": GeoShapeQuery);
 
 #[cfg(test)]
 mod tests {

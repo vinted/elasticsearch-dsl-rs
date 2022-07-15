@@ -84,7 +84,7 @@ impl ShouldSkip for WildcardQuery {
     }
 }
 
-serialize_query!(keyed, "wildcard": WildcardQuery);
+serialize_with_root_keyed!("wildcard": WildcardQuery);
 
 #[cfg(test)]
 mod tests {

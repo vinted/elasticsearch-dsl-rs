@@ -105,7 +105,7 @@ impl ShouldSkip for HasChildQuery {
     }
 }
 
-serialize_query!("has_child": HasChildQuery);
+serialize_with_root!("has_child": HasChildQuery);
 
 #[cfg(test)]
 mod tests {

@@ -77,7 +77,7 @@ impl ShouldSkip for TermsSetQuery {
     }
 }
 
-serialize_query!(keyed, "terms_set": TermsSetQuery);
+serialize_with_root_keyed!("terms_set": TermsSetQuery);
 
 #[cfg(test)]
 mod tests {

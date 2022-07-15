@@ -80,7 +80,7 @@ impl ShapeQuery {
 
 impl ShouldSkip for ShapeQuery {}
 
-serialize_query!("shape": ShapeQuery);
+serialize_with_root!("shape": ShapeQuery);
 
 #[cfg(test)]
 mod tests {

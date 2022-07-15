@@ -122,7 +122,7 @@ impl IntoIterator for GeoDistanceSort {
     }
 }
 
-serialize_query!("_geo_distance": GeoDistanceSort);
+serialize_with_root!("_geo_distance": GeoDistanceSort);
 
 #[cfg(test)]
 mod tests {

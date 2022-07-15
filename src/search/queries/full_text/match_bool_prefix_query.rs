@@ -103,7 +103,7 @@ impl ShouldSkip for MatchBoolPrefixQuery {
     }
 }
 
-serialize_query!(keyed, "match_bool_prefix": MatchBoolPrefixQuery);
+serialize_with_root_keyed!("match_bool_prefix": MatchBoolPrefixQuery);
 
 #[cfg(test)]
 mod tests {

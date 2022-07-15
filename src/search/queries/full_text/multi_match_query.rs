@@ -239,7 +239,7 @@ impl ShouldSkip for MultiMatchQuery {
     }
 }
 
-serialize_query!("multi_match": MultiMatchQuery);
+serialize_with_root!("multi_match": MultiMatchQuery);
 
 #[cfg(test)]
 mod tests {

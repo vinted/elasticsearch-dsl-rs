@@ -102,7 +102,7 @@ impl TermsLookupQuery {
 
 impl ShouldSkip for TermsLookupQuery {}
 
-serialize_query!("terms": TermsLookupQuery);
+serialize_with_root!("terms": TermsLookupQuery);
 
 #[cfg(test)]
 mod tests {

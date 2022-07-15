@@ -58,7 +58,7 @@ impl ShouldSkip for ConstantScoreQuery {
     }
 }
 
-serialize_query!("constant_score": ConstantScoreQuery);
+serialize_with_root!("constant_score": ConstantScoreQuery);
 
 #[cfg(test)]
 mod tests {

@@ -46,7 +46,7 @@ impl ScriptQuery {
 
 impl ShouldSkip for ScriptQuery {}
 
-serialize_query!("script": ScriptQuery);
+serialize_with_root!("script": ScriptQuery);
 
 #[cfg(test)]
 mod tests {

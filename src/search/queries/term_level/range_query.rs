@@ -165,7 +165,7 @@ impl ShouldSkip for RangeQuery {
     }
 }
 
-serialize_query!(keyed, "range": RangeQuery);
+serialize_with_root_keyed!("range": RangeQuery);
 
 #[cfg(test)]
 mod tests {

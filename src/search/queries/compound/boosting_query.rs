@@ -74,7 +74,7 @@ impl ShouldSkip for BoostingQuery {
     }
 }
 
-serialize_query!("boosting": BoostingQuery);
+serialize_with_root!("boosting": BoostingQuery);
 
 #[cfg(test)]
 mod tests {

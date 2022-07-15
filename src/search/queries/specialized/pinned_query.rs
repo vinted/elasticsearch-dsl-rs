@@ -56,7 +56,7 @@ impl ShouldSkip for PinnedQuery {
     }
 }
 
-serialize_query!("pinned": PinnedQuery);
+serialize_with_root!("pinned": PinnedQuery);
 
 #[cfg(test)]
 mod tests {

@@ -57,7 +57,7 @@ impl ExistsQuery {
 
 impl ShouldSkip for ExistsQuery {}
 
-serialize_query!("exists": ExistsQuery);
+serialize_with_root!("exists": ExistsQuery);
 
 #[cfg(test)]
 mod tests {

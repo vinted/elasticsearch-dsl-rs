@@ -375,7 +375,7 @@ impl ShouldSkip for QueryStringQuery {
     }
 }
 
-serialize_query!("query_string": QueryStringQuery);
+serialize_with_root!("query_string": QueryStringQuery);
 
 #[cfg(test)]
 mod tests {

@@ -68,7 +68,7 @@ impl ShouldSkip for TermQuery {
     }
 }
 
-serialize_query!(keyed, "term": TermQuery);
+serialize_with_root_keyed!("term": TermQuery);
 
 #[cfg(test)]
 mod tests {

@@ -25,7 +25,7 @@ pub struct MatchAllQuery {
     _name: Option<String>,
 }
 
-serialize_query!("match_all": MatchAllQuery);
+serialize_with_root!("match_all": MatchAllQuery);
 
 impl Query {
     /// Creates an instance of [`MatchAllQuery`]

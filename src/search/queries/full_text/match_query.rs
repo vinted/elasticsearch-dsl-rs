@@ -219,7 +219,7 @@ impl ShouldSkip for MatchQuery {
     }
 }
 
-serialize_query!(keyed, "match": MatchQuery);
+serialize_with_root_keyed!("match": MatchQuery);
 
 #[cfg(test)]
 mod tests {

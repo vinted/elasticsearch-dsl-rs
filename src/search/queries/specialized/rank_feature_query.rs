@@ -336,11 +336,11 @@ impl ShouldSkip for RankFeatureLogarithmQuery {}
 impl ShouldSkip for RankFeatureSigmoidQuery {}
 impl ShouldSkip for RankFeatureLinearQuery {}
 
-serialize_query!("rank_feature": RankFeatureQuery);
-serialize_query!("rank_feature": RankFeatureSaturationQuery);
-serialize_query!("rank_feature": RankFeatureLogarithmQuery);
-serialize_query!("rank_feature": RankFeatureSigmoidQuery);
-serialize_query!("rank_feature": RankFeatureLinearQuery);
+serialize_with_root!("rank_feature": RankFeatureQuery);
+serialize_with_root!("rank_feature": RankFeatureSaturationQuery);
+serialize_with_root!("rank_feature": RankFeatureLogarithmQuery);
+serialize_with_root!("rank_feature": RankFeatureSigmoidQuery);
+serialize_with_root!("rank_feature": RankFeatureLinearQuery);
 
 #[cfg(test)]
 mod tests {

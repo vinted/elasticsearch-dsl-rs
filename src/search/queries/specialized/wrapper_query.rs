@@ -36,7 +36,7 @@ impl Query {
 
 impl ShouldSkip for WrapperQuery {}
 
-serialize_query!("wrapper": WrapperQuery);
+serialize_with_root!("wrapper": WrapperQuery);
 
 #[cfg(test)]
 mod tests {

@@ -93,7 +93,7 @@ impl ShouldSkip for MatchPhraseQuery {
     }
 }
 
-serialize_query!(keyed, "match_phrase": MatchPhraseQuery);
+serialize_with_root_keyed!("match_phrase": MatchPhraseQuery);
 
 #[cfg(test)]
 mod tests {

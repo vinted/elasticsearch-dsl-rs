@@ -69,7 +69,7 @@ impl ShouldSkip for TermsQuery {
     }
 }
 
-serialize_query!("terms": TermsQuery);
+serialize_with_root!("terms": TermsQuery);
 
 #[cfg(test)]
 mod tests {
