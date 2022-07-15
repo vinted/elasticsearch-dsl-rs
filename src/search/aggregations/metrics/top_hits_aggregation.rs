@@ -32,7 +32,7 @@ struct TopHitsAggregationInner {
     size: Option<u64>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    sort: Vec<Sort>,
+    sort: SortCollection,
 }
 
 impl Aggregation {
@@ -43,7 +43,7 @@ impl Aggregation {
                 _source: None,
                 from: None,
                 size: None,
-                sort: vec![],
+                sort: Default::default(),
             },
         }
     }
@@ -76,9 +76,10 @@ impl TopHitsAggregation {
     /// A collection of sorting fields
     pub fn sort<T>(mut self, sort: T) -> Self
     where
-        T: Into<Vec<Sort>>,
+        T: IntoIterator,
+        T::Item: Into<Sort>,
     {
-        self.top_hits.sort.extend(sort.into());
+        self.top_hits.sort.extend(sort);
         self
     }
 }
@@ -96,7 +97,7 @@ mod tests {
                 .source(false)
                 .from(2)
                 .size(10)
-                .sort(Sort::new("sort_field").order(SortOrder::Desc)),
+                .sort(FieldSort::new("sort_field").order(SortOrder::Desc)),
             json!({
                 "top_hits": {
                     "_source": false,

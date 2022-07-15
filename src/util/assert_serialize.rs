@@ -1,8 +1,8 @@
 /// Tests if a type is serialized to correct JSON [`Value`]
 #[cfg(test)]
-pub(crate) fn assert_serialize<S>(subject: S, expectation: serde_json::Value)
+pub(crate) fn assert_serialize<T>(subject: T, expectation: serde_json::Value)
 where
-    S: serde::Serialize,
+    T: serde::Serialize,
 {
     let string = serde_json::to_string(&subject).unwrap();
     let result: serde_json::Value = serde_json::from_str(&string).unwrap();
@@ -15,9 +15,9 @@ where
 
 /// Tests if a query is serialized to correct JSON [`Value`]
 #[cfg(test)]
-pub(crate) fn assert_serialize_query<S>(subject: S, expectation: serde_json::Value)
+pub(crate) fn assert_serialize_query<T>(subject: T, expectation: serde_json::Value)
 where
-    S: Into<crate::Query>,
+    T: Into<crate::Query>,
 {
     let subject = crate::Search::new().query(subject);
     let expectation = json!({ "query": expectation });
@@ -27,12 +27,25 @@ where
 
 /// Tests if an aggregation is serialized to correct JSON [`Value`]
 #[cfg(test)]
-pub(crate) fn assert_serialize_aggregation<S>(subject: S, expectation: serde_json::Value)
+pub(crate) fn assert_serialize_aggregation<T>(subject: T, expectation: serde_json::Value)
 where
-    S: Into<crate::Aggregation>,
+    T: Into<crate::Aggregation>,
 {
     let subject = crate::Search::new().aggregate("aggregation_name", subject);
     let expectation = json!({ "aggs": { "aggregation_name": expectation } });
+
+    assert_serialize(subject, expectation)
+}
+
+/// Tests if sorting criteria is serialized to correct JSON [`Value`]
+#[cfg(test)]
+pub(crate) fn assert_serialize_sort<T>(subject: T, expectation: serde_json::Value)
+where
+    T: IntoIterator,
+    T::Item: Into<crate::Sort>,
+{
+    let subject = crate::Search::new().sort(subject);
+    let expectation = json!({ "sort": expectation });
 
     assert_serialize(subject, expectation)
 }
