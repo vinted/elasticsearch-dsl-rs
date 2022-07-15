@@ -181,3 +181,45 @@ impl Serialize for Distance {
         .serialize(serializer)
     }
 }
+
+/// Wherever distances need to be specified, such as the `distance` parameter
+/// in the
+/// [Geo-distance](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-query.html)
+/// ), the default unit is meters if none is specified.
+/// Distances can be specified in other units,
+/// such as `"1km"` or `"2mi"` (2 miles).
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-query.html>
+#[derive(Debug, PartialEq, Clone, Copy)]
+#[allow(missing_docs)]
+pub enum DistanceUnit {
+    Miles,
+    Yards,
+    Feet,
+    Inches,
+    Kilometers,
+    Meters,
+    Centimeter,
+    Millimeters,
+    NauticalMiles,
+}
+
+impl Serialize for DistanceUnit {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self {
+            Self::Miles => "mi",
+            Self::Yards => "yd",
+            Self::Feet => "ft",
+            Self::Inches => "in",
+            Self::Kilometers => "km",
+            Self::Meters => "m",
+            Self::Centimeter => "cm",
+            Self::Millimeters => "mm",
+            Self::NauticalMiles => "nmi",
+        }
+        .serialize(serializer)
+    }
+}
