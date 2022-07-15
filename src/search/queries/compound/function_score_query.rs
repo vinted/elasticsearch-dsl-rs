@@ -132,7 +132,7 @@ impl ShouldSkip for FunctionScoreQuery {
     }
 }
 
-serialize_query!("function_score": FunctionScoreQuery);
+serialize_with_root!("function_score": FunctionScoreQuery);
 
 #[cfg(test)]
 mod tests {

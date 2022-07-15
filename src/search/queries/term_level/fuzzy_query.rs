@@ -136,7 +136,7 @@ impl ShouldSkip for FuzzyQuery {
     }
 }
 
-serialize_query!(keyed, "fuzzy": FuzzyQuery);
+serialize_with_root_keyed!("fuzzy": FuzzyQuery);
 
 #[cfg(test)]
 mod tests {

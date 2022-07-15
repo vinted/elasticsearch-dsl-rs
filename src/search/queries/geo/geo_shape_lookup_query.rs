@@ -134,7 +134,7 @@ impl GeoShapeLookupQuery {
 
 impl ShouldSkip for GeoShapeLookupQuery {}
 
-serialize_query!("geo_shape": GeoShapeLookupQuery);
+serialize_with_root!("geo_shape": GeoShapeLookupQuery);
 
 #[cfg(test)]
 mod tests {

@@ -56,7 +56,7 @@ macro_rules! add_aggregate {
 
 #[doc(hidden)]
 #[macro_export]
-macro_rules! serialize_query {
+macro_rules! serialize_with_root {
     ($root:tt : $inner:ty) => {
         impl $crate::serde::Serialize for $inner {
             fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
@@ -84,8 +84,12 @@ macro_rules! serialize_query {
             }
         }
     };
+}
 
-    (keyed, $root:tt : $inner:ty) => {
+#[doc(hidden)]
+#[macro_export]
+macro_rules! serialize_with_root_keyed {
+    ($root:tt : $inner:ty) => {
         impl $crate::serde::Serialize for $inner {
             fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
             where

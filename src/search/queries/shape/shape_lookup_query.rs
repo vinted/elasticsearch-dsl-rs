@@ -126,7 +126,7 @@ impl ShapeLookupQuery {
 
 impl ShouldSkip for ShapeLookupQuery {}
 
-serialize_query!("shape": ShapeLookupQuery);
+serialize_with_root!("shape": ShapeLookupQuery);
 
 #[cfg(test)]
 mod tests {

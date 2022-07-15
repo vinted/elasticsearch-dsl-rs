@@ -121,7 +121,7 @@ impl ShouldSkip for CombinedFieldsQuery {
     }
 }
 
-serialize_query!("combined_fields": CombinedFieldsQuery);
+serialize_with_root!("combined_fields": CombinedFieldsQuery);
 
 #[cfg(test)]
 mod tests {

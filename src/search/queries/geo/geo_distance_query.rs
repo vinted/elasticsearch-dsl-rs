@@ -75,7 +75,7 @@ impl ShouldSkip for GeoDistanceQuery {
     }
 }
 
-serialize_query!("geo_distance": GeoDistanceQuery);
+serialize_with_root!("geo_distance": GeoDistanceQuery);
 
 #[cfg(test)]
 mod tests {

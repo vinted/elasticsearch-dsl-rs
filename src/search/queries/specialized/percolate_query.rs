@@ -77,7 +77,7 @@ impl ShouldSkip for PercolateQuery {
     }
 }
 
-serialize_query!("percolate": PercolateQuery);
+serialize_with_root!("percolate": PercolateQuery);
 
 #[cfg(test)]
 mod tests {

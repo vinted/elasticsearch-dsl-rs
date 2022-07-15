@@ -58,7 +58,7 @@ impl ShouldSkip for GeoBoundingBoxQuery {
     }
 }
 
-serialize_query!("geo_bounding_box": GeoBoundingBoxQuery);
+serialize_with_root!("geo_bounding_box": GeoBoundingBoxQuery);
 
 #[cfg(test)]
 mod tests {

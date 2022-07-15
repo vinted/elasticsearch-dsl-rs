@@ -135,7 +135,7 @@ impl ShouldSkip for NestedQuery {
     }
 }
 
-serialize_query!("nested": NestedQuery);
+serialize_with_root!("nested": NestedQuery);
 
 #[cfg(test)]
 mod tests {

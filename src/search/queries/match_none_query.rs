@@ -36,7 +36,7 @@ impl MatchNoneQuery {
     add_boost_and_name!();
 }
 
-serialize_query!("match_none": MatchNoneQuery);
+serialize_with_root!("match_none": MatchNoneQuery);
 
 impl ShouldSkip for MatchNoneQuery {}
 

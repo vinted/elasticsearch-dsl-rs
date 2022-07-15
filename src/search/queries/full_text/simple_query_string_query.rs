@@ -246,7 +246,7 @@ impl ShouldSkip for SimpleQueryStringQuery {
     }
 }
 
-serialize_query!("simple_query_string": SimpleQueryStringQuery);
+serialize_with_root!("simple_query_string": SimpleQueryStringQuery);
 
 #[cfg(test)]
 mod tests {

@@ -89,7 +89,7 @@ impl ShouldSkip for HasParentQuery {
     }
 }
 
-serialize_query!("has_parent": HasParentQuery);
+serialize_with_root!("has_parent": HasParentQuery);
 
 #[cfg(test)]
 mod tests {

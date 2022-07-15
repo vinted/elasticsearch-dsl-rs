@@ -112,7 +112,7 @@ impl ShouldSkip for MatchPhrasePrefixQuery {
     }
 }
 
-serialize_query!(keyed, "match_phrase_prefix": MatchPhrasePrefixQuery);
+serialize_with_root_keyed!("match_phrase_prefix": MatchPhrasePrefixQuery);
 
 #[cfg(test)]
 mod tests {

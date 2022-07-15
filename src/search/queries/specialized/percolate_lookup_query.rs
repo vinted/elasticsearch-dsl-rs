@@ -104,7 +104,7 @@ impl PercolateLookupQuery {
 
 impl ShouldSkip for PercolateLookupQuery {}
 
-serialize_query!("percolate": PercolateLookupQuery);
+serialize_with_root!("percolate": PercolateLookupQuery);
 
 #[cfg(test)]
 mod tests {

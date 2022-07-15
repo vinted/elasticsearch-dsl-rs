@@ -366,7 +366,7 @@ impl ShouldSkip for MoreLikeThisQuery {
     }
 }
 
-serialize_query!("more_like_this": MoreLikeThisQuery);
+serialize_with_root!("more_like_this": MoreLikeThisQuery);
 
 #[cfg(test)]
 mod tests {

@@ -89,7 +89,7 @@ impl ShouldSkip for PrefixQuery {
     }
 }
 
-serialize_query!(keyed, "prefix": PrefixQuery);
+serialize_with_root_keyed!("prefix": PrefixQuery);
 
 #[cfg(test)]
 mod tests {

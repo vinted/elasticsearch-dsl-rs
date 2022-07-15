@@ -60,7 +60,7 @@ impl ScriptScoreQuery {
 
 impl ShouldSkip for ScriptScoreQuery {}
 
-serialize_query!("script_score": ScriptScoreQuery);
+serialize_with_root!("script_score": ScriptScoreQuery);
 
 #[cfg(test)]
 mod tests {

@@ -126,7 +126,7 @@ impl ShouldSkip for RegexpQuery {
     }
 }
 
-serialize_query!(keyed, "regexp": RegexpQuery);
+serialize_with_root_keyed!("regexp": RegexpQuery);
 
 #[cfg(test)]
 mod tests {

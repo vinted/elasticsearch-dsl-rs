@@ -71,7 +71,7 @@ impl ShouldSkip for ParentIdQuery {
     }
 }
 
-serialize_query!("parent_id": ParentIdQuery);
+serialize_with_root!("parent_id": ParentIdQuery);
 
 #[cfg(test)]
 mod tests {

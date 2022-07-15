@@ -130,7 +130,7 @@ impl ShouldSkip for BoolQuery {
     }
 }
 
-serialize_query!("bool": BoolQuery);
+serialize_with_root!("bool": BoolQuery);
 
 #[cfg(test)]
 mod tests {
