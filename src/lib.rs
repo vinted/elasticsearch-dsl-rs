@@ -53,7 +53,7 @@
 //!                         .size(1)
 //!                         .sort(FieldSort::ascending("user_id")),
 //!                 ),
-//!         );
+//!         ).rescore(Rescore::new(Query::term("field", 1)).query_weight(1.2));
 //! }
 //! ```
 //!

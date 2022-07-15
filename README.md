@@ -51,13 +51,13 @@ fn main() {
                     "top1",
                     Aggregation::top_hits()
                         .size(1)
-                        .sort(Sort::new(SortField::Id).order(SortOrder::Desc)),
+                        .sort(FieldSort::ascending("user_id")),
                 ),
-        );
+        ).rescore(Rescore::new(Query::term("field", 1)).query_weight(1.2));
 }
 ```
 
-See examples for more.
+See [examples](examples) for more.
 
 #### License
 
