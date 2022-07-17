@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use serde::Serialize;
 
 /// Matches [geo_point](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html)
 /// and [geo_shape](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-shape.html)
@@ -16,7 +15,7 @@ pub struct GeoDistanceQuery {
     distance: Distance,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    distance_type: Option<DistanceType>,
+    distance_type: Option<GeoDistanceType>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     validation_method: Option<ValidationMethod>,
@@ -59,9 +58,10 @@ impl GeoDistanceQuery {
         self
     }
 
-    /// How to compute the distance. Can either be `Arc` (default),
-    /// or `Plane` (faster, but inaccurate on long distances and close to the poles).
-    pub fn distance_type(mut self, distance_type: DistanceType) -> Self {
+    /// How to compute the distance. Can either be [Arc](GeoDistanceType::Arc) (default), or
+    /// [Plane](GeoDistanceType::Plane) (faster, but inaccurate on long distances and close to the
+    /// poles).
+    pub fn distance_type(mut self, distance_type: GeoDistanceType) -> Self {
         self.distance_type = Some(distance_type);
         self
     }
@@ -123,7 +123,7 @@ mod tests {
                 },
                 Distance::Kilometers(300),
             )
-            .distance_type(DistanceType::Plane)
+            .distance_type(GeoDistanceType::Plane)
             .validation_method(ValidationMethod::Strict)
             .name("test_name")
             .boost(1),
