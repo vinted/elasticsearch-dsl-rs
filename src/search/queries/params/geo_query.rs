@@ -57,16 +57,6 @@ pub enum GeoBoundingBox {
     },
 }
 
-/// Strategies to compute the distance
-#[derive(Debug, PartialEq, Clone, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum DistanceType {
-    /// Accurate (default)
-    Arc,
-    /// Faster, but inaccurate on long distances and close to the poles
-    Plane,
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -124,11 +114,6 @@ mod tests {
                 "bottom": 40.01,
                 "right": -71.12
             }),
-        );
-
-        assert_serialize(
-            [DistanceType::Arc, DistanceType::Plane],
-            json!(["arc", "plane"]),
         );
     }
 }
