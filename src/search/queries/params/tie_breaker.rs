@@ -1,5 +1,3 @@
-use std::convert::TryFrom;
-
 /// Floating point number between `0` and `1.0` used to increase the
 /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
 /// of documents matching multiple query clauses. Defaults to `0.0`.
@@ -18,8 +16,14 @@ use std::convert::TryFrom;
 ///
 /// If the `tie_breaker` value is greater than `0.0`, all matching clauses
 /// count, but the clause with the highest score counts most.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Clone, Copy, PartialEq, Serialize)]
 pub struct TieBreaker(f32);
+
+impl std::fmt::Debug for TieBreaker {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 
 impl TieBreaker {
     /// Minimum value
@@ -27,18 +31,36 @@ impl TieBreaker {
 
     /// Maximum value
     const MAXIMUM: f32 = 1f32;
+
+    /// Creates a valid instance of [TieBreaker]
+    pub fn new(tie_breaker: f32) -> Option<Self> {
+        debug_assert!(
+            (Self::MINIMUM..=Self::MAXIMUM).contains(&tie_breaker),
+            "Tie breaker must bet between 0 and 1"
+        );
+
+        Some(Self(tie_breaker))
+    }
 }
 
-impl TryFrom<f32> for TieBreaker {
-    type Error = &'static str;
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    fn try_from(value: f32) -> Result<Self, Self::Error> {
-        if value < Self::MINIMUM {
-            Err("Value cannot be lower than 0")
-        } else if value > Self::MAXIMUM {
-            Err("Value cannot be greater than 1")
-        } else {
-            Ok(Self(value))
-        }
+    #[test]
+    #[should_panic]
+    fn none_when_negative() {
+        let _ = TieBreaker::new(-0.1);
+    }
+
+    #[test]
+    #[should_panic]
+    fn none_when_more_than_1() {
+        let _ = TieBreaker::new(1.1);
+    }
+
+    #[test]
+    fn some_when_within_range() {
+        assert_eq!(TieBreaker::new(0.5), Some(TieBreaker(0.5)));
     }
 }

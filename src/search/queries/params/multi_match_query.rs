@@ -41,15 +41,14 @@ impl Serialize for MultiMatchQueryType {
     where
         S: Serializer,
     {
-        let value = match self {
+        match self {
             Self::BestFields(_) => "best_fields",
             Self::MostFields => "most_fields",
             Self::CrossFields => "cross_fields",
             Self::Phrase => "phrase",
             Self::PhrasePrefix => "phrase_prefix",
             Self::BoolPrefix => "bool_prefix",
-        };
-
-        serializer.serialize_str(value)
+        }
+        .serialize(serializer)
     }
 }
