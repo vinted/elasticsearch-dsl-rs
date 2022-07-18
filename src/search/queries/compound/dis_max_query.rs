@@ -51,11 +51,12 @@ impl DisMaxQuery {
     /// **must match one or more** of these queries. If a document matches multiple queries,
     /// Elasticsearch uses the highest
     /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
-    pub fn query<Q>(mut self, queries: Q) -> Self
+    pub fn query<T>(mut self, query: T) -> Self
     where
-        Q: Into<QueryCollection>,
+        T: IntoIterator,
+        T::Item: Into<Query>,
     {
-        self.queries.extend(queries);
+        self.queries.extend(query);
         self
     }
 

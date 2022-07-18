@@ -88,7 +88,7 @@ mod tests {
             },
             json!({
                 "top_right": "dr5r9ydj2y73",
-            "bottom_left": "drj7teegpus6"
+                "bottom_left": "drj7teegpus6"
             }),
         );
 

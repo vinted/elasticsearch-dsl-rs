@@ -6,6 +6,11 @@ pub(crate) trait ShouldSkip {
     fn should_skip(&self) -> bool {
         false
     }
+
+    /// Inverse of the condition
+    fn should_keep(&self) -> bool {
+        !self.should_skip()
+    }
 }
 
 impl ShouldSkip for String {
