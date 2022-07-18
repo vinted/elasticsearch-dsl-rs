@@ -124,12 +124,16 @@ macro_rules! query {
                 }
             }
 
-            impl From<$query> for QueryCollection {
-                fn from(q: $query) -> Self {
-                    if q.should_skip() {
-                        Default::default()
+            impl IntoIterator for $query {
+                type Item = $query;
+
+                type IntoIter = std::option::IntoIter<Self::Item>;
+
+                fn into_iter(self) -> Self::IntoIter {
+                    if self.should_skip() {
+                        None.into_iter()
                     } else {
-                        Self(vec![q.into(); 1])
+                        Some(self).into_iter()
                     }
                 }
             }
@@ -201,19 +205,13 @@ impl std::fmt::Debug for QueryCollection {
     }
 }
 
-impl<T> From<T> for QueryCollection
-where
-    T: IntoIterator,
-    T::Item: Into<Option<Query>>,
-{
-    fn from(value: T) -> Self {
-        Self(
-            value
-                .into_iter()
-                .filter_map(Into::into)
-                .filter(|x| !x.should_skip())
-                .collect(),
-        )
+impl IntoIterator for QueryCollection {
+    type Item = Query;
+
+    type IntoIter = std::vec::IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.0.into_iter()
     }
 }
 
@@ -224,12 +222,18 @@ impl ShouldSkip for QueryCollection {
 }
 
 impl QueryCollection {
-    /// Pushes multiple queries to the collection
-    pub fn extend<Q>(&mut self, queries: Q)
+    /// Extends query collection
+    pub fn extend<T>(&mut self, query: T)
     where
-        Q: Into<QueryCollection>,
+        T: IntoIterator,
+        T::Item: Into<Query>,
     {
-        self.0.extend(queries.into().0)
+        self.0.extend(
+            query
+                .into_iter()
+                .map(Into::into)
+                .filter(ShouldSkip::should_keep),
+        )
     }
 }
 

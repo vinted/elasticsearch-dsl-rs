@@ -60,20 +60,22 @@ impl Query {
 
 impl BoolQuery {
     /// The clause (query) must appear in matching documents and will contribute to the score.
-    pub fn must<Q>(mut self, queries: Q) -> Self
+    pub fn must<T>(mut self, query: T) -> Self
     where
-        Q: Into<QueryCollection>,
+        T: IntoIterator,
+        T::Item: Into<Query>,
     {
-        self.must.extend(queries);
+        self.must.extend(query);
         self
     }
 
     /// The clause (query) should appear in the matching document.
-    pub fn should<Q>(mut self, queries: Q) -> Self
+    pub fn should<T>(mut self, query: T) -> Self
     where
-        Q: Into<QueryCollection>,
+        T: IntoIterator,
+        T::Item: Into<Query>,
     {
-        self.should.extend(queries);
+        self.should.extend(query);
         self
     }
 
@@ -81,11 +83,12 @@ impl BoolQuery {
     /// However unlike must the score of the query will be ignored.
     /// Filter clauses are executed in [filter context](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html),
     /// meaning that scoring is ignored and clauses are considered for caching.
-    pub fn filter<Q>(mut self, queries: Q) -> Self
+    pub fn filter<T>(mut self, query: T) -> Self
     where
-        Q: Into<QueryCollection>,
+        T: IntoIterator,
+        T::Item: Into<Query>,
     {
-        self.filter.extend(queries);
+        self.filter.extend(query);
         self
     }
 
@@ -93,11 +96,12 @@ impl BoolQuery {
     /// Clauses are executed in [filter context](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html)
     /// meaning that scoring is ignored and clauses are considered for caching.
     /// Because scoring is ignored, a score of `0` for all documents is returned.
-    pub fn must_not<Q>(mut self, queries: Q) -> Self
+    pub fn must_not<T>(mut self, query: T) -> Self
     where
-        Q: Into<QueryCollection>,
+        T: IntoIterator,
+        T::Item: Into<Query>,
     {
-        self.must_not.extend(queries);
+        self.must_not.extend(query);
         self
     }
 
