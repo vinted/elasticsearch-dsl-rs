@@ -42,7 +42,7 @@ pub struct BoolQuery {
     must_not: QueryCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    minimum_should_match: Option<MinimumShouldMatch>,
+    minimum_should_match: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -114,11 +114,11 @@ impl BoolQuery {
     ///
     /// For other valid values, see the
     /// [minimum_should_match parameter](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-minimum-should-match.html).
-    pub fn minimum_should_match<S>(mut self, minimum_should_match: S) -> Self
+    pub fn minimum_should_match<T>(mut self, minimum_should_match: T) -> Self
     where
-        S: Into<MinimumShouldMatch>,
+        T: ToString,
     {
-        self.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.to_string());
         self
     }
 

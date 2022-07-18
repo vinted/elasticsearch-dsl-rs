@@ -66,7 +66,7 @@ pub struct QueryStringQuery {
     max_determinized_states: Option<u32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    minimum_should_match: Option<MinimumShouldMatch>,
+    minimum_should_match: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     quote_analyzer: Option<String>,
@@ -293,15 +293,13 @@ impl QueryStringQuery {
         self
     }
 
-    /// Minimum number of clauses that must match for a document to be returned.
-    /// See the
-    /// [`minimum_should_match` parameter](crate::MinimumShouldMatch)
-    /// for valid values and more information.
+    /// Minimum number of clauses that must match for a document to be returned. See the
+    /// `minimum_should_match` parameter for valid values and more information.
     pub fn minimum_should_match<T>(mut self, minimum_should_match: T) -> Self
     where
-        T: Into<MinimumShouldMatch>,
+        T: ToString,
     {
-        self.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.to_string());
         self
     }
 
