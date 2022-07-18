@@ -113,26 +113,16 @@ impl Search {
     /// Starting document offset.
     ///
     /// Defaults to `0`.
-    pub fn from<S>(mut self, from: S) -> Self
-    where
-        S: TryInto<u64>,
-    {
-        if let Ok(from) = from.try_into() {
-            self.from = Some(from);
-        }
+    pub fn from(mut self, from: u64) -> Self {
+        self.from = Some(from);
         self
     }
 
     /// The number of hits to return.
     ///
     /// Defaults to `10`.
-    pub fn size<S>(mut self, size: S) -> Self
-    where
-        S: TryInto<u64>,
-    {
-        if let Ok(size) = size.try_into() {
-            self.size = Some(size);
-        }
+    pub fn size(mut self, size: u64) -> Self {
+        self.size = Some(size);
         self
     }
 
