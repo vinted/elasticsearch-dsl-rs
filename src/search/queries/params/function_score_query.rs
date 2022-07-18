@@ -38,7 +38,7 @@ impl Default for FunctionScoreMode {
 /// `boost_mode` defines how.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[serde(rename_all = "snake_case")]
-pub enum FunctionScoreBoostMode {
+pub enum FunctionBoostMode {
     /// Query score and function score is multiplied (default)
     Multiply,
 
@@ -58,7 +58,7 @@ pub enum FunctionScoreBoostMode {
     Min,
 }
 
-impl Default for FunctionScoreBoostMode {
+impl Default for FunctionBoostMode {
     fn default() -> Self {
         Self::Multiply
     }
