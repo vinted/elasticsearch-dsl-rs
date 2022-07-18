@@ -78,13 +78,8 @@ impl DisMaxQuery {
     ///
     /// If the `tie_breaker` value is greater than `0.0`, all matching clauses
     /// count, but the clause with the highest score counts most.
-    pub fn tie_breaker<T>(mut self, tie_breaker: T) -> Self
-    where
-        T: std::convert::TryInto<TieBreaker>,
-    {
-        if let Ok(tie_breaker) = tie_breaker.try_into() {
-            self.tie_breaker = Some(tie_breaker);
-        }
+    pub fn tie_breaker(mut self, tie_breaker: f32) -> Self {
+        self.tie_breaker = TieBreaker::new(tie_breaker);
         self
     }
 

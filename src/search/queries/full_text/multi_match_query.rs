@@ -242,7 +242,6 @@ serialize_with_root!("multi_match": MultiMatchQuery);
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::convert::TryFrom;
 
     #[test]
     fn serialization() {
@@ -258,9 +257,7 @@ mod tests {
 
         assert_serialize_query(
             Query::multi_match(["test"], "search text")
-                .r#type(MultiMatchQueryType::BestFields(
-                    TieBreaker::try_from(0.2).ok(),
-                ))
+                .r#type(MultiMatchQueryType::BestFields(TieBreaker::new(0.2)))
                 .analyzer("search_time_analyzer")
                 .auto_generate_synonyms_phrase_query(true)
                 .fuzziness(23)
