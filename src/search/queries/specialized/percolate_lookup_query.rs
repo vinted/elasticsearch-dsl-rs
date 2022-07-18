@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use std::convert::TryInto;
 
 /// In order to percolate a newly indexed document, the [percolate](PercolateLookupQuery) query can
 /// be used. Based on the response from an index request, the `_id` and other meta information can
@@ -81,13 +80,8 @@ impl PercolateLookupQuery {
     }
 
     /// The expected version of the document to be fetched
-    pub fn version<S>(mut self, version: S) -> Self
-    where
-        S: TryInto<u64>,
-    {
-        if let Ok(version) = version.try_into() {
-            self.version = Some(version);
-        }
+    pub fn version(mut self, version: u64) -> Self {
+        self.version = Some(version);
         self
     }
 
