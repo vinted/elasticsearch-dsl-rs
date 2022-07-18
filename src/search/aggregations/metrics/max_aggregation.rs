@@ -28,11 +28,11 @@ impl Aggregation {
     /// - `field` - field to aggregate
     pub fn max<T>(field: T) -> MaxAggregation
     where
-        T: Into<String>,
+        T: ToString,
     {
         MaxAggregation {
             max: MaxAggregationInner {
-                field: field.into(),
+                field: field.to_string(),
                 missing: None,
             },
         }

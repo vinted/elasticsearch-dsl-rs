@@ -143,9 +143,9 @@ impl SimpleQueryStringQuery {
     /// default analyzer is used.
     pub fn analyzer<T>(mut self, analyzer: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.to_string());
         self
     }
 

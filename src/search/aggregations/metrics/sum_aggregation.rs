@@ -24,11 +24,11 @@ impl Aggregation {
     /// - `field` - field to aggregate
     pub fn sum<T>(field: T) -> SumAggregation
     where
-        T: Into<String>,
+        T: ToString,
     {
         SumAggregation {
             sum: SumAggregationInner {
-                field: field.into(),
+                field: field.to_string(),
                 missing: None,
             },
         }

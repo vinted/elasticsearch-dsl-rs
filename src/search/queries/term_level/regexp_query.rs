@@ -60,11 +60,11 @@ impl Query {
     /// [`index.max_regex_length`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-regex-length) setting.
     pub fn regexp<S>(field: S, value: S) -> RegexpQuery
     where
-        S: Into<String>,
+        S: ToString,
     {
         RegexpQuery {
-            field: field.into(),
-            value: value.into(),
+            field: field.to_string(),
+            value: value.to_string(),
             flags: vec![],
             case_insensitive: None,
             max_determinized_states: None,

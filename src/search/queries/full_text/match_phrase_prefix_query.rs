@@ -53,11 +53,11 @@ impl Query {
     /// that term.
     pub fn match_phrase_prefix<T, U>(field: T, query: U) -> MatchPhrasePrefixQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Into<Text>,
     {
         MatchPhrasePrefixQuery {
-            field: field.into(),
+            field: field.to_string(),
             query: query.into(),
             analyzer: None,
             max_expansions: None,
@@ -76,9 +76,9 @@ impl MatchPhrasePrefixQuery {
     /// mapped for the `<field>`. If no analyzer is mapped, the index’s default analyzer is used.
     pub fn analyzer<T>(mut self, analyzer: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.to_string());
         self
     }
 

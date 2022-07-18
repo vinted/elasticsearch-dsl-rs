@@ -40,11 +40,11 @@ impl Query {
     /// parent document matches the search, the query returns its child documents.
     pub fn has_parent<T, U>(parent_type: T, query: U) -> HasParentQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Into<Query>,
     {
         HasParentQuery {
-            parent_type: parent_type.into(),
+            parent_type: parent_type.to_string(),
             query: Box::new(query.into()),
             score: None,
             ignore_unmapped: None,

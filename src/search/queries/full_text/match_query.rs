@@ -80,11 +80,11 @@ impl Query {
     /// fields for analyzed tokens rather than an exact term.
     pub fn r#match<T, U>(field: T, query: U) -> MatchQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Into<Text>,
     {
         MatchQuery {
-            field: field.into(),
+            field: field.to_string(),
             query: query.into(),
             analyzer: None,
             auto_generate_synonyms_phrase_query: None,
@@ -110,9 +110,9 @@ impl MatchQuery {
     /// mapped for the `<field>`. If no analyzer is mapped, the index’s default analyzer is used.
     pub fn analyzer<T>(mut self, analyzer: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.to_string());
         self
     }
 

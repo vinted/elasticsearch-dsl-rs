@@ -69,10 +69,10 @@ impl TermsSetScript {
     /// Creates an instance of [TermsSetScript]
     pub fn new<T>(source: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
         Self {
-            source: source.into(),
+            source: source.to_string(),
             params: None,
         }
     }

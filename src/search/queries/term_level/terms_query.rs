@@ -48,11 +48,11 @@ impl Query {
     /// use the terms lookup parameters.
     pub fn terms<S, I>(field: S, values: I) -> TermsQuery
     where
-        S: Into<String>,
+        S: ToString,
         I: Into<Terms>,
     {
         TermsQuery {
-            pair: KeyValuePair::new(field.into(), values.into()),
+            pair: KeyValuePair::new(field.to_string(), values.into()),
             boost: None,
             _name: None,
         }

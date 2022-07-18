@@ -45,11 +45,11 @@ impl Query {
     /// To return a document, the wildcard must exactly match the field value, including whitespace and capitalization.
     pub fn wildcard<T, U>(field: T, value: U) -> WildcardQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Serialize,
     {
         WildcardQuery {
-            field: field.into(),
+            field: field.to_string(),
             value: Term::new(value),
             rewrite: None,
             case_insensitive: None,

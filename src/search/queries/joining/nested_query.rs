@@ -66,11 +66,11 @@ impl Query {
     /// Multi-level nested queries are also supported.
     pub fn nested<T, U>(path: T, query: U) -> NestedQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Into<Query>,
     {
         NestedQuery {
-            path: path.into(),
+            path: path.to_string(),
             query: Box::new(query.into()),
             score_mode: None,
             ignore_unmapped: None,
