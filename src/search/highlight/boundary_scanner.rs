@@ -1,8 +1,5 @@
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 
-/// Locale type alias
-pub type Locale = String;
-
 /// Specifies how to break the highlighted fragments. Defaults to
 /// [`sentence`](UnifiedBoundaryScanner::Sentence).
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
@@ -15,12 +12,12 @@ pub enum UnifiedBoundaryScanner {
     /// > The `sentence` scanner splits sentences bigger than `fragment_size` at the first word
     /// boundary next to `fragment_size`. You can set `fragment_size` to 0 to never split any
     /// sentence.
-    Sentence(Option<Locale>),
+    Sentence(Option<String>),
 
     /// Break highlighted fragments at the next word boundary, as determined by Java’s
     /// [BreakIterator](https://docs.oracle.com/javase/8/docs/api/java/text/BreakIterator.html).
     /// You can specify the locale to use with `boundary_scanner_locale`.
-    Word(Option<Locale>),
+    Word(Option<String>),
 }
 
 /// Specifies how to break the highlighted fragments. Defaults to
@@ -34,12 +31,12 @@ pub enum FvhBoundaryScanner {
     /// Break highlighted fragments at the next sentence boundary, as determined by Java’s
     /// [BreakIterator](https://docs.oracle.com/javase/8/docs/api/java/text/BreakIterator.html).
     /// You can specify the locale to use with `boundary_scanner_locale`.
-    Sentence(Option<Locale>),
+    Sentence(Option<String>),
 
     /// Break highlighted fragments at the next word boundary, as determined by Java’s
     /// [BreakIterator](https://docs.oracle.com/javase/8/docs/api/java/text/BreakIterator.html).
     /// You can specify the locale to use with `boundary_scanner_locale`.
-    Word(Option<Locale>),
+    Word(Option<String>),
 }
 
 impl Serialize for UnifiedBoundaryScanner {
