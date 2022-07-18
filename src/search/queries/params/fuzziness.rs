@@ -43,9 +43,9 @@ impl Serialize for Fuzziness {
         S: Serializer,
     {
         match self {
-            Self::Auto => serializer.serialize_str("AUTO"),
-            Self::Range(r) => serializer.serialize_str(&format!("AUTO:{},{}", r.start, r.end)),
-            Self::Distance(d) => serializer.serialize_u8(*d),
+            Self::Auto => "AUTO".serialize(serializer),
+            Self::Range(r) => format!("AUTO:{},{}", r.start, r.end).serialize(serializer),
+            Self::Distance(d) => d.serialize(serializer),
         }
     }
 }
@@ -65,6 +65,7 @@ impl From<u8> for Fuzziness {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::util::assert_serialize;
 
     #[test]
     fn implements_from_u8() {
@@ -85,29 +86,14 @@ mod tests {
     }
 
     #[test]
-    fn serializes_auto() {
-        let result = serde_json::to_string(&Fuzziness::Auto).unwrap();
-
-        let expectation = "\"AUTO\"";
-
-        assert_eq!(result, expectation);
-    }
-
-    #[test]
-    fn serializes_auto_low_high() {
-        let result = serde_json::to_string(&Fuzziness::Range(0..2)).unwrap();
-
-        let expectation = "\"AUTO:0,2\"";
-
-        assert_eq!(result, expectation);
-    }
-
-    #[test]
-    fn serializes_distance() {
-        let result = serde_json::to_string(&Fuzziness::Distance(5)).unwrap();
-
-        let expectation = "5";
-
-        assert_eq!(result, expectation);
+    fn serializes() {
+        assert_serialize(
+            [
+                Fuzziness::Auto,
+                Fuzziness::Range(0..2),
+                Fuzziness::Distance(5),
+            ],
+            json!(["AUTO", "AUTO:0,2", 5,]),
+        )
     }
 }
