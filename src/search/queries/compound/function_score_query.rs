@@ -20,7 +20,7 @@ use crate::util::*;
 ///     .max_boost(2.2)
 ///     .min_score(2.3)
 ///     .score_mode(FunctionScoreMode::Avg)
-///     .boost_mode(FunctionScoreBoostMode::Max)
+///     .boost_mode(FunctionBoostMode::Max)
 ///     .boost(1.1)
 ///     .name("test");
 /// ```
@@ -43,7 +43,7 @@ pub struct FunctionScoreQuery {
     score_mode: Option<FunctionScoreMode>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost_mode: Option<FunctionScoreBoostMode>,
+    boost_mode: Option<FunctionBoostMode>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -118,7 +118,7 @@ impl FunctionScoreQuery {
 
     /// The newly computed score is combined with the score of the query. The parameter
     /// `boost_mode` defines how.
-    pub fn boost_mode(mut self, boost_mode: FunctionScoreBoostMode) -> Self {
+    pub fn boost_mode(mut self, boost_mode: FunctionBoostMode) -> Self {
         self.boost_mode = Some(boost_mode);
         self
     }
@@ -167,7 +167,7 @@ mod tests {
                 .max_boost(2.2)
                 .min_score(2.3)
                 .score_mode(FunctionScoreMode::Avg)
-                .boost_mode(FunctionScoreBoostMode::Max)
+                .boost_mode(FunctionBoostMode::Max)
                 .boost(1.1)
                 .name("test"),
             json!({
