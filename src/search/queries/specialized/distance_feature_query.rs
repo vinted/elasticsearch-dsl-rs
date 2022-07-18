@@ -149,11 +149,11 @@ impl Query {
         pivot: <O as Origin>::Pivot,
     ) -> DistanceFeatureQuery<O>
     where
-        T: Into<String>,
+        T: ToString,
         O: Origin,
     {
         DistanceFeatureQuery {
-            field: field.into(),
+            field: field.to_string(),
             origin,
             pivot,
             boost: None,

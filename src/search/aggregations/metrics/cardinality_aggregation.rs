@@ -26,11 +26,11 @@ impl Aggregation {
     /// - `field` - field to aggregate
     pub fn cardinality<T>(field: T) -> CardinalityAggregation
     where
-        T: Into<String>,
+        T: ToString,
     {
         CardinalityAggregation {
             cardinality: CardinalityAggregationInner {
-                field: field.into(),
+                field: field.to_string(),
                 precision_threshold: None,
                 missing: None,
             },
@@ -52,9 +52,9 @@ impl CardinalityAggregation {
     /// be ignored but it is also possible to treat them as if they had a value.
     pub fn missing<T>(mut self, missing: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.cardinality.missing = Some(missing.into());
+        self.cardinality.missing = Some(missing.to_string());
         self
     }
 }

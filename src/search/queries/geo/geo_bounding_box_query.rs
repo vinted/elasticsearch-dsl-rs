@@ -29,11 +29,11 @@ impl Query {
     /// - `value` - A series of vertex coordinates of a geo bounding box
     pub fn geo_bounding_box<T, U>(field: T, value: U) -> GeoBoundingBoxQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Into<GeoBoundingBox>,
     {
         GeoBoundingBoxQuery {
-            pair: KeyValuePair::new(field.into(), value.into()),
+            pair: KeyValuePair::new(field.to_string(), value.into()),
             validation_method: None,
             boost: None,
             _name: None,

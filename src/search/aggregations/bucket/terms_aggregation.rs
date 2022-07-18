@@ -39,11 +39,11 @@ impl Aggregation {
     /// - `field` - field to group by
     pub fn terms<T>(field: T) -> TermsAggregation
     where
-        T: Into<String>,
+        T: ToString,
     {
         TermsAggregation {
             terms: TermsAggregationInner {
-                field: field.into(),
+                field: field.to_string(),
                 size: None,
                 show_term_doc_count_error: None,
                 order: Default::default(),

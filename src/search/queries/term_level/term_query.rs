@@ -46,11 +46,11 @@ impl Query {
     /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
     pub fn term<T, U>(field: T, value: U) -> TermQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Serialize,
     {
         TermQuery {
-            field: field.into(),
+            field: field.to_string(),
             value: Term::new(value),
             boost: None,
             _name: None,

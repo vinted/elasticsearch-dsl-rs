@@ -50,11 +50,11 @@ impl Query {
     /// To return a document, the term must exactly match the field value, including whitespace and capitalization.
     pub fn prefix<T, U>(field: T, value: U) -> PrefixQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Serialize,
     {
         PrefixQuery {
-            field: field.into(),
+            field: field.to_string(),
             value: Term::new(value),
             rewrite: None,
             case_insensitive: None,

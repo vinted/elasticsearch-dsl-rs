@@ -48,11 +48,11 @@ impl Query {
     /// - `query` - Text, number, boolean value or date you wish to find in the provided `<field>`
     pub fn match_bool_prefix<T, U>(field: T, query: U) -> MatchBoolPrefixQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Into<Text>,
     {
         MatchBoolPrefixQuery {
-            field: field.into(),
+            field: field.to_string(),
             query: query.into(),
             analyzer: None,
             minimum_should_match: None,
@@ -70,9 +70,9 @@ impl MatchBoolPrefixQuery {
     /// mapped for the `<field>`. If no analyzer is mapped, the index’s default analyzer is used.
     pub fn analyzer<T>(mut self, analyzer: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.to_string());
         self
     }
 

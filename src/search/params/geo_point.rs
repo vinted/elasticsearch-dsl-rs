@@ -50,9 +50,9 @@ impl GeoPoint {
     /// Creates an instance of [GeoPoint](GeoPoint)
     pub fn geohash<T>(geohash: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        Self::Geohash(geohash.into())
+        Self::Geohash(geohash.to_string())
     }
 }
 

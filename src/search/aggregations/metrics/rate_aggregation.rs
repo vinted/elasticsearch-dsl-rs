@@ -39,9 +39,9 @@ impl RateAggregation {
     /// Calculate sum or number of values of the `field`
     pub fn field<T>(mut self, field: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.rate.field = Some(field.into());
+        self.rate.field = Some(field.to_string());
         self
     }
 

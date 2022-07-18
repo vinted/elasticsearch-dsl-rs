@@ -46,11 +46,11 @@ impl Aggregation {
     /// Creates an instance of [`DiversifiedSamplerAggregation`]
     pub fn diversified_sampler<T>(field: T) -> DiversifiedSamplerAggregation
     where
-        T: Into<String>,
+        T: ToString,
     {
         DiversifiedSamplerAggregation {
             diversified_sampler: DiversifiedSamplerAggregationInner {
-                field: field.into(),
+                field: field.to_string(),
                 shard_size: None,
                 max_docs_per_value: None,
                 execution_hint: None,

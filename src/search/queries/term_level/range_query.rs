@@ -56,10 +56,10 @@ impl Query {
     /// - `field` - Field you wish to search.
     pub fn range<T>(field: T) -> RangeQuery
     where
-        T: Into<String>,
+        T: ToString,
     {
         RangeQuery {
-            field: field.into(),
+            field: field.to_string(),
             gt: Default::default(),
             gte: Default::default(),
             lt: Default::default(),
@@ -124,9 +124,9 @@ impl RangeQuery {
     /// [Missing date components](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html#missing-date-components).
     pub fn format<T>(mut self, format: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.format = Some(format.into());
+        self.format = Some(format.to_string());
         self
     }
 
@@ -147,9 +147,9 @@ impl RangeQuery {
     /// [Time zone in `range` queries](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html#range-query-time-zone).
     pub fn time_zone<T>(mut self, time_zone: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.time_zone = Some(time_zone.into());
+        self.time_zone = Some(time_zone.to_string());
         self
     }
 

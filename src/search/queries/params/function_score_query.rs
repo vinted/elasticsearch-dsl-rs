@@ -127,7 +127,7 @@ impl Function {
     /// - `field` - Field to be extracted from the document.
     pub fn field_value_factor<T>(field: T) -> FieldValueFactor
     where
-        T: Into<String>,
+        T: ToString,
     {
         FieldValueFactor::new(field)
     }
@@ -151,7 +151,7 @@ impl Function {
         scale: <O as Origin>::Scale,
     ) -> Decay<O>
     where
-        T: Into<String>,
+        T: ToString,
         O: Origin,
     {
         Decay::new(function, field, origin, scale)
@@ -162,7 +162,7 @@ impl Function {
     /// - `source` - script source
     pub fn script<T>(source: T) -> Script
     where
-        T: Into<String>,
+        T: ToString,
     {
         Script::new(source)
     }
@@ -231,9 +231,9 @@ impl RandomScore {
     /// Sets field value
     pub fn field<T>(mut self, field: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.random_score.field = Some(field.into());
+        self.random_score.field = Some(field.to_string());
         self
     }
 }
@@ -284,11 +284,11 @@ impl FieldValueFactor {
     /// - `field` - Field to be extracted from the document.
     pub fn new<T>(field: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
         Self {
             field_value_factor: FieldValueFactorInner {
-                field: field.into(),
+                field: field.to_string(),
                 factor: None,
                 modifier: None,
                 missing: None,
@@ -445,12 +445,12 @@ where
     /// ("1h", "10d",…​). Default unit is milliseconds. For numeric field: Any number.
     pub fn new<T>(function: DecayFunction, field: T, origin: O, scale: <O as Origin>::Scale) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
         Self {
             function,
             inner: DecayFieldInner {
-                field: field.into(),
+                field: field.to_string(),
                 inner: DecayInner {
                     origin,
                     scale,
@@ -547,12 +547,12 @@ impl Script {
     /// - `source` - script source
     pub fn new<T>(source: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
         Self {
             script_score: ScriptInnerWrapper {
                 script: ScriptInner {
-                    source: source.into(),
+                    source: source.to_string(),
                     params: None,
                 },
             },

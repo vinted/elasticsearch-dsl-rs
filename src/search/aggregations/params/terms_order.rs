@@ -22,15 +22,15 @@ impl TermsOrder {
     /// - `order` - Sorting order
     pub fn new<T>(key: T, order: SortOrder) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        Self(KeyValuePair::new(key.into(), order))
+        Self(KeyValuePair::new(key.to_string(), order))
     }
 
     /// Sorts terms by a given key in ascending order
     pub fn ascending<T>(key: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
         Self::new(key, SortOrder::Asc)
     }
@@ -38,7 +38,7 @@ impl TermsOrder {
     /// Sorts terms by a given key in descending order
     pub fn descending<T>(key: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
         Self::new(key, SortOrder::Desc)
     }

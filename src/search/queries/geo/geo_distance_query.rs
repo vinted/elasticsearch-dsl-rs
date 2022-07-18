@@ -35,12 +35,12 @@ impl Query {
     /// - `distance` - Distance threshold
     pub fn geo_distance<T, U, V>(field: T, origin: U, distance: V) -> GeoDistanceQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Into<GeoPoint>,
         V: Into<Distance>,
     {
         GeoDistanceQuery {
-            pair: KeyValuePair::new(field.into(), origin.into()),
+            pair: KeyValuePair::new(field.to_string(), origin.into()),
             distance: distance.into(),
             distance_type: None,
             validation_method: None,

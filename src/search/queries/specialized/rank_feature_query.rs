@@ -226,10 +226,10 @@ impl Query {
     /// - `field` - `rank_feature` or `rank_features` field used to boost relevance scores
     pub fn rank_feature<T>(field: T) -> RankFeatureQuery
     where
-        T: Into<String>,
+        T: ToString,
     {
         RankFeatureQuery {
-            field: field.into(),
+            field: field.to_string(),
             boost: None,
             _name: None,
         }

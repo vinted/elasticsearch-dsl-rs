@@ -41,10 +41,10 @@ impl Query {
     ///   - A custom [`null-value`](https://www.elastic.co/guide/en/elasticsearch/reference/current/null-value.html), defined in field mapping
     pub fn exists<T>(field: T) -> ExistsQuery
     where
-        T: Into<String>,
+        T: ToString,
     {
         ExistsQuery {
-            field: field.into(),
+            field: field.to_string(),
             boost: None,
             _name: None,
         }

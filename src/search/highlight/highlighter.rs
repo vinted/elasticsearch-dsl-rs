@@ -383,9 +383,9 @@ macro_rules! add_highlighter_methods {
         /// A string that contains each boundary character. Defaults to `.,!? \t\n`.
         pub fn boundary_chars<T>(mut self, boundary_chars: T) -> Self
         where
-            T: Into<String>,
+            T: ToString,
         {
-            self.boundary_chars = Some(boundary_chars.into());
+            self.boundary_chars = Some(boundary_chars.to_string());
             self
         }
 

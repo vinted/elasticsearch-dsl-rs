@@ -156,10 +156,10 @@ impl Document {
     /// - `id` - document id as string.
     pub fn new<T>(id: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
         Self {
-            _id: id.into(),
+            _id: id.to_string(),
             _stored_fields: BTreeSet::new(),
             _index: None,
             _routing: None,
@@ -170,18 +170,18 @@ impl Document {
     /// The index that contains the document. Required if no index is specified in the request URI.
     pub fn index<T>(mut self, index: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self._index = Some(index.into());
+        self._index = Some(index.to_string());
         self
     }
 
     /// The key for the primary shard the document resides on. Required if routing is used during indexing.
     pub fn routing<T>(mut self, routing: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self._routing = Some(routing.into());
+        self._routing = Some(routing.to_string());
         self
     }
 
@@ -198,9 +198,9 @@ impl Document {
     pub fn stored_fields<T>(mut self, stored_fields: T) -> Self
     where
         T: IntoIterator,
-        T::Item: Into<String>,
+        T::Item: ToString,
     {
-        self._stored_fields = stored_fields.into_iter().map(Into::into).collect();
+        self._stored_fields = stored_fields.into_iter().map(|x| x.to_string()).collect();
         self
     }
 }
@@ -243,9 +243,9 @@ impl MoreLikeThisQuery {
     pub fn fields<I>(mut self, fields: I) -> Self
     where
         I: IntoIterator,
-        I::Item: Into<String>,
+        I::Item: ToString,
     {
-        self.fields = Some(fields.into_iter().map(Into::into).collect());
+        self.fields = Some(fields.into_iter().map(|x| x.to_string()).collect());
         self
     }
 
@@ -308,9 +308,9 @@ impl MoreLikeThisQuery {
     pub fn stop_words<T>(mut self, stop_words: T) -> Self
     where
         T: IntoIterator,
-        T::Item: Into<String>,
+        T::Item: ToString,
     {
-        self.stop_words = Some(stop_words.into_iter().map(Into::into).collect());
+        self.stop_words = Some(stop_words.into_iter().map(|x| x.to_string()).collect());
         self
     }
 
@@ -318,9 +318,9 @@ impl MoreLikeThisQuery {
     /// Defaults to the analyzer associated with the first field in `fields`.
     pub fn analyzer<T>(mut self, analyzer: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.analyzer = Some(analyzer.into());
+        self.analyzer = Some(analyzer.to_string());
         self
     }
 
@@ -328,9 +328,9 @@ impl MoreLikeThisQuery {
     /// The syntax is the same as the `minimum should match`. (Defaults to "30%").
     pub fn minimum_should_match<T>(mut self, minimum_should_match: T) -> Self
     where
-        T: Into<String>,
+        T: ToString,
     {
-        self.minimum_should_match = Some(minimum_should_match.into());
+        self.minimum_should_match = Some(minimum_should_match.to_string());
         self
     }
 

@@ -153,10 +153,10 @@ impl Analyze {
     pub fn attributes<I>(mut self, attributes: I) -> Self
     where
         I: IntoIterator,
-        I::Item: Into<String>,
+        I::Item: ToString,
     {
         self.attributes
-            .extend(attributes.into_iter().map(Into::into));
+            .extend(attributes.into_iter().map(|x| x.to_string()));
         self
     }
 
@@ -208,10 +208,10 @@ impl CustomAnalyzer {
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis-tokenizers.html>
     pub fn new<S>(tokenizer: S) -> Self
     where
-        S: Into<String>,
+        S: ToString,
     {
         Self {
-            tokenizer: tokenizer.into(),
+            tokenizer: tokenizer.to_string(),
             char_filter: vec![],
             filter: vec![],
         }
@@ -249,25 +249,25 @@ impl Analysis {
     /// Creates an instance of [`Analysis::Field`]
     pub fn field<S>(value: S) -> Self
     where
-        S: Into<String>,
+        S: ToString,
     {
-        Self::Field(value.into())
+        Self::Field(value.to_string())
     }
 
     /// Creates an instance of [`Analysis::BuiltInAnalyzer`]
     pub fn analyzer<S>(value: S) -> Self
     where
-        S: Into<String>,
+        S: ToString,
     {
-        Self::BuiltInAnalyzer(value.into())
+        Self::BuiltInAnalyzer(value.to_string())
     }
 
     /// Creates an instance of [`Analysis::BuiltInNormalizer`]
     pub fn normalizer<S>(value: S) -> Self
     where
-        S: Into<String>,
+        S: ToString,
     {
-        Self::BuiltInNormalizer(value.into())
+        Self::BuiltInNormalizer(value.to_string())
     }
 }
 

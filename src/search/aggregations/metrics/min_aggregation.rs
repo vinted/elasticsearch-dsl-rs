@@ -28,11 +28,11 @@ impl Aggregation {
     /// - `field` - field to aggregate
     pub fn min<T>(field: T) -> MinAggregation
     where
-        T: Into<String>,
+        T: ToString,
     {
         MinAggregation {
             min: MinAggregationInner {
-                field: field.into(),
+                field: field.to_string(),
                 missing: None,
             },
         }

@@ -68,11 +68,11 @@ impl Query {
     /// - `value` - Fuzzy you wish to find in the provided field.
     pub fn fuzzy<T, U>(field: T, value: U) -> FuzzyQuery
     where
-        T: Into<String>,
+        T: ToString,
         U: Serialize,
     {
         FuzzyQuery {
-            field: field.into(),
+            field: field.to_string(),
             value: Term::new(value),
             fuzziness: None,
             max_expansions: None,

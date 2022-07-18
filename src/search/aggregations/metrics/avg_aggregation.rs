@@ -25,11 +25,11 @@ impl Aggregation {
     /// - `field` - field to aggregate
     pub fn avg<T>(field: T) -> AvgAggregation
     where
-        T: Into<String>,
+        T: ToString,
     {
         AvgAggregation {
             avg: AvgAggregationInner {
-                field: field.into(),
+                field: field.to_string(),
                 missing: None,
             },
         }

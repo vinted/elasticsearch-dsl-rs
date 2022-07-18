@@ -35,11 +35,11 @@ impl Aggregation {
     /// - `field` - field to aggregate
     pub fn boxplot<T>(field: T) -> BoxplotAggregation
     where
-        T: Into<String>,
+        T: ToString,
     {
         BoxplotAggregation {
             boxplot: BoxplotAggregationInner {
-                field: field.into(),
+                field: field.to_string(),
                 compression: None,
                 missing: None,
             },
