@@ -46,6 +46,9 @@ pub struct Search {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     rescore: RescoreCollection,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    suggest: BTreeMap<String, Suggester>,
 }
 
 impl Search {
@@ -171,6 +174,16 @@ impl Search {
         T::Item: Into<Rescore>,
     {
         self.rescore.extend(rescore);
+        self
+    }
+
+    /// Suggest
+    pub fn suggest<T, U>(mut self, name: T, suggester: U) -> Self
+    where
+        T: ToString,
+        U: Into<Suggester>,
+    {
+        let _ = self.suggest.insert(name.to_string(), suggester.into());
         self
     }
 

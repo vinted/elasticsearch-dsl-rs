@@ -15,3 +15,9 @@ impl std::fmt::Debug for Suggester {
         }
     }
 }
+
+impl From<CompletionSuggester> for Suggester {
+    fn from(value: CompletionSuggester) -> Self {
+        Self::Completion(value)
+    }
+}
