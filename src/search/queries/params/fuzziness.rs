@@ -9,7 +9,7 @@ use std::ops::Range;
 /// — the number of one character changes that need to be made to one string to make it the same as another string.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness>
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Fuzziness {
     /// Generates an edit distance based on the length of the term.
     ///
@@ -31,7 +31,7 @@ pub enum Fuzziness {
     /// **`>5`**
     ///
     /// &nbsp;&nbsp;&nbsp;&nbsp;Two edits allowed
-    Range(Range<u8>),
+    Range(u8, u8),
 
     /// The maximum allowed Levenshtein Edit Distance (or number of edits)
     Distance(u8),
@@ -44,7 +44,7 @@ impl Serialize for Fuzziness {
     {
         match self {
             Self::Auto => "AUTO".serialize(serializer),
-            Self::Range(r) => format!("AUTO:{},{}", r.start, r.end).serialize(serializer),
+            Self::Range(start, end) => format!("AUTO:{},{}", start, end).serialize(serializer),
             Self::Distance(d) => d.serialize(serializer),
         }
     }
@@ -52,7 +52,13 @@ impl Serialize for Fuzziness {
 
 impl From<Range<u8>> for Fuzziness {
     fn from(v: Range<u8>) -> Self {
-        Self::Range(v)
+        Self::Range(v.start, v.end)
+    }
+}
+
+impl From<[u8; 2]> for Fuzziness {
+    fn from(v: [u8; 2]) -> Self {
+        Self::Range(v[0], v[1])
     }
 }
 
@@ -80,7 +86,7 @@ mod tests {
     fn implements_from_range_u8() {
         let result = Fuzziness::from(0..2);
 
-        let expectation = Fuzziness::Range(0..2);
+        let expectation = Fuzziness::Range(0, 2);
 
         assert_eq!(result, expectation);
     }
@@ -90,7 +96,7 @@ mod tests {
         assert_serialize(
             [
                 Fuzziness::Auto,
-                Fuzziness::Range(0..2),
+                Fuzziness::Range(0, 2),
                 Fuzziness::Distance(5),
             ],
             json!(["AUTO", "AUTO:0,2", 5,]),
