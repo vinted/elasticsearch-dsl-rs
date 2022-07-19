@@ -21,6 +21,7 @@ pub mod request;
 pub mod rescoring;
 pub mod runtime_mappings;
 pub mod sort;
+pub mod suggesters;
 
 // Public re-exports
 pub use self::aggregations::*;
@@ -33,3 +34,4 @@ pub use self::rescoring::*;
 pub use self::response::*;
 pub use self::runtime_mappings::*;
 pub use self::sort::*;
+pub use self::suggesters::*;
