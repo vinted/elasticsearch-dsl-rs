@@ -17,7 +17,7 @@ use serde::ser::{Serialize, Serializer};
 ///
 /// Other methods calculate relevance scores. These score calculations
 /// are often expensive and do not improve query results.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Rewrite {
     /// Uses the constant_score_boolean method for fewer matching terms.
     /// Otherwise, this method finds all matching terms in sequence and returns
@@ -105,14 +105,14 @@ impl Serialize for Rewrite {
         S: Serializer,
     {
         match self {
-            Self::ConstantScore => serializer.serialize_str("constant_score"),
-            Self::ConstantScoreBoolean => serializer.serialize_str("constant_score_boolean"),
-            Self::ScoringBoolean => serializer.serialize_str("scoring_boolean"),
+            Self::ConstantScore => "constant_score".serialize(serializer),
+            Self::ConstantScoreBoolean => "constant_score_boolean".serialize(serializer),
+            Self::ScoringBoolean => "scoring_boolean".serialize(serializer),
             Self::TopTermsBlendedFrequencies(n) => {
-                serializer.serialize_str(&format!("top_terms_blended_freqs_{}", n))
+                format!("top_terms_blended_freqs_{}", n).serialize(serializer)
             }
-            Self::TopTermsBoost(n) => serializer.serialize_str(&format!("top_terms_boost_{}", n)),
-            Self::TopTerms(n) => serializer.serialize_str(&format!("top_terms_{}", n)),
+            Self::TopTermsBoost(n) => format!("top_terms_boost_{}", n).serialize(serializer),
+            Self::TopTerms(n) => format!("top_terms_{}", n).serialize(serializer),
         }
     }
 }
