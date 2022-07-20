@@ -123,6 +123,53 @@ macro_rules! serialize_with_root_keyed {
 
 #[doc(hidden)]
 #[macro_export]
+macro_rules! serialize_with_root_key_value_pair {
+    ($root:tt : $inner:ty, $key:ident, $value:ident) => {
+        impl $crate::serde::Serialize for $inner {
+            fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+            where
+                S: $crate::serde::ser::Serializer,
+            {
+                use $crate::serde::ser::SerializeStruct;
+
+                struct Wrapper<'a> {
+                    root: &'a $inner,
+                }
+
+                impl<'a> $crate::serde::Serialize for Wrapper<'a> {
+                    fn serialize<S>(&self, serializer: S) -> ::std::result::Result<S::Ok, S::Error>
+                    where
+                        S: $crate::serde::Serializer,
+                    {
+                        <$inner>::serialize(&self.root, serializer)
+                    }
+                }
+
+                #[derive(Serialize)]
+                struct KeyValueWrapper<'a, K, V> {
+                    #[serde(flatten)]
+                    wrapper: &'a Wrapper<'a>,
+
+                    #[serde(flatten)]
+                    pair: KeyValuePair<K, V>,
+                }
+
+                let mut state = serializer.serialize_struct("Wrapper", 1)?;
+                state.serialize_field(
+                    $root,
+                    &KeyValueWrapper {
+                        pair: KeyValuePair::new(&self.$key, &self.$value),
+                        wrapper: &Wrapper { root: self },
+                    },
+                )?;
+                state.end()
+            }
+        }
+    };
+}
+
+#[doc(hidden)]
+#[macro_export]
 macro_rules! serialize_keyed {
     ($inner:ty : $field:ident) => {
         impl $crate::serde::Serialize for $inner {

@@ -10,8 +10,11 @@ use serde::Serialize;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct GeoBoundingBoxQuery {
-    #[serde(flatten)]
-    pair: KeyValuePair<String, GeoBoundingBox>,
+    #[serde(skip)]
+    field: String,
+
+    #[serde(skip)]
+    bounding_box: GeoBoundingBox,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     validation_method: Option<ValidationMethod>,
@@ -26,14 +29,15 @@ impl Query {
     /// Creates an instance of [`GeoBoundingBoxQuery`]
     ///
     /// - `field` - Field you wish to search.
-    /// - `value` - A series of vertex coordinates of a geo bounding box
-    pub fn geo_bounding_box<T, U>(field: T, value: U) -> GeoBoundingBoxQuery
+    /// - `bounding_box` - A series of vertex coordinates of a geo bounding box
+    pub fn geo_bounding_box<T, U>(field: T, bounding_box: U) -> GeoBoundingBoxQuery
     where
         T: ToString,
         U: Into<GeoBoundingBox>,
     {
         GeoBoundingBoxQuery {
-            pair: KeyValuePair::new(field.to_string(), value.into()),
+            field: field.to_string(),
+            bounding_box: bounding_box.into(),
             validation_method: None,
             boost: None,
             _name: None,
@@ -52,13 +56,9 @@ impl GeoBoundingBoxQuery {
     add_boost_and_name!();
 }
 
-impl ShouldSkip for GeoBoundingBoxQuery {
-    fn should_skip(&self) -> bool {
-        self.pair.key.should_skip()
-    }
-}
+impl ShouldSkip for GeoBoundingBoxQuery {}
 
-serialize_with_root!("geo_bounding_box": GeoBoundingBoxQuery);
+serialize_with_root_key_value_pair!("geo_bounding_box": GeoBoundingBoxQuery, field, bounding_box);
 
 #[cfg(test)]
 mod tests {

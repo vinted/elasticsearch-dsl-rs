@@ -24,8 +24,11 @@ use crate::util::*;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct TermsQuery {
-    #[serde(flatten)]
-    pair: KeyValuePair<String, Terms>,
+    #[serde(skip)]
+    field: String,
+
+    #[serde(skip)]
+    terms: Terms,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -46,13 +49,14 @@ impl Query {
     /// [`index.max_terms_count setting`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-terms-count).<br>
     /// > To use the field values of an existing document as search terms,
     /// use the terms lookup parameters.
-    pub fn terms<S, I>(field: S, values: I) -> TermsQuery
+    pub fn terms<S, I>(field: S, terms: I) -> TermsQuery
     where
         S: ToString,
         I: Into<Terms>,
     {
         TermsQuery {
-            pair: KeyValuePair::new(field.to_string(), values.into()),
+            field: field.to_string(),
+            terms: terms.into(),
             boost: None,
             _name: None,
         }
@@ -65,11 +69,11 @@ impl TermsQuery {
 
 impl ShouldSkip for TermsQuery {
     fn should_skip(&self) -> bool {
-        self.pair.value.should_skip()
+        self.terms.should_skip()
     }
 }
 
-serialize_with_root!("terms": TermsQuery);
+serialize_with_root_key_value_pair!("terms": TermsQuery, field, terms);
 
 #[cfg(test)]
 mod tests {

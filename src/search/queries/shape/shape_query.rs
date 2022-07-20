@@ -10,8 +10,11 @@ use serde::Serialize;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct ShapeQuery {
-    #[serde(flatten)]
-    pair: KeyValuePair<String, InlineShape>,
+    #[serde(skip)]
+    field: String,
+
+    #[serde(skip)]
+    shape: InlineShape,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     ignore_unmapped: Option<bool>,
@@ -42,13 +45,11 @@ impl Query {
         T: Into<Shape>,
     {
         ShapeQuery {
-            pair: KeyValuePair::new(
-                field.to_string(),
-                InlineShape {
-                    shape: shape.into(),
-                    relation: None,
-                },
-            ),
+            field: field.to_string(),
+            shape: InlineShape {
+                shape: shape.into(),
+                relation: None,
+            },
             ignore_unmapped: None,
             boost: None,
             _name: None,
@@ -61,7 +62,7 @@ impl ShapeQuery {
     /// mapping parameter determines which spatial relation operators may be
     /// used at search time.
     pub fn relation(mut self, relation: SpatialRelation) -> Self {
-        self.pair.value.relation = Some(relation);
+        self.shape.relation = Some(relation);
         self
     }
 
@@ -80,7 +81,7 @@ impl ShapeQuery {
 
 impl ShouldSkip for ShapeQuery {}
 
-serialize_with_root!("shape": ShapeQuery);
+serialize_with_root_key_value_pair!("shape": ShapeQuery, field, shape);
 
 #[cfg(test)]
 mod tests {
