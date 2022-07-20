@@ -9,8 +9,11 @@ use crate::util::*;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct GeoDistanceQuery {
-    #[serde(flatten)]
-    pair: KeyValuePair<String, GeoPoint>,
+    #[serde(skip)]
+    field: String,
+
+    #[serde(skip)]
+    location: GeoPoint,
 
     distance: Distance,
 
@@ -40,7 +43,8 @@ impl Query {
         V: Into<Distance>,
     {
         GeoDistanceQuery {
-            pair: KeyValuePair::new(field.to_string(), origin.into()),
+            field: field.to_string(),
+            location: origin.into(),
             distance: distance.into(),
             distance_type: None,
             validation_method: None,
@@ -69,13 +73,9 @@ impl GeoDistanceQuery {
     add_boost_and_name!();
 }
 
-impl ShouldSkip for GeoDistanceQuery {
-    fn should_skip(&self) -> bool {
-        self.pair.key.should_skip()
-    }
-}
+impl ShouldSkip for GeoDistanceQuery {}
 
-serialize_with_root!("geo_distance": GeoDistanceQuery);
+serialize_with_root_key_value_pair!("geo_distance": GeoDistanceQuery, field, location);
 
 #[cfg(test)]
 mod tests {

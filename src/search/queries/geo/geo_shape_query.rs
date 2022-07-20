@@ -18,8 +18,11 @@ use serde::Serialize;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct GeoShapeQuery {
-    #[serde(flatten)]
-    pair: KeyValuePair<String, InlineShape>,
+    #[serde(skip)]
+    field: String,
+
+    #[serde(skip)]
+    shape: InlineShape,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     ignore_unmapped: Option<bool>,
@@ -50,13 +53,11 @@ impl Query {
         T: Into<GeoShape>,
     {
         GeoShapeQuery {
-            pair: KeyValuePair::new(
-                field.to_string(),
-                InlineShape {
-                    shape: shape.into(),
-                    relation: None,
-                },
-            ),
+            field: field.to_string(),
+            shape: InlineShape {
+                shape: shape.into(),
+                relation: None,
+            },
             ignore_unmapped: None,
             boost: None,
             _name: None,
@@ -69,7 +70,7 @@ impl GeoShapeQuery {
     /// mapping parameter determines which spatial relation operators may be
     /// used at search time.
     pub fn relation(mut self, relation: SpatialRelation) -> Self {
-        self.pair.value.relation = Some(relation);
+        self.shape.relation = Some(relation);
         self
     }
 
@@ -88,7 +89,7 @@ impl GeoShapeQuery {
 
 impl ShouldSkip for GeoShapeQuery {}
 
-serialize_with_root!("geo_shape": GeoShapeQuery);
+serialize_with_root_key_value_pair!("geo_shape": GeoShapeQuery, field, shape);
 
 #[cfg(test)]
 mod tests {

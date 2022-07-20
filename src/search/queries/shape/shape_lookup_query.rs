@@ -10,8 +10,11 @@ use serde::Serialize;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct ShapeLookupQuery {
-    #[serde(flatten)]
-    pair: KeyValuePair<String, Shape>,
+    #[serde(skip)]
+    field: String,
+
+    #[serde(skip)]
+    shape: Shape,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     ignore_unmapped: Option<bool>,
@@ -56,18 +59,16 @@ impl Query {
         T: ToString,
     {
         ShapeLookupQuery {
-            pair: KeyValuePair::new(
-                field.to_string(),
-                Shape {
-                    indexed_shape: IndexedShape {
-                        id: id.to_string(),
-                        index: None,
-                        path: None,
-                        routing: None,
-                    },
-                    relation: None,
+            field: field.to_string(),
+            shape: Shape {
+                indexed_shape: IndexedShape {
+                    id: id.to_string(),
+                    index: None,
+                    path: None,
+                    routing: None,
                 },
-            ),
+                relation: None,
+            },
             ignore_unmapped: None,
             boost: None,
             _name: None,
@@ -81,7 +82,7 @@ impl ShapeLookupQuery {
     where
         S: ToString,
     {
-        self.pair.value.indexed_shape.index = Some(index.to_string());
+        self.shape.indexed_shape.index = Some(index.to_string());
         self
     }
 
@@ -90,7 +91,7 @@ impl ShapeLookupQuery {
     where
         S: ToString,
     {
-        self.pair.value.indexed_shape.path = Some(path.to_string());
+        self.shape.indexed_shape.path = Some(path.to_string());
         self
     }
 
@@ -99,7 +100,7 @@ impl ShapeLookupQuery {
     where
         S: ToString,
     {
-        self.pair.value.indexed_shape.routing = Some(routing.to_string());
+        self.shape.indexed_shape.routing = Some(routing.to_string());
         self
     }
 
@@ -107,7 +108,7 @@ impl ShapeLookupQuery {
     /// mapping parameter determines which spatial relation operators may be
     /// used at search time.
     pub fn relation(mut self, relation: SpatialRelation) -> Self {
-        self.pair.value.relation = Some(relation);
+        self.shape.relation = Some(relation);
         self
     }
 
@@ -126,7 +127,7 @@ impl ShapeLookupQuery {
 
 impl ShouldSkip for ShapeLookupQuery {}
 
-serialize_with_root!("shape": ShapeLookupQuery);
+serialize_with_root_key_value_pair!("shape": ShapeLookupQuery, field, shape);
 
 #[cfg(test)]
 mod tests {

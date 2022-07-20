@@ -29,8 +29,11 @@ use crate::util::*;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct TermsLookupQuery {
-    #[serde(flatten)]
-    pair: KeyValuePair<String, TermsLookup>,
+    #[serde(skip)]
+    field: String,
+
+    #[serde(skip)]
+    terms_lookup: TermsLookup,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -67,15 +70,13 @@ impl Query {
         V: ToString,
     {
         TermsLookupQuery {
-            pair: KeyValuePair::new(
-                field.to_string(),
-                TermsLookup {
-                    index: index.to_string(),
-                    id: id.to_string(),
-                    path: path.to_string(),
-                    routing: None,
-                },
-            ),
+            field: field.to_string(),
+            terms_lookup: TermsLookup {
+                index: index.to_string(),
+                id: id.to_string(),
+                path: path.to_string(),
+                routing: None,
+            },
             boost: None,
             _name: None,
         }
@@ -95,14 +96,14 @@ impl TermsLookupQuery {
     where
         S: ToString,
     {
-        self.pair.value.routing = Some(routing.to_string());
+        self.terms_lookup.routing = Some(routing.to_string());
         self
     }
 }
 
 impl ShouldSkip for TermsLookupQuery {}
 
-serialize_with_root!("terms": TermsLookupQuery);
+serialize_with_root_key_value_pair!("terms": TermsLookupQuery, field, terms_lookup);
 
 #[cfg(test)]
 mod tests {
