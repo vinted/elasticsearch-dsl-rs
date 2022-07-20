@@ -24,10 +24,10 @@ pub struct MultiMatchQuery {
     fields: Vec<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    r#type: Option<MultiMatchQueryType>,
+    r#type: Option<TextQueryType>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    tie_breaker: Option<TieBreaker>,
+    tie_breaker: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     query: Text,
@@ -114,13 +114,31 @@ impl Query {
 impl MultiMatchQuery {
     /// The way the multi_match query is executed internally depends on the
     /// type parameter
-    pub fn r#type(mut self, r#type: MultiMatchQueryType) -> Self {
+    pub fn r#type(mut self, r#type: TextQueryType) -> Self {
         self.r#type = Some(r#type);
+        self
+    }
 
-        match r#type {
-            MultiMatchQueryType::BestFields(tie_breaker) => self.tie_breaker = tie_breaker,
-            _ => self.tie_breaker = None,
-        }
+    /// Floating point number between `0` and `1.0` used to increase the
+    /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
+    /// of documents matching multiple query clauses. Defaults to `0.0`.
+    ///
+    /// You can use the `tie_breaker` value to assign higher relevance scores to
+    /// documents that contain the same term in multiple fields than documents that
+    /// contain this term in only the best of those multiple fields, without
+    /// confusing this with the better case of two different terms in the multiple
+    /// fields.
+    ///
+    /// If a document matches multiple clauses, the `dis_max` query calculates
+    /// the relevance score for the document as follows:
+    /// 1. Take the relevance score from a matching clause with the highest score.
+    /// 2. Multiply the score from any other matching clauses by the tie_breaker value.
+    /// 3. Add the highest score to the multiplied scores.
+    ///
+    /// If the `tie_breaker` value is greater than `0.0`, all matching clauses
+    /// count, but the clause with the highest score counts most.
+    pub fn tie_breaker(mut self, tie_breaker: f32) -> Self {
+        self.tie_breaker = Some(tie_breaker);
         self
     }
 
@@ -257,7 +275,8 @@ mod tests {
 
         assert_serialize_query(
             Query::multi_match(["test"], "search text")
-                .r#type(MultiMatchQueryType::BestFields(TieBreaker::new(0.2)))
+                .r#type(TextQueryType::BestFields)
+                .tie_breaker(0.2)
                 .analyzer("search_time_analyzer")
                 .auto_generate_synonyms_phrase_query(true)
                 .fuzziness(23)

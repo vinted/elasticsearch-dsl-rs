@@ -1,14 +1,13 @@
-use serde::{Serialize, Serializer};
-
 /// The way the `multi_match` query is executed internally.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#multi-match-types>
-#[derive(Debug, Clone, Copy, PartialEq)]
-pub enum MultiMatchQueryType {
+#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TextQueryType {
     /// Finds documents which match any field, but uses the `_score` from the
     /// best field. See
     /// [`best_fields`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#type-best-fields).
-    BestFields(Option<super::TieBreaker>),
+    BestFields,
 
     /// Finds documents which match any field and combines the `_score` from
     /// each field. See
@@ -34,21 +33,4 @@ pub enum MultiMatchQueryType {
     /// `_score` from each field. See
     /// [`bool_prefix`](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#type-bool-prefix).
     BoolPrefix,
-}
-
-impl Serialize for MultiMatchQueryType {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match self {
-            Self::BestFields(_) => "best_fields",
-            Self::MostFields => "most_fields",
-            Self::CrossFields => "cross_fields",
-            Self::Phrase => "phrase",
-            Self::PhrasePrefix => "phrase_prefix",
-            Self::BoolPrefix => "bool_prefix",
-        }
-        .serialize(serializer)
-    }
 }

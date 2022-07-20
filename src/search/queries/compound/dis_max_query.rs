@@ -30,7 +30,7 @@ pub struct DisMaxQuery {
     queries: QueryCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    tie_breaker: Option<TieBreaker>,
+    tie_breaker: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,
@@ -79,7 +79,7 @@ impl DisMaxQuery {
     /// If the `tie_breaker` value is greater than `0.0`, all matching clauses
     /// count, but the clause with the highest score counts most.
     pub fn tie_breaker(mut self, tie_breaker: f32) -> Self {
-        self.tie_breaker = TieBreaker::new(tie_breaker);
+        self.tie_breaker = Some(tie_breaker);
         self
     }
 
