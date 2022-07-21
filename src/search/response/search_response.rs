@@ -1,8 +1,8 @@
-use super::{ClusterStatistics, HitsMetadata, ShardStatistics};
+use super::{ClusterStatistics, HitsMetadata, ShardStatistics, Suggest};
 use crate::util::ShouldSkip;
 use serde::de::DeserializeOwned;
 use serde_json::Value;
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
 /// Search response
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -52,6 +52,10 @@ pub struct SearchResponse {
     /// Search aggregations
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     pub aggregations: Option<Value>,
+
+    /// Suggest response
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
+    pub suggest: BTreeMap<String, Vec<Suggest>>,
 }
 
 impl SearchResponse {
@@ -67,7 +71,10 @@ impl SearchResponse {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{Hit, Source, TotalHits, TotalHitsRelation};
+    use crate::{
+        CompletionSuggestOption, Hit, PhraseSuggestOption, Source, SuggestOption,
+        TermSuggestOption, TotalHits, TotalHitsRelation,
+    };
 
     #[test]
     fn deserializes_successfully() {
@@ -92,6 +99,64 @@ mod tests {
                 "_type": "_doc",
                 "_id": "123",
                 "_score": 1.0
+              }
+            ]
+          },
+          "suggest": {
+            "song-suggest": [
+              {
+                "text": "nir",
+                "offset": 0,
+                "length": 3,
+                "options": [
+                  {
+                    "text": "Nirvana",
+                    "_index": "music",
+                    "_type": "_doc",
+                    "_id": "1",
+                    "_score": 1.0,
+                    "_source": { "suggest": ["Nevermind", "Nirvana"] }
+                  }
+                ]
+              }
+            ],
+            "term#my-first-suggester": [
+              {
+                "text": "some",
+                "offset": 0,
+                "length": 4,
+                "options": []
+              },
+              {
+                "text": "test",
+                "offset": 5,
+                "length": 4,
+                "options": []
+              },
+              {
+                "text": "mssage",
+                "offset": 10,
+                "length": 6,
+                "options": [
+                  {
+                    "text": "message",
+                    "score": 0.8333333,
+                    "freq": 4
+                  }
+                ]
+              }
+            ],
+            "phrase#my-second-suggester": [
+              {
+                "text": "some test mssage",
+                "offset": 0,
+                "length": 16,
+                "options": [
+                  {
+                    "text": "some test message",
+                    "score": 0.030227963
+                  }
+                ]
               }
             ]
           }
@@ -137,6 +202,65 @@ mod tests {
             num_reduce_phases: None,
             max_score: None,
             clusters: None,
+            suggest: BTreeMap::from([
+                (
+                    "song-suggest".to_string(),
+                    vec![Suggest {
+                        text: "nir".to_string(),
+                        length: 3,
+                        offset: 0,
+                        options: vec![SuggestOption::Completion(CompletionSuggestOption {
+                            text: "Nirvana".to_string(),
+                            index: "music".to_string(),
+                            id: "1".to_string(),
+                            score: 1.0,
+                            source: Some(json!({ "suggest": ["Nevermind", "Nirvana"] })),
+                            contexts: Default::default(),
+                        })],
+                    }],
+                ),
+                (
+                    "term#my-first-suggester".to_string(),
+                    vec![
+                        Suggest {
+                            text: "some".to_string(),
+                            length: 4,
+                            offset: 0,
+                            options: vec![],
+                        },
+                        Suggest {
+                            text: "test".to_string(),
+                            length: 4,
+                            offset: 5,
+                            options: vec![],
+                        },
+                        Suggest {
+                            text: "mssage".to_string(),
+                            length: 6,
+                            offset: 10,
+                            options: vec![SuggestOption::Term(TermSuggestOption {
+                                text: "message".to_string(),
+                                score: 0.8333333,
+                                frequency: 4,
+                            })],
+                        },
+                    ],
+                ),
+                (
+                    "phrase#my-second-suggester".to_string(),
+                    vec![Suggest {
+                        text: "some test mssage".to_string(),
+                        length: 16,
+                        offset: 0,
+                        options: vec![SuggestOption::Phrase(PhraseSuggestOption {
+                            text: "some test message".to_string(),
+                            score: 0.030227963,
+                            collate_match: None,
+                            highlighted: None,
+                        })],
+                    }],
+                ),
+            ]),
         };
 
         assert_eq!(actual, expected);

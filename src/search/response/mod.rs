@@ -9,6 +9,8 @@ mod search_response;
 mod shard_failure;
 mod shard_statistics;
 mod source;
+mod suggest;
+mod suggest_option;
 mod total_hits;
 mod total_hits_relation;
 
@@ -23,5 +25,7 @@ pub use self::search_response::*;
 pub use self::shard_failure::*;
 pub use self::shard_statistics::*;
 pub use self::source::*;
+pub use self::suggest::*;
+pub use self::suggest_option::*;
 pub use self::total_hits::*;
 pub use self::total_hits_relation::*;
