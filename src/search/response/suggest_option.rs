@@ -1,6 +1,5 @@
-use crate::util::ShouldSkip;
+use crate::{util::ShouldSkip, Map};
 use serde::de::DeserializeOwned;
-use std::collections::BTreeMap;
 
 /// Suggester response option variants
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
@@ -59,7 +58,7 @@ pub struct CompletionSuggestOption {
     ///
     /// Contexts always return either as a category or as geohash
     #[serde(default, skip_serializing_if = "ShouldSkip::should_skip")]
-    pub contexts: BTreeMap<String, Vec<String>>,
+    pub contexts: Map<String, Vec<String>>,
 }
 
 impl CompletionSuggestOption {

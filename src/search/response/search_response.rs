@@ -1,8 +1,7 @@
 use super::{ClusterStatistics, HitsMetadata, ShardStatistics, Suggest};
-use crate::util::ShouldSkip;
+use crate::{util::ShouldSkip, Map};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
-use std::collections::{BTreeMap, HashMap};
 
 /// Search response
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -23,7 +22,7 @@ pub struct SearchResponse {
 
     /// Dynamically fetched fields
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
-    pub fields: HashMap<String, Value>,
+    pub fields: Map<String, Value>,
 
     /// Point in time Id
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -55,7 +54,7 @@ pub struct SearchResponse {
 
     /// Suggest response
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
-    pub suggest: BTreeMap<String, Vec<Suggest>>,
+    pub suggest: Map<String, Vec<Suggest>>,
 }
 
 impl SearchResponse {
@@ -202,7 +201,7 @@ mod tests {
             num_reduce_phases: None,
             max_score: None,
             clusters: None,
-            suggest: BTreeMap::from([
+            suggest: Map::from([
                 (
                     "song-suggest".to_string(),
                     vec![Suggest {

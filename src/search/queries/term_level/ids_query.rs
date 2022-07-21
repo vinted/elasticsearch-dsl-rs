@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use std::collections::BTreeSet;
+use crate::Set;
 
 /// Returns documents based on their IDs. This query uses document IDs stored in the
 /// [`_id`](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-id-field.html)
@@ -18,7 +18,7 @@ use std::collections::BTreeSet;
 #[serde(remote = "Self")]
 pub struct IdsQuery {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    values: BTreeSet<String>,
+    values: Set<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<Boost>,

@@ -7,9 +7,8 @@
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>
 
-use crate::util::*;
+use crate::{util::*, Map};
 use serde::{Serialize, Serializer};
-use std::collections::BTreeMap;
 
 /// Wherever scripting is supported in the Elasticsearch APIs, the syntax follows the same pattern;
 /// you specify the language of your script, provide the script logic (or source, and add parameters
@@ -25,7 +24,7 @@ pub struct Script {
     lang: Option<ScriptLang>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    params: BTreeMap<String, serde_json::Value>,
+    params: Map<String, serde_json::Value>,
 }
 
 /// The script itself, which you specify as `source` for an inline script or
@@ -51,7 +50,7 @@ impl Script {
         Self {
             source: ScriptSource::Source(source.to_string()),
             lang: None,
-            params: BTreeMap::new(),
+            params: Map::new(),
         }
     }
 
@@ -63,7 +62,7 @@ impl Script {
         Self {
             source: ScriptSource::Id(id.to_string()),
             lang: None,
-            params: BTreeMap::new(),
+            params: Map::new(),
         }
     }
 

@@ -115,6 +115,7 @@ extern crate serde_json;
 // Macro modules
 #[macro_use]
 mod macros;
+mod types;
 
 // Crate modules
 #[macro_use]
@@ -127,3 +128,4 @@ pub mod search;
 // Public re-exports
 pub use self::analyze::*;
 pub use self::search::*;
+pub use self::types::*;

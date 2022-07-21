@@ -1,4 +1,4 @@
-use std::collections::BTreeSet;
+use crate::Set;
 
 /// Ids or documents to filter by
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -6,10 +6,10 @@ use std::collections::BTreeSet;
 pub enum PinnedQueryValues {
     /// [Document IDs](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-id-field.html)
     /// listed in the order they are to appear in results.
-    Ids(BTreeSet<String>),
+    Ids(Set<String>),
 
     /// Documents listed in the order they are to appear in results.
-    Docs(BTreeSet<PinnedDocument>),
+    Docs(Set<PinnedDocument>),
 }
 
 /// Pinned document

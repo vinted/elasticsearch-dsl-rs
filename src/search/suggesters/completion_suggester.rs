@@ -1,6 +1,5 @@
 use super::{SuggestContextQuery, SuggestFuzziness, Suggester};
-use crate::util::ShouldSkip;
-use std::collections::BTreeMap;
+use crate::{util::ShouldSkip, Map};
 
 /// The `completion` suggester provides auto-complete/search-as-you-type functionality. This is a
 /// navigational feature to guide users to relevant results as they are typing, improving search
@@ -35,7 +34,7 @@ struct CompletionSuggesterCompletion {
     skip_duplicates: Option<bool>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    contexts: BTreeMap<String, Vec<SuggestContextQuery>>,
+    contexts: Map<String, Vec<SuggestContextQuery>>,
 }
 
 impl Suggester {

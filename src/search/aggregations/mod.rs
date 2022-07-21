@@ -18,6 +18,8 @@ pub mod metrics;
 pub mod params;
 pub mod pipeline;
 
+use crate::Map;
+
 pub use self::bucket::*;
 pub use self::metrics::*;
 pub use self::params::*;
@@ -71,4 +73,4 @@ aggregation!(
 );
 
 /// Type alias for a collection of aggregations
-pub type Aggregations = std::collections::BTreeMap<AggregationName, Aggregation>;
+pub type Aggregations = Map<AggregationName, Aggregation>;

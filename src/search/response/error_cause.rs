@@ -1,6 +1,5 @@
-use crate::util::ShouldSkip;
+use crate::{util::ShouldSkip, Map};
 use serde_json::Value;
-use std::collections::HashMap;
 
 /// Error cause
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -28,5 +27,5 @@ pub struct ErrorCause {
 
     /// Additional fields that are not part of the strongly typed error cause
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default, flatten)]
-    pub additional_details: HashMap<String, Value>,
+    pub additional_details: Map<String, Value>,
 }
