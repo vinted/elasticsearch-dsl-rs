@@ -1,7 +1,8 @@
 //! Allows you to execute a search query and get back search hits that match the query.
 use crate::search::*;
 use crate::util::*;
-use std::{collections::BTreeMap, convert::TryInto};
+use crate::Map;
+use std::convert::TryInto;
 
 /// Returns search hits that match the query defined in the request.
 ///
@@ -9,7 +10,7 @@ use std::{collections::BTreeMap, convert::TryInto};
 #[derive(Debug, Default, Clone, Serialize, PartialEq)]
 pub struct Search {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    runtime_mappings: BTreeMap<String, RuntimeMapping>,
+    runtime_mappings: Map<String, RuntimeMapping>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     indices_boost: Vec<KeyValuePair<String, Boost>>,
@@ -48,7 +49,7 @@ pub struct Search {
     rescore: RescoreCollection,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    suggest: BTreeMap<String, Suggester>,
+    suggest: Map<String, Suggester>,
 }
 
 impl Search {

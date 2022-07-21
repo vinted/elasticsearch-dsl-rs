@@ -1,8 +1,7 @@
 use super::{Explanation, NestedIdentity, Source};
-use crate::{util::ShouldSkip, InnerHitsResult};
+use crate::{util::ShouldSkip, InnerHitsResult, Map};
 use serde::de::DeserializeOwned;
 use serde_json::Value;
-use std::collections::HashMap;
 
 /// Represents a single matched document
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -41,11 +40,11 @@ pub struct Hit {
 
     /// Highlighted matches
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
-    pub highlight: HashMap<String, Vec<String>>,
+    pub highlight: Map<String, Vec<String>>,
 
     /// Inner hits
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
-    pub inner_hits: HashMap<String, InnerHitsResult>,
+    pub inner_hits: Map<String, InnerHitsResult>,
 
     /// Matched queries
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
@@ -57,7 +56,7 @@ pub struct Hit {
 
     /// Field values for the documents. Need to be specified in the request
     #[serde(skip_serializing_if = "ShouldSkip::should_skip", default)]
-    pub fields: HashMap<String, Value>,
+    pub fields: Map<String, Value>,
 }
 
 impl Hit {

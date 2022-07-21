@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use std::collections::BTreeSet;
+use crate::Set;
 
 /// The More Like This Query finds documents that are "like" a given set of documents.
 /// In order to do so, MLT selects a set of representative terms of these input documents,
@@ -147,7 +147,7 @@ pub struct Document {
     _source: Option<SourceFilter>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    _stored_fields: BTreeSet<String>,
+    _stored_fields: Set<String>,
 }
 
 impl Document {
@@ -160,7 +160,7 @@ impl Document {
     {
         Self {
             _id: id.to_string(),
-            _stored_fields: BTreeSet::new(),
+            _stored_fields: Set::new(),
             _index: None,
             _routing: None,
             _source: None,
