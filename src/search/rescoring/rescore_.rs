@@ -78,14 +78,20 @@ impl Rescore {
     }
 
     /// The relative importance of the rescore query can be controlled with the `rescore_query_weight` respectively. Both default to 1.
-    pub fn rescore_query_weight(mut self, rescore_query_weight: f32) -> Self {
-        self.query.rescore_query_weight = Some(rescore_query_weight);
+    pub fn rescore_query_weight<T>(mut self, rescore_query_weight: T) -> Self
+    where
+        T: num_traits::AsPrimitive<f32>,
+    {
+        self.query.rescore_query_weight = Some(rescore_query_weight.as_());
         self
     }
 
     /// The relative importance of the original query can be controlled with the `query_weight` respectively. Both default to 1.
-    pub fn query_weight(mut self, query_weight: f32) -> Self {
-        self.query.query_weight = Some(query_weight);
+    pub fn query_weight<T>(mut self, query_weight: T) -> Self
+    where
+        T: num_traits::AsPrimitive<f32>,
+    {
+        self.query.query_weight = Some(query_weight.as_());
         self
     }
 
