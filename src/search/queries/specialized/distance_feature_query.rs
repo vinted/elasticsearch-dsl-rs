@@ -13,7 +13,7 @@ impl Origin for DateTime<Utc> {
     type Pivot = Time;
 }
 
-impl Origin for GeoPoint {
+impl Origin for GeoLocation {
     type Pivot = Distance;
 }
 
@@ -68,11 +68,11 @@ impl Origin for GeoPoint {
 /// ```
 /// To create distance feature query geo query:
 /// ```
-/// # use elasticsearch_dsl::{Distance, GeoPoint};
+/// # use elasticsearch_dsl::{Distance, GeoLocation};
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// Query::distance_feature("test", GeoPoint::coordinates(12.0, 13.0), Distance::Kilometers(15))
+/// Query::distance_feature("test", GeoLocation::new(-71.34, 40.12), Distance::Kilometers(15))
 ///     .boost(1.5)
 ///     .name("test");
 /// ```
@@ -172,7 +172,7 @@ where
 impl<O> ShouldSkip for DistanceFeatureQuery<O> where O: Origin {}
 
 serialize_with_root!("distance_feature": DistanceFeatureQuery<DateTime<Utc>>);
-serialize_with_root!("distance_feature": DistanceFeatureQuery<GeoPoint>);
+serialize_with_root!("distance_feature": DistanceFeatureQuery<GeoLocation>);
 
 #[cfg(test)]
 mod tests {
@@ -209,7 +209,7 @@ mod tests {
         assert_serialize_query(
             Query::distance_feature(
                 "test",
-                GeoPoint::coordinates(12.0, 13.0),
+                GeoLocation::new(12.0, 13.0),
                 Distance::Kilometers(15),
             ),
             json!({
@@ -224,7 +224,7 @@ mod tests {
         assert_serialize_query(
             Query::distance_feature(
                 "test",
-                GeoPoint::coordinates(12.0, 13.0),
+                GeoLocation::new(12.0, 13.0),
                 Distance::Kilometers(15),
             )
             .boost(2)

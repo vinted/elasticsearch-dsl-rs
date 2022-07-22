@@ -13,14 +13,14 @@ pub enum GeoShape {
     #[serde(rename = "point")]
     Point {
         /// Coordinates
-        coordinates: GeoCoordinate,
+        coordinates: GeoLocation,
     },
 
     /// An arbitrary line given two or more points
     #[serde(rename = "linestring")]
     LineString {
         /// Coordinates
-        coordinates: Vec<GeoCoordinate>,
+        coordinates: Vec<GeoLocation>,
     },
 
     /// A closed polygon whose first and last point must match, thus requiring
@@ -29,28 +29,28 @@ pub enum GeoShape {
     #[serde(rename = "polygon")]
     Polygon {
         /// Coordinates
-        coordinates: Vec<Vec<GeoCoordinate>>,
+        coordinates: Vec<Vec<GeoLocation>>,
     },
 
     /// An array of unconnected, but likely related points
     #[serde(rename = "multipoint")]
     MultiPoint {
         /// Coordinates
-        coordinates: Vec<GeoCoordinate>,
+        coordinates: Vec<GeoLocation>,
     },
 
     /// An array of separate linestrings
     #[serde(rename = "multilinestring")]
     MultiLineString {
         /// Coordinates
-        coordinates: Vec<Vec<GeoCoordinate>>,
+        coordinates: Vec<Vec<GeoLocation>>,
     },
 
     /// An array of separate polygons
     #[serde(rename = "multipolygon")]
     MultiPolygon {
         /// Coordinates
-        coordinates: Vec<Vec<Vec<GeoCoordinate>>>,
+        coordinates: Vec<Vec<Vec<GeoLocation>>>,
     },
 
     /// A bounding rectangle, or envelope, specified by specifying only
@@ -58,7 +58,7 @@ pub enum GeoShape {
     #[serde(rename = "envelope")]
     Envelope {
         /// Coordinates
-        coordinates: (GeoCoordinate, GeoCoordinate),
+        coordinates: (GeoLocation, GeoLocation),
     },
 
     /// A circle specified by a center point and radius with units,
@@ -66,7 +66,7 @@ pub enum GeoShape {
     #[serde(rename = "circle")]
     Circle {
         /// Coordinates
-        coordinates: GeoCoordinate,
+        coordinates: GeoLocation,
 
         /// Circle radius
         radius: Distance,
@@ -85,7 +85,7 @@ impl GeoShape {
     /// Creates an instance of [`GeoShape::Point`]
     pub fn point<T>(coordinates: T) -> Self
     where
-        T: Into<GeoCoordinate>,
+        T: Into<GeoLocation>,
     {
         Self::Point {
             coordinates: coordinates.into(),
@@ -96,7 +96,7 @@ impl GeoShape {
     pub fn line_string<T>(coordinates: T) -> Self
     where
         T: IntoIterator,
-        T::Item: Into<GeoCoordinate>,
+        T::Item: Into<GeoLocation>,
     {
         Self::LineString {
             coordinates: coordinates.into_iter().map(Into::into).collect(),
@@ -108,7 +108,7 @@ impl GeoShape {
     where
         T: IntoIterator,
         T::Item: IntoIterator,
-        <T::Item as IntoIterator>::Item: Into<GeoCoordinate>,
+        <T::Item as IntoIterator>::Item: Into<GeoLocation>,
     {
         Self::Polygon {
             coordinates: coordinates
@@ -122,7 +122,7 @@ impl GeoShape {
     pub fn multi_point<T>(coordinates: T) -> Self
     where
         T: IntoIterator,
-        T::Item: Into<GeoCoordinate>,
+        T::Item: Into<GeoLocation>,
     {
         Self::MultiPoint {
             coordinates: coordinates.into_iter().map(Into::into).collect(),
@@ -134,7 +134,7 @@ impl GeoShape {
     where
         T: IntoIterator,
         T::Item: IntoIterator,
-        <T::Item as IntoIterator>::Item: Into<GeoCoordinate>,
+        <T::Item as IntoIterator>::Item: Into<GeoLocation>,
     {
         Self::MultiLineString {
             coordinates: coordinates
@@ -150,7 +150,7 @@ impl GeoShape {
         T: IntoIterator,
         T::Item: IntoIterator,
         <T::Item as IntoIterator>::Item: IntoIterator,
-        <<T::Item as IntoIterator>::Item as IntoIterator>::Item: Into<GeoCoordinate>,
+        <<T::Item as IntoIterator>::Item as IntoIterator>::Item: Into<GeoLocation>,
     {
         Self::MultiPolygon {
             coordinates: coordinates
@@ -167,7 +167,7 @@ impl GeoShape {
     /// Creates an instance of [`GeoShape::Envelope`]
     pub fn envelope<T>(top_left: T, bottom_right: T) -> Self
     where
-        T: Into<GeoCoordinate>,
+        T: Into<GeoLocation>,
     {
         Self::Envelope {
             coordinates: (top_left.into(), bottom_right.into()),
@@ -177,7 +177,7 @@ impl GeoShape {
     /// Creates an instance of [`GeoShape::Circle`]
     pub fn circle<T, R>(coordinates: T, radius: R) -> Self
     where
-        T: Into<GeoCoordinate>,
+        T: Into<GeoLocation>,
         R: Into<Distance>,
     {
         Self::Circle {

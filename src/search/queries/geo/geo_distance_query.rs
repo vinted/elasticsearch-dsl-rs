@@ -13,7 +13,7 @@ pub struct GeoDistanceQuery {
     field: String,
 
     #[serde(skip)]
-    location: GeoPoint,
+    location: GeoLocation,
 
     distance: Distance,
 
@@ -39,7 +39,7 @@ impl Query {
     pub fn geo_distance<T, U, V>(field: T, origin: U, distance: V) -> GeoDistanceQuery
     where
         T: ToString,
-        U: Into<GeoPoint>,
+        U: Into<GeoLocation>,
         V: Into<Distance>,
     {
         GeoDistanceQuery {
@@ -86,10 +86,7 @@ mod tests {
         assert_serialize_query(
             Query::geo_distance(
                 "pin.location",
-                GeoPoint::Coordinates {
-                    latitude: 40.12,
-                    longitude: -71.34,
-                },
+                GeoLocation::new(40.12, -71.34),
                 Distance::Kilometers(300),
             ),
             json!({
@@ -103,24 +100,7 @@ mod tests {
         assert_serialize_query(
             Query::geo_distance(
                 "pin.location",
-                GeoPoint::Geohash("drm3btev3e86".into()),
-                Distance::Miles(200),
-            ),
-            json!({
-                "geo_distance": {
-                    "distance": "200mi",
-                    "pin.location": "drm3btev3e86",
-                }
-            }),
-        );
-
-        assert_serialize_query(
-            Query::geo_distance(
-                "pin.location",
-                GeoPoint::Coordinates {
-                    latitude: 40.12,
-                    longitude: -71.34,
-                },
+                GeoLocation::new(40.12, -71.34),
                 Distance::Kilometers(300),
             )
             .distance_type(GeoDistanceType::Plane)

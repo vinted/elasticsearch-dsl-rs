@@ -22,17 +22,17 @@ pub enum GeoBoundingBox {
     /// MainDiagonal vertices of geo bounding box
     MainDiagonal {
         /// The coordinates of the upper left vertex
-        top_left: GeoPoint,
+        top_left: GeoLocation,
         /// The coordinates of the lower right vertex
-        bottom_right: GeoPoint,
+        bottom_right: GeoLocation,
     },
 
     /// SubDiagonal vertices of geo bounding box
     SubDiagonal {
         /// The coordinates of the upper right vertex
-        top_right: GeoPoint,
+        top_right: GeoLocation,
         /// The coordinates of the lower left vertex
-        bottom_left: GeoPoint,
+        bottom_left: GeoLocation,
     },
 
     /// Well-Known Text (WKT).
@@ -66,29 +66,12 @@ mod tests {
     fn serialization() {
         assert_serialize(
             GeoBoundingBox::MainDiagonal {
-                top_left: GeoPoint::Coordinates {
-                    longitude: -74.1,
-                    latitude: 40.73,
-                },
-                bottom_right: GeoPoint::Coordinates {
-                    longitude: -71.12,
-                    latitude: 40.01,
-                },
+                top_left: GeoLocation::new(40.73, -74.1),
+                bottom_right: GeoLocation::new(40.01, -71.12),
             },
             json!({
                 "top_left": [-74.1, 40.73],
                 "bottom_right": [-71.12, 40.01]
-            }),
-        );
-
-        assert_serialize(
-            GeoBoundingBox::SubDiagonal {
-                top_right: GeoPoint::Geohash("dr5r9ydj2y73".into()),
-                bottom_left: GeoPoint::Geohash("drj7teegpus6".into()),
-            },
-            json!({
-                "top_right": "dr5r9ydj2y73",
-                "bottom_left": "drj7teegpus6"
             }),
         );
 

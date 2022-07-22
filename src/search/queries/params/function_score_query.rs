@@ -99,7 +99,7 @@ function!(Function {
     RandomScore(RandomScore),
     FieldValueFactor(FieldValueFactor),
     DecayDateTime(Decay<DateTime<Utc>>),
-    DecayLocation(Decay<GeoPoint>),
+    DecayLocation(Decay<GeoLocation>),
     DecayI8(Decay<i8>),
     DecayI16(Decay<i16>),
     DecayI32(Decay<i32>),
@@ -375,7 +375,7 @@ impl Origin for DateTime<Utc> {
     type Offset = Time;
 }
 
-impl Origin for GeoPoint {
+impl Origin for GeoLocation {
     type Scale = Distance;
     type Offset = Distance;
 }
@@ -585,23 +585,6 @@ mod tests {
                     "test": {
                         "origin": "2014-07-08T09:01:00Z",
                         "scale": "7d",
-                    }
-                }
-            }),
-        );
-
-        assert_serialize(
-            Decay::new(
-                DecayFunction::Exp,
-                "test",
-                GeoPoint::coordinates(12.0, 13.0),
-                Distance::Kilometers(15),
-            ),
-            json!({
-                "exp": {
-                    "test": {
-                        "origin": [13.0, 12.0],
-                        "scale": "15km",
                     }
                 }
             }),
