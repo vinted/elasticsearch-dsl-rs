@@ -23,7 +23,7 @@ pub struct ParentIdQuery {
     ignore_unmapped: Option<bool>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -99,7 +99,7 @@ mod tests {
                     "type": "my-child",
                     "id": "1",
                     "ignore_unmapped": true,
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "test"
                 }
             }),

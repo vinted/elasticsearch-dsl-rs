@@ -31,7 +31,7 @@ pub struct WildcardQuery {
     case_insensitive: Option<bool>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -115,7 +115,7 @@ mod tests {
                         "value": "value*",
                         "rewrite": "constant_score",
                         "case_insensitive": true,
-                        "boost": 2,
+                        "boost": 2.0,
                         "_name": "test"
                     }
                 }

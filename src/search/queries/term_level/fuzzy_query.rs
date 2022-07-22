@@ -55,7 +55,7 @@ pub struct FuzzyQuery {
     rewrite: Option<Rewrite>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -173,7 +173,7 @@ mod tests {
                         "prefix_length": 4,
                         "transpositions": false,
                         "rewrite": "scoring_boolean",
-                        "boost": 2,
+                        "boost": 2.0,
                         "_name": "test"
                     }
                 }

@@ -39,7 +39,7 @@ pub struct TermsSetQuery {
     minimum_should_match: TermsSetMinimumShouldMatch,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -118,7 +118,7 @@ mod tests {
                                 "num_terms_sets": 2
                             }
                         },
-                        "boost": 2,
+                        "boost": 2.0,
                         "_name": "test"
                     }
                 }

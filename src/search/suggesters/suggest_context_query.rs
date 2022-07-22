@@ -1,5 +1,4 @@
 use crate::util::ShouldSkip;
-use crate::Boost;
 
 /// The completion suggester considers all documents in the index, but it is often desirable to
 /// serve suggestions filtered and/or boosted by some criteria. For example, you want to suggest
@@ -14,7 +13,7 @@ pub struct SuggestContextQuery {
     context: String,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     prefix: Option<bool>,
@@ -39,9 +38,9 @@ impl SuggestContextQuery {
     /// multiplying the boost with the suggestion weight, defaults to `1`
     pub fn boost<T>(mut self, boost: T) -> Self
     where
-        T: std::convert::TryInto<Boost>,
+        T: num_traits::AsPrimitive<f32>,
     {
-        self.boost = boost.try_into().ok();
+        self.boost = Some(boost.as_());
         self
     }
 

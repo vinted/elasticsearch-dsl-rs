@@ -1,7 +1,6 @@
 //! Strongly typed Elasticsearch query params
 
 // Common parameters
-mod boost;
 mod fuzziness;
 mod has_child_query;
 mod inner_hits;
@@ -25,7 +24,6 @@ mod terms_set_query;
 mod text_query_type;
 
 // Public re-exports
-pub use self::boost::*;
 pub use self::function_score_query::*;
 pub use self::fuzziness::*;
 pub use self::geo_query::*;

@@ -33,7 +33,7 @@ pub struct DisMaxQuery {
     tie_breaker: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -176,7 +176,7 @@ mod tests {
                         }
                     ],
                     "tie_breaker": 0.5,
-                    "boost": 3,
+                    "boost": 3.0,
                     "_name": "test"
                 }
             }),

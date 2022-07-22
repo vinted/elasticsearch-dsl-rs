@@ -34,7 +34,7 @@ pub struct FunctionScoreQuery {
     functions: Vec<Function>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    max_boost: Option<Boost>,
+    max_boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     min_score: Option<f32>,
@@ -46,7 +46,7 @@ pub struct FunctionScoreQuery {
     boost_mode: Option<FunctionBoostMode>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -89,11 +89,9 @@ impl FunctionScoreQuery {
     /// Maximum score value after applying all the functions
     pub fn max_boost<T>(mut self, max_boost: T) -> Self
     where
-        T: std::convert::TryInto<Boost>,
+        T: num_traits::AsPrimitive<f32>,
     {
-        if let Ok(max_boost) = max_boost.try_into() {
-            self.max_boost = Some(max_boost);
-        }
+        self.max_boost = Some(max_boost.as_());
         self
     }
 

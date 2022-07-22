@@ -44,7 +44,7 @@ pub struct RangeQuery {
     time_zone: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -213,7 +213,7 @@ mod tests {
                         "lt": 3,
                         "lte": 4,
                         "relation": "WITHIN",
-                        "boost": 2,
+                        "boost": 2.0,
                         "_name": "range_query_test"
                     }
                 }
@@ -241,7 +241,7 @@ mod tests {
                         "format": "yyyy-MM-dd",
                         "time_zone": "UTC",
                         "relation": "CONTAINS",
-                        "boost": 2,
+                        "boost": 2.0,
                         "_name": "range_query_test"
                     }
                 }

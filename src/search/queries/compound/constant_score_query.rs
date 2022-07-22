@@ -22,7 +22,7 @@ pub struct ConstantScoreQuery {
     filter: Box<Query>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -94,7 +94,7 @@ mod tests {
                             }
                         }
                     },
-                    "boost": 3,
+                    "boost": 3.0,
                     "_name": "test"
                 }
             }),

@@ -2,7 +2,6 @@
 use crate::search::*;
 use crate::util::*;
 use crate::Map;
-use std::convert::TryInto;
 
 /// Returns search hits that match the query defined in the request.
 ///
@@ -13,7 +12,7 @@ pub struct Search {
     runtime_mappings: Map<String, RuntimeMapping>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    indices_boost: Vec<KeyValuePair<String, Boost>>,
+    indices_boost: Vec<KeyValuePair<String, f32>>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     min_score: Option<f32>,
@@ -71,15 +70,13 @@ impl Search {
     /// across more than one indices. This is very handy when hits coming from
     /// one index matter more than hits coming from another index (think social
     /// graph where each user has an index).
-    pub fn indices_boost<F, B>(mut self, field: F, boost: B) -> Self
+    pub fn indices_boost<T, U>(mut self, field: T, boost: U) -> Self
     where
-        F: ToString,
-        B: TryInto<Boost>,
+        T: ToString,
+        U: num_traits::AsPrimitive<f32>,
     {
-        if let Ok(boost) = boost.try_into() {
-            self.indices_boost
-                .push(KeyValuePair::new(field.to_string(), boost));
-        }
+        self.indices_boost
+            .push(KeyValuePair::new(field.to_string(), boost.as_()));
         self
     }
 

@@ -36,7 +36,7 @@ pub struct TermsLookupQuery {
     terms_lookup: TermsLookup,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -137,7 +137,7 @@ mod tests {
                         "path": "path_value",
                         "routing": "routing_value"
                     },
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "test",
                 }
             }),

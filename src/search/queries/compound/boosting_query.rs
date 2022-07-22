@@ -27,7 +27,7 @@ pub struct BoostingQuery {
     negative_boost: NegativeBoost,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -126,7 +126,7 @@ mod tests {
                         }
                     },
                     "negative_boost": 0.2,
-                    "boost": 3,
+                    "boost": 3.0,
                     "_name": "test"
                 }
             }),
