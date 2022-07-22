@@ -28,8 +28,11 @@ impl SuggestFuzziness {
 
     /// The fuzziness factor, defaults to [`AUTO`](Fuzziness::Auto). See [Fuzziness] for allowed
     /// settings.
-    pub fn fuzziness(mut self, fuzziness: Fuzziness) -> Self {
-        self.fuzziness = Some(fuzziness);
+    pub fn fuzziness<T>(mut self, fuzziness: T) -> Self
+    where
+        T: Into<Fuzziness>,
+    {
+        self.fuzziness = Some(fuzziness.into());
         self
     }
 
