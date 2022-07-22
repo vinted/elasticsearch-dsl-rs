@@ -233,8 +233,11 @@ impl QueryStringQuery {
 
     /// Maximum edit distance allowed for fuzzy matching. For fuzzy syntax, see
     /// [`Fuzziness`].
-    pub fn fuzziness(mut self, fuzziness: Fuzziness) -> Self {
-        self.fuzziness = Some(fuzziness);
+    pub fn fuzziness<T>(mut self, fuzziness: T) -> Self
+    where
+        T: Into<Fuzziness>,
+    {
+        self.fuzziness = Some(fuzziness.into());
         self
     }
 
