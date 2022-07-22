@@ -1,13 +1,17 @@
 # Strongly typed Elasticsearch DSL written in Rust
 
-This is an unofficial library and doesn't yet support all the DSL, it's still work in progress.
+A high level library, giving a strongly typed DSL that maps one to one with the official
+Elasticsearch query DSL.
 
 ## Features
 
 - Strongly typed queries
 - Strongly typed aggregations
+- Strongly typed completions
+- Response structures
 - Automatically skips empty queries making DSL pleasant to use
-- Crate doesn't depend on [elasticsearch-rs](https://github.com/elastic/elasticsearch-rs) and can be used as a standalone library with any HTTP client to call Elasticsearch
+- Crate doesn't depend on [elasticsearch-rs](https://github.com/elastic/elasticsearch-rs) and can
+  be used as a standalone library with any HTTP client to call Elasticsearch
 
 ## Installation
 
@@ -15,7 +19,7 @@ Add `elasticsearch-dsl` crate and version to Cargo.toml
 
 ```toml
 [dependencies]
-elasticsearch-dsl = "0.2"
+elasticsearch-dsl = "0.4"
 ```
 
 ## Documentation
@@ -53,7 +57,54 @@ fn main() {
                         .size(1)
                         .sort(FieldSort::ascending("user_id")),
                 ),
-        ).rescore(Rescore::new(Query::term("field", 1)).query_weight(1.2));
+        )
+        .rescore(Rescore::new(Query::term("field", 1)).query_weight(1.2));
+}
+```
+
+```json
+{
+  "_source": false,
+  "stats": ["statistics"],
+  "from": 0,
+  "size": 30,
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "multi_match": {
+            "fields": ["title", "description"],
+            "query": "you know, for search"
+          }
+        }
+      ],
+      "filter": [{ "terms": { "tags": ["elasticsearch"] } }],
+      "should": [{ "term": { "verified": { "value": true, "boost": 10.0 } } }]
+    }
+  },
+  "aggs": {
+    "country_ids": {
+      "terms": { "field": "country_id" },
+      "aggs": {
+        "catalog_ids": { "terms": { "field": "catalog_id" } },
+        "company_ids": { "terms": { "field": "company_id" } },
+        "top1": {
+          "top_hits": {
+            "size": 1,
+            "sort": [{ "user_id": { "order": "asc" } }]
+          }
+        }
+      }
+    }
+  },
+  "rescore": [
+    {
+      "query": {
+        "rescore_query": { "term": { "field": { "value": 1 } } },
+        "query_weight": 1.2
+      }
+    }
+  ]
 }
 ```
 
