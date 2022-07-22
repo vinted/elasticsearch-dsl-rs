@@ -39,7 +39,7 @@ pub struct CombinedFieldsQuery {
     zero_terms_query: Option<ZeroTermsQuery>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -153,7 +153,7 @@ mod tests {
                     "operator": "AND",
                     "minimum_should_match": "22",
                     "zero_terms_query": "none",
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "test",
                 }
             }),

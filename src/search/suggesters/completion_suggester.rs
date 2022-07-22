@@ -154,7 +154,7 @@ mod tests {
                     "contexts": {
                         "place_type": [
                             { "context": "cafe" },
-                            { "context": "restaurants", "boost": 2 }
+                            { "context": "restaurants", "boost": 2.0 }
                         ]
                     }
                 }

@@ -20,7 +20,7 @@ pub struct ShapeLookupQuery {
     ignore_unmapped: Option<bool>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -160,7 +160,7 @@ mod tests {
             json!({
                 "shape": {
                     "_name": "test",
-                    "boost": 2,
+                    "boost": 2.0,
                     "ignore_unmapped": true,
                     "pin.location": {
                         "indexed_shape": {

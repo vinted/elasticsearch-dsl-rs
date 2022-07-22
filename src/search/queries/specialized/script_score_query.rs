@@ -28,7 +28,7 @@ pub struct ScriptScoreQuery {
     min_score: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,

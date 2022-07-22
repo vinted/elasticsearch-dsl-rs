@@ -20,7 +20,7 @@ pub struct GeoBoundingBoxQuery {
     validation_method: Option<ValidationMethod>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -121,7 +121,7 @@ mod tests {
                 "geo_bounding_box": {
                     "validation_method": "STRICT",
                     "_name": "test_name",
-                    "boost": 1,
+                    "boost": 1.0,
                     "pin.location": {
                         "top": 40.73,
                         "left": -74.1,

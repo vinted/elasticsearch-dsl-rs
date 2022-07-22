@@ -34,7 +34,7 @@ pub struct RankFeatureQuery {
     field: String,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -74,7 +74,7 @@ pub struct RankFeatureSaturationQuery {
     saturation: Saturation,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -114,7 +114,7 @@ pub struct RankFeatureLogarithmQuery {
     log: Logarithm,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -154,7 +154,7 @@ pub struct RankFeatureSigmoidQuery {
     sigmoid: Sigmoid,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -194,7 +194,7 @@ pub struct RankFeatureLinearQuery {
     linear: Linear,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -362,7 +362,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "query",
                 }
             }),
@@ -376,7 +376,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "query",
                     "saturation": {},
                 }
@@ -392,7 +392,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "query",
                     "saturation": {
                         "pivot": 2.2,
@@ -409,7 +409,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "query",
                     "log": {
                         "scaling_factor": 2.2
@@ -426,7 +426,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "query",
                     "sigmoid": {
                         "pivot": 2.2,
@@ -441,7 +441,7 @@ mod tests {
             json!({
                 "rank_feature": {
                     "field": "test",
-                    "boost": 2,
+                    "boost": 2.0,
                     "_name": "query",
                     "linear": {},
                 }

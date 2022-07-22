@@ -1,4 +1,3 @@
-use super::params::*;
 use super::Query;
 use crate::util::*;
 
@@ -19,7 +18,7 @@ use crate::util::*;
 #[serde(remote = "Self")]
 pub struct MatchAllQuery {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<Boost>,
+    boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     _name: Option<String>,
@@ -50,7 +49,7 @@ mod tests {
 
         assert_serialize_query(
             Query::match_all().boost(2).name("test"),
-            json!({ "match_all": { "boost": 2, "_name": "test" } }),
+            json!({ "match_all": { "boost": 2.0, "_name": "test" } }),
         );
     }
 }

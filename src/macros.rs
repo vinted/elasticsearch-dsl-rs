@@ -12,13 +12,11 @@ macro_rules! add_boost_and_name {
         /// Boost values are relative to the default value of `1.0`.
         /// A boost value between 0 and `1.0` decreases the relevance score.
         /// A value greater than `1.0` increases the relevance score.
-        pub fn boost<B>(mut self, boost: B) -> Self
+        pub fn boost<T>(mut self, boost: T) -> Self
         where
-            B: std::convert::TryInto<Boost>,
+            T: num_traits::AsPrimitive<f32>,
         {
-            if let Ok(boost) = boost.try_into() {
-                self.boost = Some(boost);
-            }
+            self.boost = Some(boost.as_());
             self
         }
 
