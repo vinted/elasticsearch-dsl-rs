@@ -157,7 +157,7 @@ query!(
     Ids(IdsQuery),
     ConstantScore(ConstantScoreQuery),
     DistanceFeatureDate(DistanceFeatureQuery<chrono::DateTime<chrono::Utc>>),
-    DistanceFeatureGeo(DistanceFeatureQuery<crate::GeoPoint>),
+    DistanceFeatureGeo(DistanceFeatureQuery<crate::GeoLocation>),
     Match(MatchQuery),
     MatchBoolPrefix(MatchBoolPrefixQuery),
     MatchPhrasePrefix(MatchPhrasePrefixQuery),

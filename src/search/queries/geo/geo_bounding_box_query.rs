@@ -86,14 +86,8 @@ mod tests {
             Query::geo_bounding_box(
                 "pin.location",
                 GeoBoundingBox::MainDiagonal {
-                    top_left: GeoPoint::Coordinates {
-                        longitude: -74.1,
-                        latitude: 40.73,
-                    },
-                    bottom_right: GeoPoint::Coordinates {
-                        longitude: -71.12,
-                        latitude: 40.01,
-                    },
+                    top_left: GeoLocation::new(40.73, -74.1),
+                    bottom_right: GeoLocation::new(40.01, -71.12),
                 },
             )
             .validation_method(ValidationMethod::Strict)

@@ -1,6 +1,6 @@
 use super::{SortMode, SortOrder};
 use crate::util::{KeyValuePair, ShouldSkip};
-use crate::{DistanceUnit, GeoDistanceType, GeoPoint};
+use crate::{DistanceUnit, GeoDistanceType, GeoLocation};
 use serde::Serialize;
 
 /// Sorts search hits by other field values
@@ -9,8 +9,11 @@ use serde::Serialize;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct GeoDistanceSort {
-    #[serde(flatten)]
-    pair: KeyValuePair<String, Vec<GeoPoint>>,
+    #[serde(skip)]
+    field: String,
+
+    #[serde(skip)]
+    points: Vec<GeoLocation>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     order: Option<SortOrder>,
@@ -30,17 +33,15 @@ pub struct GeoDistanceSort {
 
 impl GeoDistanceSort {
     /// Creates an instance of [GeoDistanceSort]
-    pub fn new<T, U>(field: T, geo_points: U) -> Self
+    pub fn new<T, U>(field: T, points: U) -> Self
     where
         T: ToString,
         U: IntoIterator,
-        U::Item: Into<GeoPoint>,
+        U::Item: Into<GeoLocation>,
     {
         Self {
-            pair: KeyValuePair::new(
-                field.to_string(),
-                geo_points.into_iter().map(Into::into).collect(),
-            ),
+            field: field.to_string(),
+            points: points.into_iter().map(Into::into).collect(),
             order: None,
             unit: None,
             mode: None,
@@ -50,23 +51,23 @@ impl GeoDistanceSort {
     }
 
     /// Creates an instance of [GeoDistanceSort] by ascending order
-    pub fn ascending<T, U>(field: T, geo_points: U) -> Self
+    pub fn ascending<T, U>(field: T, points: U) -> Self
     where
         T: ToString,
         U: IntoIterator,
-        U::Item: Into<GeoPoint>,
+        U::Item: Into<GeoLocation>,
     {
-        Self::new(field, geo_points).order(SortOrder::Asc)
+        Self::new(field, points).order(SortOrder::Asc)
     }
 
     /// Creates an instance of [GeoDistanceSort] by descending order
-    pub fn descending<T, U>(field: T, geo_points: U) -> Self
+    pub fn descending<T, U>(field: T, points: U) -> Self
     where
         T: ToString,
         U: IntoIterator,
-        U::Item: Into<GeoPoint>,
+        U::Item: Into<GeoLocation>,
     {
-        Self::new(field, geo_points).order(SortOrder::Desc)
+        Self::new(field, points).order(SortOrder::Desc)
     }
 
     /// Explicit order
@@ -122,7 +123,7 @@ impl IntoIterator for GeoDistanceSort {
     }
 }
 
-serialize_with_root!("_geo_distance": GeoDistanceSort);
+serialize_with_root_key_value_pair!("_geo_distance": GeoDistanceSort, field, points);
 
 #[cfg(test)]
 mod tests {
@@ -132,7 +133,7 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize(
-            GeoDistanceSort::new("test", GeoPoint::coordinates(1.2, 3.3)),
+            GeoDistanceSort::new("test", GeoLocation::new(1.2, 3.3)),
             json!({
                 "_geo_distance": {
                     "test": [ [3.3, 1.2] ]
@@ -141,7 +142,7 @@ mod tests {
         );
 
         assert_serialize(
-            GeoDistanceSort::ascending("test", GeoPoint::coordinates(1.2, 3.3)),
+            GeoDistanceSort::ascending("test", GeoLocation::new(1.2, 3.3)),
             json!({
                 "_geo_distance": {
                     "test": [ [3.3, 1.2] ],
@@ -151,7 +152,7 @@ mod tests {
         );
 
         assert_serialize(
-            GeoDistanceSort::descending("test", GeoPoint::coordinates(1.2, 3.3))
+            GeoDistanceSort::descending("test", GeoLocation::new(1.2, 3.3))
                 .order(SortOrder::Asc)
                 .unit(DistanceUnit::Inches)
                 .mode(SortMode::Max)

@@ -2,9 +2,8 @@
 
 mod coordinate;
 mod date;
-mod geo_coordinate;
 mod geo_distance_type;
-mod geo_point;
+mod geo_location;
 mod geo_shape;
 mod number;
 mod score_mode;
@@ -19,9 +18,8 @@ mod units;
 
 pub use self::coordinate::*;
 pub use self::date::*;
-pub use self::geo_coordinate::*;
 pub use self::geo_distance_type::*;
-pub use self::geo_point::*;
+pub use self::geo_location::*;
 pub use self::geo_shape::*;
 pub use self::number::*;
 pub use self::score_mode::*;
