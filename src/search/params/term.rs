@@ -1,7 +1,7 @@
 use serde::ser::{self, Serialize};
 
 /// Elasticsearch term value
-#[derive(Clone, PartialEq, PartialOrd, Serialize)]
+#[derive(Clone, Serialize)]
 #[serde(untagged)]
 pub enum Term {
     /// Boolean value
@@ -32,6 +32,22 @@ impl std::fmt::Debug for Term {
             Self::Float32(term) => term.fmt(f),
             Self::Float64(term) => term.fmt(f),
             Self::String(term) => term.fmt(f),
+        }
+    }
+}
+
+impl PartialEq for Term {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (Self::Boolean(l0), Self::Boolean(r0)) => l0 == r0,
+            (Self::PositiveNumber(l0), Self::PositiveNumber(r0)) => l0 == r0,
+            (Self::NegativeNumber(l0), Self::NegativeNumber(r0)) => l0 == r0,
+            (Self::Float32(l0), Self::Float32(r0)) => l0 == r0,
+            (Self::Float64(l0), Self::Float64(r0)) => l0 == r0,
+            (Self::Float32(l0), Self::Float64(r0)) => l0 == &(*r0 as f32),
+            (Self::Float64(l0), Self::Float32(r0)) => &(*l0 as f32) == r0,
+            (Self::String(l0), Self::String(r0)) => l0 == r0,
+            _ => false,
         }
     }
 }
@@ -442,5 +458,11 @@ mod tests {
             Term::new(Wrapper { value: 123 }),
             Some(Term::PositiveNumber(123))
         );
+    }
+
+    #[test]
+    fn custom_partial_eq() {
+        assert_eq!(Term::Float32(1.0), Term::Float64(1.0));
+        assert_eq!(Term::Float64(1.0), Term::Float32(1.0));
     }
 }
