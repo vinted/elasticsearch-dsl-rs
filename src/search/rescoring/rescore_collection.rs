@@ -39,6 +39,11 @@ impl RescoreCollection {
         T: IntoIterator,
         T::Item: Into<Rescore>,
     {
-        self.0.extend(rescore.into_iter().map(Into::into))
+        self.0.extend(
+            rescore
+                .into_iter()
+                .map(Into::into)
+                .filter(ShouldSkip::should_keep),
+        )
     }
 }
