@@ -1,5 +1,11 @@
 # Strongly typed Elasticsearch DSL written in Rust
 
+[![Crates.io](https://img.shields.io/crates/v/elasticsearch-dsl)](https://crates.io/crates/elasticsearch-dsl)
+[![Crates.io](https://img.shields.io/crates/l/elasticsearch-dsl)](https://crates.io/crates/elasticsearch-dsl)
+[![Crates.io](https://img.shields.io/crates/d/elasticsearch-dsl)](https://crates.io/crates/elasticsearch-dsl)
+[![Docs.io](https://docs.rs/elasticsearch-dsl/badge.svg)](https://docs.rs/elasticsearch-dsl)
+[![Rust](https://github.com/vinted/elasticsearch-dsl-rs/actions/workflows/CI.yml/badge.svg)](https://github.com/vinted/elasticsearch-dsl-rs/actions/workflows/CI.yml)
+
 A high level library, giving a strongly typed DSL that maps one to one with the official
 Elasticsearch query DSL.
 
