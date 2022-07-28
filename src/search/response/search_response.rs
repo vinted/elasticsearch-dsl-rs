@@ -38,7 +38,7 @@ pub struct SearchResponse {
     pub max_score: Option<f32>,
 
     /// Number of clusters touched with their states
-    #[serde(rename = "_clusters")]
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_clusters")]
     pub clusters: Option<ClusterStatistics>,
 
     /// Number of shards touched with their states
