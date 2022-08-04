@@ -9,7 +9,7 @@ pub struct SearchResponse {
     /// The time that it took Elasticsearch to process the query
     pub took: u32,
 
-    /// Indicates whether there have been timed-out shards, if `true` - responses are partial
+    /// The search has been cancelled and results are partial
     pub timed_out: bool,
 
     /// Indicates if search has been terminated early
