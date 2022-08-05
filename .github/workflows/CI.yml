@@ -18,7 +18,7 @@ jobs:
       CARGO_TERM_COLOR: always
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
@@ -26,7 +26,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-          components: rustfmt, clippy
+          components: rustfmt, clippy, llvm-tools-preview
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
 
       - name: Install nextest
         uses: taiki-e/install-action@v1
@@ -41,6 +44,18 @@ jobs:
         with:
           command: check
 
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      - name: Run cargo clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: ${{ matrix.features }} -- -D warnings
+
       - name: Run library tests
         uses: actions-rs/cargo@v1
         with:
@@ -53,17 +68,14 @@ jobs:
           command: test
           args: --doc
 
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+      - name: Collect coverage data
+        run: cargo llvm-cov nextest --lcov --output-path lcov.info
 
-      - name: Run cargo clippy
-        uses: actions-rs/clippy-check@v1
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features -- -D warnings
+          files: lcov.info
+          fail_ci_if_error: true
 
       - name: Run cargo doc
         uses: actions-rs/cargo@v1
