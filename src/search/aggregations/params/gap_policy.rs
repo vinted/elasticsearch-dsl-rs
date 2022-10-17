@@ -1,7 +1,7 @@
 /// Gap policies are a mechanism to inform the pipeline aggregation about the desired behavior when
 /// "gappy" or missing data is encountered. All pipeline aggregations accept the `gap_policy`
 /// parameter.
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum GapPolicy {
     /// This option treats missing data as if the bucket does not exist. It will skip the bucket

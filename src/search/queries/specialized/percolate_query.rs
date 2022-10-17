@@ -22,7 +22,7 @@ use serde::Serialize;
 /// Query::percolate("field", vec![json!({ "message": "search text" }), json!({ "message": "another search text" })]);
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-percolate-query.html>
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(remote = "Self")]
 pub struct PercolateQuery {
     field: String,

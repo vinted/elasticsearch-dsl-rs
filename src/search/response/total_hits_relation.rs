@@ -1,5 +1,5 @@
 /// Relation to total number of matched documents
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum TotalHitsRelation {
     /// When `track_total_hits` is `false` (default), Elasticsearch returns that
     /// there have been more than 10,000 documents

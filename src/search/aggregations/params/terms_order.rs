@@ -4,7 +4,7 @@ use crate::{
 };
 
 /// Terms Aggregation sorting criterion
-#[derive(Clone, PartialEq, Serialize)]
+#[derive(Clone, PartialEq, Eq, Serialize)]
 pub struct TermsOrder(KeyValuePair<String, SortOrder>);
 
 impl std::fmt::Debug for TermsOrder {
@@ -65,7 +65,7 @@ impl TermsOrder {
 }
 
 /// Terms Aggregation sorting criteria
-#[derive(Default, Clone, PartialEq, Serialize)]
+#[derive(Default, Clone, PartialEq, Eq, Serialize)]
 pub struct TermsOrderCollection(Vec<TermsOrder>);
 
 impl ShouldSkip for TermsOrderCollection {

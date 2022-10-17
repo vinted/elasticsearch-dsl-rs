@@ -17,7 +17,7 @@ use serde::ser::{Serialize, Serializer};
 ///
 /// Other methods calculate relevance scores. These score calculations
 /// are often expensive and do not improve query results.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Rewrite {
     /// Uses the constant_score_boolean method for fewer matching terms.
     /// Otherwise, this method finds all matching terms in sequence and returns

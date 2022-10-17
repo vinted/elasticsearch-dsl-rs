@@ -1,7 +1,7 @@
 use super::TotalHitsRelation;
 
 /// Total number of matched documents
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct TotalHits {
     /// Number of total documents
     pub value: u64,

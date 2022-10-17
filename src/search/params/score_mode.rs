@@ -1,5 +1,5 @@
 /// The way the scores are combined can be controlled
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScoreMode {
     /// Add the original score and the rescore query score.

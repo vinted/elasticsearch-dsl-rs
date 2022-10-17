@@ -1,7 +1,7 @@
 /// The way the `multi_match` query is executed internally.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html#multi-match-types>
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum TextQueryType {
     /// Finds documents which match any field, but uses the `_score` from the

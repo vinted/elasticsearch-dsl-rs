@@ -1,5 +1,5 @@
 /// Boolean logic used to interpret text in the `query` value
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum Operator {
     /// For example, a `query` value of `capital of Hungary` is interpreted as

@@ -104,7 +104,7 @@ pub struct MoreLikeThisQuery {
 }
 
 /// Types for `like` and `unlike` fields
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(untagged)]
 pub enum Like {
     /// String/text which will be used in `like` field array
@@ -133,7 +133,7 @@ impl From<Document> for Like {
 }
 
 /// One of `like` and `unlike` types which has like document structure
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Document {
     _id: String,
 

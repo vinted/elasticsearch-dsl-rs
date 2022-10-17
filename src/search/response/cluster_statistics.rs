@@ -1,5 +1,5 @@
 /// Cluster statistics
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ClusterStatistics {
     /// Total number of touched clusters
     pub total: u32,

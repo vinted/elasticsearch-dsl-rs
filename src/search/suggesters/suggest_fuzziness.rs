@@ -2,7 +2,7 @@ use crate::util::ShouldSkip;
 use crate::Fuzziness;
 
 /// Suggester fuzziness parameters
-#[derive(Debug, Default, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Serialize)]
 pub struct SuggestFuzziness {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     fuzziness: Option<Fuzziness>,

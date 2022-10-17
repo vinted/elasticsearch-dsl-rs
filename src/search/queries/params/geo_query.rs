@@ -2,7 +2,7 @@ use crate::search::*;
 use serde::Serialize;
 
 /// Strategies to verify the correctness of coordinates
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Eq, Clone, Serialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ValidationMethod {
     /// accept geo points with invalid latitude or longitude

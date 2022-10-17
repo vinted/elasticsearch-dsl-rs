@@ -6,7 +6,7 @@ use serde::Serialize;
 /// Sorts search hits by script result
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#script-based-sorting>
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(remote = "Self")]
 pub struct ScriptSort {
     script: Script,
