@@ -379,7 +379,7 @@ impl ser::SerializeStructVariant for Serializer {
 }
 
 /// Term conversion error
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd)]
 pub enum TermSerializeError {
     /// No term provided,
     NoTerm,

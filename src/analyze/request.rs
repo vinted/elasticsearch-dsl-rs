@@ -35,7 +35,7 @@ use serde::ser::{Serialize, SerializeStruct, Serializer};
 ///    .explain(true)
 ///    .attributes(["attributes"]);
 /// ```
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Default)]
 pub struct Analyze {
     text: StringOrVecString,
 
@@ -50,7 +50,7 @@ pub struct Analyze {
 }
 
 /// Structure of custom analyzer.
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Default)]
 pub struct CustomAnalyzer {
     tokenizer: String,
 
@@ -62,7 +62,7 @@ pub struct CustomAnalyzer {
 }
 
 /// Structure of custom normalizer
-#[derive(Debug, Clone, PartialEq, Serialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Default)]
 pub struct CustomNormalizer {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     char_filter: Vec<StringOrObject>,
@@ -72,7 +72,7 @@ pub struct CustomNormalizer {
 }
 
 /// Analysis types
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Analysis {
     /// The name of the analyzer that should be applied to the provided text.
     /// This could be a `built-in analyzer`, or an analyzer that’s been configured in the index.
@@ -102,7 +102,7 @@ pub enum Analysis {
 }
 
 /// Structure of filters
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(untagged)]
 pub enum StringOrObject {
     /// Built-in filters
@@ -113,7 +113,7 @@ pub enum StringOrObject {
 }
 
 /// Type for text field. Text can be string or array of strings
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(untagged)]
 pub enum StringOrVecString {
     /// One text input to analyze

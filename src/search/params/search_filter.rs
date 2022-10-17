@@ -4,7 +4,7 @@ use std::borrow::Cow;
 ///
 /// By default operations return the contents of the `_source` field
 /// unless you have used the `stored_fields` parameter or if the `_source` field is disabled.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum SourceFilter {
     /// Whether `_source` retrieval should be enabled (`true`) or disabled (`false`)

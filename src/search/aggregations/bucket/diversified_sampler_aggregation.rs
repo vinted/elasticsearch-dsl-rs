@@ -15,7 +15,7 @@ pub struct DiversifiedSamplerAggregation {
 }
 
 /// `execution_hint` field values.
-#[derive(Debug, Clone, Serialize, PartialEq, Copy)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq, Copy)]
 #[serde(rename_all = "snake_case")]
 pub enum ExecutionHint {
     /// Hold field values directly

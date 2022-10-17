@@ -1,5 +1,5 @@
 /// Special sorting field variants
-#[derive(Debug, Clone, Copy, PartialEq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
 pub enum SortSpecialField {
     /// Document score
     #[serde(rename = "_score")]

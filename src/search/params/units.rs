@@ -4,7 +4,7 @@ use serde::ser::{Serialize, Serializer};
 /// the duration must specify the unit, like `2d` for 2 days.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#time-units>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(missing_docs)]
 pub enum Time {
     Days(u64),
@@ -79,7 +79,7 @@ pub enum CalendarInterval {
 /// Note that these units use powers of 1024, so `1kb` means 1024 bytes.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#byte-units>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(missing_docs)]
 pub enum Byte {
     Bytes(u64),
@@ -114,7 +114,7 @@ impl Serialize for Byte {
 /// 10,000,000 or 7k for 7,000. We’ll still print 87 when we mean 87 though.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#size-units>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(missing_docs)]
 pub enum Size {
     Kilo(u64),
@@ -148,7 +148,7 @@ impl Serialize for Size {
 /// such as `"1km"` or `"2mi"` (2 miles).
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-query.html>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(missing_docs)]
 pub enum Distance {
     Miles(u64),
@@ -190,7 +190,7 @@ impl Serialize for Distance {
 /// such as `"1km"` or `"2mi"` (2 miles).
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-geo-distance-query.html>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 #[allow(missing_docs)]
 pub enum DistanceUnit {
     Miles,

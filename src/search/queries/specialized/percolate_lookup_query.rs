@@ -14,7 +14,7 @@ use crate::util::*;
 /// Query::percolate_lookup("field", "index_name", "document_id");
 /// ```
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-percolate-query.html#_percolating_an_existing_document>
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(remote = "Self")]
 pub struct PercolateLookupQuery {
     field: String,

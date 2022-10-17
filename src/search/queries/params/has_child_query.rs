@@ -1,6 +1,6 @@
 /// Indicates how scores for matching child documents affect the root parent document’s relevance
 /// score.
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum HasChildScoreMode {
     /// Do not use the relevance scores of matching child documents. The query assigns parent

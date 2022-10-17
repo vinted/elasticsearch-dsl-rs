@@ -15,7 +15,7 @@ use serde::{Serialize, Serializer};
 /// that are passed into the script.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-using.html>
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Script {
     #[serde(flatten)]
     source: ScriptSource,
@@ -31,7 +31,7 @@ pub struct Script {
 /// `id` for a stored script. Use the
 /// [stored script APIs](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-using.html#prefer-params)
 /// to create and manage stored scripts.
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ScriptSource {
     /// Inline script

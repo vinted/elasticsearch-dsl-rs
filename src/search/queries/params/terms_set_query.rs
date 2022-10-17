@@ -1,7 +1,7 @@
 use serde_json::Value;
 
 /// Number of matching terms to be required
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub enum TermsSetMinimumShouldMatch {
     /// [Numeric](https://www.elastic.co/guide/en/elasticsearch/reference/current/number.html)
     /// field containing the number of matching terms required to return a document.
@@ -41,7 +41,7 @@ impl From<TermsSetScript> for TermsSetMinimumShouldMatch {
 ///
 /// For parameters and valid values, see
 /// [Scripting](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html).
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct TermsSetScript {
     source: String,
     params: Option<Value>,

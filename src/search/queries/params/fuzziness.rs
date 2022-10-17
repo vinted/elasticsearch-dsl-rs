@@ -9,7 +9,7 @@ use std::ops::Range;
 /// — the number of one character changes that need to be made to one string to make it the same as another string.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#fuzziness>
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Fuzziness {
     /// Generates an edit distance based on the length of the term.
     ///

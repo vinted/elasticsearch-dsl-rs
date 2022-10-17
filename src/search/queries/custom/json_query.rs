@@ -12,7 +12,7 @@ use crate::util::*;
 /// ```
 /// **NOTE**: This is fallible and can lead to incorrect queries and
 /// rejected search requests, use ar your own risk.
-#[derive(Debug, Clone, PartialEq, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct JsonQuery(serde_json::Value);
 
 impl Query {

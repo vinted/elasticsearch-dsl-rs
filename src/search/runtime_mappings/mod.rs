@@ -13,7 +13,7 @@
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 
 /// A runtime data type that is used in a search request.
-#[derive(Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd)]
 pub enum RuntimeDataType {
     /// Boolean
     Boolean,

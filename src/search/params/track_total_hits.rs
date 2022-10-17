@@ -5,7 +5,7 @@
 ///
 /// When set to `Count` with an integer value `n`, the response accurately tracks the total
 /// hit count that match the query up to `n` documents.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum TrackTotalHits {
     /// Whether to accurately track the number of hits that match the query accurately

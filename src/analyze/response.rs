@@ -1,7 +1,7 @@
 use serde::{de, Deserialize, Serialize, Serializer};
 
 /// Elasticsearch analyze API response
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub enum AnalyzeResponse {
     /// Standard response, when `explain` value is `false`
     #[serde(rename = "tokens")]
@@ -13,7 +13,7 @@ pub enum AnalyzeResponse {
 }
 
 /// Extracted token from text using tokenizer
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct Token {
     /// The characters of the current token
     pub token: String,
@@ -45,7 +45,7 @@ pub struct Token {
 }
 
 /// Explained response structure
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct ExplainedResponse {
     custom_analyzer: bool,
 
@@ -61,21 +61,21 @@ pub struct ExplainedResponse {
 }
 
 /// Structure for analyzer, tokenizer and token filters
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct AnalysisObject {
     name: String,
     tokens: Vec<Token>,
 }
 
 /// Structure for char filters
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct CharFilter {
     name: String,
     filtered_text: Vec<String>,
 }
 
 /// Type of token
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TokenType {
     /// Alphanumeric token
     Alphanum,
