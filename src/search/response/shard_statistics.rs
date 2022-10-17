@@ -25,7 +25,7 @@ impl Default for ShardStatistics {
     fn default() -> Self {
         Self {
             total: 1,
-            successful: 0,
+            successful: 1,
             skipped: 0,
             failed: 0,
             failures: Vec::new(),
