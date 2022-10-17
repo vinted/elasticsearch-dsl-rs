@@ -4,7 +4,7 @@ use serde::de::DeserializeOwned;
 use serde_json::Value;
 
 /// Search response
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
 pub struct SearchResponse {
     /// The time that it took Elasticsearch to process the query
     pub took: u32,
@@ -32,7 +32,7 @@ pub struct SearchResponse {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     pub num_reduce_phases: Option<u64>,
 
-    /// Maximum document score. [`None`] when documents are implicitly sorted
+    /// Maximum document score. [None] when documents are implicitly sorted
     /// by a field other than `_score`
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     pub max_score: Option<f32>,

@@ -2,7 +2,7 @@ use super::{Hit, TotalHits};
 use crate::util::ShouldSkip;
 
 /// Matched hits
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize, PartialEq)]
 pub struct HitsMetadata {
     /// Total number of matched documents
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]

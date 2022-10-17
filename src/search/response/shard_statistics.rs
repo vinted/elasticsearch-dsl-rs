@@ -21,6 +21,18 @@ pub struct ShardStatistics {
     pub failures: Vec<ShardFailure>,
 }
 
+impl Default for ShardStatistics {
+    fn default() -> Self {
+        Self {
+            total: 1,
+            successful: 0,
+            skipped: 0,
+            failed: 0,
+            failures: Vec::new(),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
