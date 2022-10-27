@@ -14,11 +14,19 @@ pub struct Hit {
     pub explanation: Option<Explanation>,
 
     /// Document index
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip", rename = "_index")]
-    pub index: Option<String>,
+    #[serde(
+        default,
+        skip_serializing_if = "ShouldSkip::should_skip",
+        rename = "_index"
+    )]
+    pub index: String,
 
     /// Document ID
-    #[serde(rename = "_id")]
+    #[serde(
+        default,
+        skip_serializing_if = "ShouldSkip::should_skip",
+        rename = "_id"
+    )]
     pub id: String,
 
     /// Document score. [`None`] when documents are implicitly sorted by a

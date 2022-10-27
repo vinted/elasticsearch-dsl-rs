@@ -182,7 +182,7 @@ mod tests {
                 hits: vec![Hit {
                     explanation: None,
                     nested: None,
-                    index: Some("_index".into()),
+                    index: "_index".into(),
                     id: "123".into(),
                     score: Some(1.0),
                     source: Source::from_string("null".to_string()).unwrap(),
