@@ -2,6 +2,7 @@
 use crate::search::*;
 use crate::util::*;
 use crate::Map;
+use crate::Set;
 
 /// Returns search hits that match the query defined in the request.
 ///
@@ -49,6 +50,12 @@ pub struct Search {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     suggest: Map<String, Suggester>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    stored_fields: Set<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    docvalue_fields: Set<String>,
 }
 
 impl Search {
@@ -182,6 +189,28 @@ impl Search {
         U: Into<Suggester>,
     {
         let _ = self.suggest.insert(name.to_string(), suggester.into());
+        self
+    }
+
+    /// A collection of stored fields
+    pub fn stored_fields<T>(mut self, stored_fields: T) -> Self
+    where
+        T: IntoIterator,
+        T::Item: ToString,
+    {
+        self.stored_fields
+            .extend(stored_fields.into_iter().map(|x| x.to_string()));
+        self
+    }
+
+    /// A collection of docvalue fields
+    pub fn docvalue_fields<T>(mut self, docvalue_fields: T) -> Self
+    where
+        T: IntoIterator,
+        T::Item: ToString,
+    {
+        self.docvalue_fields
+            .extend(docvalue_fields.into_iter().map(|x| x.to_string()));
         self
     }
 
