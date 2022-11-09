@@ -9,3 +9,6 @@
 //! spans.
 //!
 //! Span queries cannot be mixed with non-span queries (with the exception of the span_multi query).
+
+#[doc(hidden)]
+pub mod todo {}
