@@ -22,3 +22,6 @@
 //! will be included in the final output.
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline.html>
+
+#[doc(hidden)]
+pub mod todo {}
