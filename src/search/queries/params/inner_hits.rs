@@ -1,5 +1,6 @@
 use crate::search::*;
 use crate::util::*;
+use crate::Set;
 
 /// The [parent-join](https://www.elastic.co/guide/en/elasticsearch/reference/current/parent-join.html)
 /// and [nested](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html)
@@ -35,6 +36,9 @@ pub struct InnerHits {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     highlight: Option<Highlight>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    docvalue_fields: Set<String>,
 }
 
 impl InnerHits {
@@ -84,6 +88,17 @@ impl InnerHits {
         T: Into<Highlight>,
     {
         self.highlight = Some(highlight.into());
+        self
+    }
+
+    /// A collection of docvalue fields
+    pub fn docvalue_fields<T>(mut self, docvalue_fields: T) -> Self
+    where
+        T: IntoIterator,
+        T::Item: ToString,
+    {
+        self.docvalue_fields
+            .extend(docvalue_fields.into_iter().map(|x| x.to_string()));
         self
     }
 }
