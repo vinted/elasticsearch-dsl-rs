@@ -577,7 +577,7 @@ mod tests {
             Decay::new(
                 DecayFunction::Gauss,
                 "test",
-                Utc.ymd(2014, 7, 8).and_hms(9, 1, 0),
+                Utc.with_ymd_and_hms(2014, 7, 8, 9, 1, 0).single().unwrap(),
                 Time::Days(7),
             ),
             json!({

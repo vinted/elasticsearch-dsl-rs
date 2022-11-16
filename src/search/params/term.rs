@@ -423,7 +423,7 @@ mod tests {
         assert_eq!(Term::new('s'), Some(Term::String("s".into())));
         assert_eq!(Term::new("str"), Some(Term::String("str".into())));
         assert_eq!(
-            Term::new(Utc.ymd(2022, 3, 21).and_hms(0, 5, 8)),
+            Term::new(Utc.with_ymd_and_hms(2022, 3, 21, 0, 5, 8).single().unwrap()),
             Some(Term::String("2022-03-21T00:05:08Z".into()))
         );
     }
