@@ -222,10 +222,24 @@ mod tests {
 
         assert_serialize_query(
             Query::range("test_date_field")
-                .gt(Utc.ymd(2014, 11, 28).and_hms(12, 0, 1))
-                .gte(Utc.ymd(2014, 11, 28).and_hms(12, 0, 2))
-                .lt(Utc.ymd(2014, 11, 28).and_hms(12, 0, 3))
-                .lte(Utc.ymd(2014, 11, 28).and_hms(12, 0, 4))
+                .gt(Utc
+                    .with_ymd_and_hms(2014, 11, 28, 12, 0, 1)
+                    .single()
+                    .unwrap())
+                .gte(
+                    Utc.with_ymd_and_hms(2014, 11, 28, 12, 0, 2)
+                        .single()
+                        .unwrap(),
+                )
+                .lt(Utc
+                    .with_ymd_and_hms(2014, 11, 28, 12, 0, 3)
+                    .single()
+                    .unwrap())
+                .lte(
+                    Utc.with_ymd_and_hms(2014, 11, 28, 12, 0, 4)
+                        .single()
+                        .unwrap(),
+                )
                 .relation(RangeRelation::Contains)
                 .format("yyyy-MM-dd")
                 .time_zone("UTC")

@@ -182,7 +182,11 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize_query(
-            Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7)),
+            Query::distance_feature(
+                "test",
+                Utc.with_ymd_and_hms(2014, 7, 8, 9, 1, 0).single().unwrap(),
+                Time::Days(7),
+            ),
             json!({
                 "distance_feature": {
                     "field": "test",
@@ -193,9 +197,13 @@ mod tests {
         );
 
         assert_serialize_query(
-            Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7))
-                .boost(1.5)
-                .name("test"),
+            Query::distance_feature(
+                "test",
+                Utc.with_ymd_and_hms(2014, 7, 8, 9, 1, 0).single().unwrap(),
+                Time::Days(7),
+            )
+            .boost(1.5)
+            .name("test"),
             json!({
                 "distance_feature": {
                     "field": "test",
