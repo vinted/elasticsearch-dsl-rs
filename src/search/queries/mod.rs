@@ -195,6 +195,15 @@ query!(
     SimpleQueryString(SimpleQueryStringQuery),
     QueryString(QueryStringQuery),
     CombinedFields(CombinedFieldsQuery),
+    SpanContaining(SpanContainingQuery),
+    SpanFieldMasking(SpanFieldMaskingQuery),
+    SpanFirst(SpanFirstQuery),
+    SpanMulti(SpanMultiQuery),
+    SpanNear(SpanNearQuery),
+    SpanNot(SpanNotQuery),
+    SpanOr(SpanOrQuery),
+    SpanTerm(SpanTermQuery),
+    SpanWithin(SpanWithinQuery),
 );
 
 #[cfg(test)]
