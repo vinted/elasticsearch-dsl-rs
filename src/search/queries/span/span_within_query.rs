@@ -18,7 +18,7 @@ pub struct SpanWithinQuery {
 }
 
 impl Query {
-    /// Creates an instance of [`SpanContainingQuery`]
+    /// Creates an instance of [`SpanWithinQuery`]
     pub fn span_within<T, U>(little: T, big: U) -> SpanWithinQuery
     where
         T: Into<SpanQuery>,
