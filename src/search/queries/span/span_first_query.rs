@@ -2,17 +2,22 @@ use crate::util::*;
 use crate::{Query, SpanQuery};
 use serde::Serialize;
 
-/// TODO
+/// Matches spans near the beginning of a field. The span first query maps to Lucene
+/// `SpanFirstQuery`. <br/>
+/// The `match` clause can be any other span type query. The `end` controls the maximum end
+/// position permitted in a match.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-first-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct SpanFirstQuery {
     r#match: Box<SpanQuery>,
-    end: i32,
+    end: u32,
 }
 
 impl Query {
     /// Creates an instance of [`SpanFirstQuery`]
-    pub fn span_first<T>(r#match: T, end: i32) -> SpanFirstQuery
+    pub fn span_first<T>(r#match: T, end: u32) -> SpanFirstQuery
     where
         T: Into<SpanQuery>,
     {

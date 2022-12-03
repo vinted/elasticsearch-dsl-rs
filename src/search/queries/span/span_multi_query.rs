@@ -2,7 +2,13 @@ use crate::util::*;
 use crate::{MultiTermQuery, Query};
 use serde::Serialize;
 
-/// TODO
+/// The span_multi query allows you to wrap a `multi term query` (one of
+/// [`wildcard`](crate::WildcardQuery), [`fuzzy`](crate::FuzzyQuery),
+/// [`prefix`](crate::PrefixQuery), [`range`](crate::RangeQuery) or
+/// [`regexp`](crate::RegexpQuery) query) as a [`span query`](crate::SpanQuery), so it can be
+/// nested.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-multi-term-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct SpanMultiQuery {

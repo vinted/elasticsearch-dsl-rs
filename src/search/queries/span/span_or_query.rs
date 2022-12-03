@@ -3,17 +3,15 @@ use crate::util::*;
 use crate::Query;
 use serde::Serialize;
 
-/// TODO
+/// Matches the union of its span clauses. The span or query maps to Lucene `SpanOrQuery`.
+///
+/// The `clauses` element is a list of one or more other span type queries.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-or-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct SpanOrQuery {
     clauses: Vec<SpanQuery>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    boost: Option<f32>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    _name: Option<String>,
 }
 
 impl ShouldSkip for SpanOrQuery {}
@@ -27,8 +25,6 @@ impl Query {
     {
         SpanOrQuery {
             clauses: clauses.into_iter().map(Into::into).collect(),
-            boost: None,
-            _name: None,
         }
     }
 }

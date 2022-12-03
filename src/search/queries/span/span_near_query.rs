@@ -3,7 +3,13 @@ use crate::Query;
 use crate::SpanQuery;
 use serde::Serialize;
 
-/// TODO
+/// Matches spans which are near one another. One can specify _slop_, the maximum number of
+/// intervening unmatched positions, as well as whether matches are required to be in-order. The
+/// span near query maps to Lucene `SpanNearQuery`. <br/>
+/// The `clauses` element is a list of one or more other span type queries and the `slop` controls
+/// the maximum number of intervening unmatched positions permitted.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-near-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct SpanNearQuery {

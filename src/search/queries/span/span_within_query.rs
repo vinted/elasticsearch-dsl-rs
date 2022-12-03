@@ -3,7 +3,13 @@ use crate::util::*;
 use crate::Query;
 use serde::Serialize;
 
-/// TODO
+/// Returns matches which are enclosed inside another span query. The span within query maps to
+/// Lucene `SpanWithinQuery`.
+///
+/// The `big` and `little` clauses can be any span type query. Matching spans from `little` that
+/// are enclosed within `big` are returned.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-within-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct SpanWithinQuery {

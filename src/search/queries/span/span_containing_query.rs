@@ -2,7 +2,12 @@ use super::SpanQuery;
 use crate::util::*;
 use crate::Query;
 
-/// TODO
+/// Returns matches which enclose another span query. The span containing query maps to Lucene
+/// `SpanContainingQuery`. <br/>
+/// The `big` and `little` clauses can be any span type query. Matching spans from `big` that
+/// contain matches from `little` are returned.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-containing-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct SpanContainingQuery {

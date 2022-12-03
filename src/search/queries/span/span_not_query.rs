@@ -2,7 +2,15 @@ use crate::util::*;
 use crate::{Query, SpanQuery};
 use serde::Serialize;
 
-/// TODO
+/// Removes matches which overlap with another span query or which are within x tokens before
+/// (controlled by the parameter `pre`) or y tokens after (controlled by the parameter `post`)
+/// another SpanQuery. The span not query maps to Lucene `SpanNotQuery`.
+///
+/// The `include` and `exclude` clauses can be any span type query. The `include` clause is the
+/// span query whose matches are filtered, and the `exclude` clause is the span query whose matches
+/// must not overlap those returned.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-not-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct SpanNotQuery {
@@ -42,19 +50,27 @@ impl Query {
 }
 
 impl SpanNotQuery {
-    /// TODO
+    /// If set the amount of tokens from within the include span can’t have overlap with the
+    /// exclude span.
+    ///
+    /// Equivalent of setting both `pre` and `post`.
     pub fn dist(mut self, dist: i32) -> Self {
         self.dist = Some(dist);
         self
     }
 
-    /// TODO
+    /// If set the amount of tokens after the include span can’t have overlap with the exclude span.
+    ///
+    /// Defaults to 0.
     pub fn post(mut self, post: i32) -> Self {
         self.post = Some(post);
         self
     }
 
-    /// TODO
+    /// If set the amount of tokens before the include span can’t have overlap with the exclude
+    /// span.
+    ///
+    /// Defaults to 0.
     pub fn pre(mut self, pre: i32) -> Self {
         self.pre = Some(pre);
         self

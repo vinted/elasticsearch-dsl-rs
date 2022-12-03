@@ -2,7 +2,9 @@ use crate::util::*;
 use crate::{Query, Term};
 use serde::Serialize;
 
-/// TODO
+/// Matches spans containing a term. The span term query maps to Lucene `SpanTermQuery`.
+///
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-span-term-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct SpanTermQuery {
