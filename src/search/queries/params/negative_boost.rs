@@ -30,9 +30,7 @@ impl NegativeBoost {
     /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
     /// of documents matching the `negative` query.
     pub fn new(boost: f32) -> Self {
-        let boost = f32::min(f32::max(Self::MINIMUM, boost), Self::MAXIMUM);
-
-        Self(boost)
+        Self(boost.clamp(Self::MINIMUM, Self::MAXIMUM))
     }
 }
 

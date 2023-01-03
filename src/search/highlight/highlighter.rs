@@ -75,7 +75,7 @@ pub struct DefaultHighlighter {
 /// phrase matches being sorted above term matches when highlighting a Boosting Query that boosts
 /// phrase matches over term matches
 ///
-/// > **Warning**</br>
+/// > **Warning**<br/>
 /// > The `fvh` highlighter does not support span queries. If you need support for span queries,
 /// try an alternative highlighter, such as the `unified` highlighter.
 ///
