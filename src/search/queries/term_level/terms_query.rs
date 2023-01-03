@@ -43,10 +43,10 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `values` - An array of terms you wish to find in the provided field. To return a
     /// document, one or more terms must exactly match a field value,
-    /// including whitespace and capitalization.<br>
+    /// including whitespace and capitalization.<br/>
     /// By default, Elasticsearch limits the `terms` query to a maximum of
     /// 65,536 terms. You can change this limit using the
-    /// [`index.max_terms_count setting`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-terms-count).<br>
+    /// [`index.max_terms_count setting`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-terms-count).<br/>
     /// > To use the field values of an existing document as search terms,
     /// use the terms lookup parameters.
     pub fn terms<S, I>(field: S, terms: I) -> TermsQuery

@@ -47,7 +47,7 @@ impl Query {
     /// Creates an instance of [`MatchPhrasePrefixQuery`]
     ///
     /// - `field` - Field you wish to search.
-    /// - `query` - Text you wish to find in the provided <field>. <br> The `match_phrase_prefix`
+    /// - `query` - Text you wish to find in the provided `<field>`. <br/> The `match_phrase_prefix`
     /// query analyzes any provided text into tokens before performing a search. The last term of
     /// this text is treated as a [prefix](crate::PrefixQuery), matching any words that begin with
     /// that term.

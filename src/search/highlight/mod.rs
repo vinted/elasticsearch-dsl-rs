@@ -29,7 +29,7 @@
 //! current document. This is repeated for every field and every document that needs highlighting.
 //! The [`plain` highlighter](PlainHighlighter) always uses plain highlighting.
 //!
-//! > **Warning**</br>
+//! > **Warning**<br/>
 //! > Plain highlighting for large texts may require substantial amount of time and memory. To
 //! protect against this, the maximum number of text characters that will be analyzed has been
 //! limited to 1000000. This default limit can be changed for a particular index with the index

@@ -71,7 +71,7 @@ impl Query {
     ///
     /// - `field` - Field you wish to search.
     /// - `query` - Text, number, boolean value or date you wish to find in the provided
-    /// `<field>`.<br>
+    /// `<field>`.<br/>
     /// The `match` query
     /// [analyzes](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
     /// any provided text before performing a search. This means the `match`

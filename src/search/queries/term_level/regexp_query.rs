@@ -53,7 +53,7 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `value` - Regular expression for terms you wish to find in the provided field. For a list
     /// of supported operators, see
-    /// [Regular expression syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/regexp-syntax.html). <br>
+    /// [Regular expression syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/regexp-syntax.html). <br/>
     ///
     /// By default, regular expressions are limited to 1,000 characters. You can change this limit
     /// using the

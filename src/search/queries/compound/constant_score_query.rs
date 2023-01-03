@@ -32,7 +32,7 @@ impl Query {
     /// Creates an instance of [`ConstantScoreQuery`]
     ///
     /// - `filter` - [Filter query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-bool-query.html)
-    /// you wish to run. Any returned documents must match this query.<br>
+    /// you wish to run. Any returned documents must match this query.<br/>
     /// Filter queries do not calculate
     /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores).
     /// To speed up performance, Elasticsearch automatically caches frequently used filter queries.

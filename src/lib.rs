@@ -70,7 +70,6 @@
 )]
 #![deny(
     bad_style,
-    const_err,
     dead_code,
     deprecated,
     improper_ctypes,
@@ -120,6 +119,7 @@ mod types;
 // Crate modules
 #[macro_use]
 pub(crate) mod util;
+pub(crate) use self::types::*;
 
 // Public modules
 pub mod analyze;
@@ -128,4 +128,3 @@ pub mod search;
 // Public re-exports
 pub use self::analyze::*;
 pub use self::search::*;
-pub use self::types::*;

@@ -39,7 +39,7 @@ impl Query {
     /// - `positive` - Query you wish to run. Any returned documents must match this query.
     /// - `negative` - Query used to decrease the
     /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
-    /// of matching documents.<br>
+    /// of matching documents.<br/>
     /// If a returned document matches the `positive` query and this query, the `boosting` query
     /// calculates the final
     /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
