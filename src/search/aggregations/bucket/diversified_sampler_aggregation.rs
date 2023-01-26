@@ -21,10 +21,10 @@ pub enum ExecutionHint {
     /// Hold field values directly
     Map,
 
-    /// Hold ordinals of the field as determined by the Lucene index
+    /// Hold hashes of the field values - with potential for hash collisions
     BytesHash,
 
-    /// Hold hashes of the field values - with potential for hash collisions
+    /// Hold ordinals of the field as determined by the Lucene index
     GlobalOrdinals,
 }
 
