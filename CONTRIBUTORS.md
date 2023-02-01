@@ -9,4 +9,5 @@ Shout out to our top contributors!
 - [oleg-vinted](https://api.github.com/users/oleg-vinted)
 - [dainiusjocas](https://api.github.com/users/dainiusjocas)
 - [Jakimcikas](https://api.github.com/users/Jakimcikas)
+- [jbcrail](https://api.github.com/users/jbcrail)
 - [ypenglyn](https://api.github.com/users/ypenglyn)
