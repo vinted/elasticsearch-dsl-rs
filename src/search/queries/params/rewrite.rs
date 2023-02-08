@@ -109,10 +109,10 @@ impl Serialize for Rewrite {
             Self::ConstantScoreBoolean => "constant_score_boolean".serialize(serializer),
             Self::ScoringBoolean => "scoring_boolean".serialize(serializer),
             Self::TopTermsBlendedFrequencies(n) => {
-                format!("top_terms_blended_freqs_{}", n).serialize(serializer)
+                format!("top_terms_blended_freqs_{n}").serialize(serializer)
             }
-            Self::TopTermsBoost(n) => format!("top_terms_boost_{}", n).serialize(serializer),
-            Self::TopTerms(n) => format!("top_terms_{}", n).serialize(serializer),
+            Self::TopTermsBoost(n) => format!("top_terms_boost_{n}").serialize(serializer),
+            Self::TopTerms(n) => format!("top_terms_{n}").serialize(serializer),
         }
     }
 }
