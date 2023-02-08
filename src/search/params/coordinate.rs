@@ -59,7 +59,7 @@ impl FromStr for Coordinate {
 
         match (x, y, values.next()) {
             (Some(x), Some(y), None) => Ok(Self { x, y }),
-            _ => Err(format!("Couldn't parse '{}' as coordinate", s)),
+            _ => Err(format!("Couldn't parse '{s}' as coordinate")),
         }
     }
 }

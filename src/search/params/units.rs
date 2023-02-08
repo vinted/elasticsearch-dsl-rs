@@ -22,13 +22,13 @@ impl Serialize for Time {
         S: Serializer,
     {
         match self {
-            Self::Days(u) => format!("{}d", u),
-            Self::Hours(u) => format!("{}h", u),
-            Self::Minutes(u) => format!("{}m", u),
-            Self::Seconds(u) => format!("{}s", u),
-            Self::Milliseconds(u) => format!("{}ms", u),
-            Self::Microseconds(u) => format!("{}micros", u),
-            Self::Nanoseconds(u) => format!("{}nanos", u),
+            Self::Days(u) => format!("{u}d"),
+            Self::Hours(u) => format!("{u}h"),
+            Self::Minutes(u) => format!("{u}m"),
+            Self::Seconds(u) => format!("{u}s"),
+            Self::Milliseconds(u) => format!("{u}ms"),
+            Self::Microseconds(u) => format!("{u}micros"),
+            Self::Nanoseconds(u) => format!("{u}nanos"),
         }
         .serialize(serializer)
     }
@@ -96,12 +96,12 @@ impl Serialize for Byte {
         S: Serializer,
     {
         match self {
-            Self::Bytes(u) => format!("{}b", u),
-            Self::Kilobytes(u) => format!("{}kb", u),
-            Self::Megabytes(u) => format!("{}mb", u),
-            Self::Gigabytes(u) => format!("{}gb", u),
-            Self::Terabytes(u) => format!("{}tb", u),
-            Self::Petabytes(u) => format!("{}pb", u),
+            Self::Bytes(u) => format!("{u}b"),
+            Self::Kilobytes(u) => format!("{u}kb"),
+            Self::Megabytes(u) => format!("{u}mb"),
+            Self::Gigabytes(u) => format!("{u}gb"),
+            Self::Terabytes(u) => format!("{u}tb"),
+            Self::Petabytes(u) => format!("{u}pb"),
         }
         .serialize(serializer)
     }
@@ -130,11 +130,11 @@ impl Serialize for Size {
         S: Serializer,
     {
         match self {
-            Self::Kilo(u) => format!("{}k", u),
-            Self::Mega(u) => format!("{}m", u),
-            Self::Giga(u) => format!("{}g", u),
-            Self::Tera(u) => format!("{}t", u),
-            Self::Peta(u) => format!("{}p", u),
+            Self::Kilo(u) => format!("{u}k"),
+            Self::Mega(u) => format!("{u}m"),
+            Self::Giga(u) => format!("{u}g"),
+            Self::Tera(u) => format!("{u}t"),
+            Self::Peta(u) => format!("{u}p"),
         }
         .serialize(serializer)
     }
@@ -168,15 +168,15 @@ impl Serialize for Distance {
         S: Serializer,
     {
         match self {
-            Self::Miles(u) => format!("{}mi", u),
-            Self::Yards(u) => format!("{}yd", u),
-            Self::Feet(u) => format!("{}ft", u),
-            Self::Inches(u) => format!("{}in", u),
-            Self::Kilometers(u) => format!("{}km", u),
-            Self::Meters(u) => format!("{}m", u),
-            Self::Centimeter(u) => format!("{}cm", u),
-            Self::Millimeters(u) => format!("{}mm", u),
-            Self::NauticalMiles(u) => format!("{}nmi", u),
+            Self::Miles(u) => format!("{u}mi"),
+            Self::Yards(u) => format!("{u}yd"),
+            Self::Feet(u) => format!("{u}ft"),
+            Self::Inches(u) => format!("{u}in"),
+            Self::Kilometers(u) => format!("{u}km"),
+            Self::Meters(u) => format!("{u}m"),
+            Self::Centimeter(u) => format!("{u}cm"),
+            Self::Millimeters(u) => format!("{u}mm"),
+            Self::NauticalMiles(u) => format!("{u}nmi"),
         }
         .serialize(serializer)
     }

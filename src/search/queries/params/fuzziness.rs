@@ -44,7 +44,7 @@ impl Serialize for Fuzziness {
     {
         match self {
             Self::Auto => "AUTO".serialize(serializer),
-            Self::Range(start, end) => format!("AUTO:{},{}", start, end).serialize(serializer),
+            Self::Range(start, end) => format!("AUTO:{start},{end}").serialize(serializer),
             Self::Distance(d) => d.serialize(serializer),
         }
     }
