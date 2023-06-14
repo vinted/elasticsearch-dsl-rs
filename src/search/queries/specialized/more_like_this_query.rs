@@ -1,6 +1,5 @@
 use crate::search::*;
 use crate::util::*;
-use crate::Set;
 
 /// The More Like This Query finds documents that are "like" a given set of documents.
 /// In order to do so, MLT selects a set of representative terms of these input documents,
@@ -147,7 +146,7 @@ pub struct Document {
     _source: Option<SourceFilter>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    _stored_fields: Set<String>,
+    _stored_fields: StoredFields,
 }
 
 impl Document {
@@ -160,7 +159,7 @@ impl Document {
     {
         Self {
             _id: id.to_string(),
-            _stored_fields: Set::new(),
+            _stored_fields: Default::default(),
             _index: None,
             _routing: None,
             _source: None,
@@ -197,10 +196,9 @@ impl Document {
     /// The stored fields you want to retrieve.
     pub fn stored_fields<T>(mut self, stored_fields: T) -> Self
     where
-        T: IntoIterator,
-        T::Item: ToString,
+        T: Into<StoredFields>,
     {
-        self._stored_fields = stored_fields.into_iter().map(|x| x.to_string()).collect();
+        self._stored_fields = stored_fields.into();
         self
     }
 }

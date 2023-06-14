@@ -8,6 +8,7 @@ mod negative_boost;
 mod operator;
 mod rewrite;
 mod script_object;
+mod stored_fields;
 mod zero_terms_query;
 
 // Query specific parameters
@@ -40,6 +41,7 @@ pub use self::rewrite::*;
 pub use self::script_object::*;
 pub use self::shape_query::*;
 pub use self::simple_query_string_query::*;
+pub use self::stored_fields::*;
 pub use self::terms_set_query::*;
 pub use self::text_query_type::*;
 pub use self::zero_terms_query::*;
