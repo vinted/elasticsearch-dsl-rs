@@ -52,7 +52,7 @@ pub struct Search {
     suggest: Map<String, Suggester>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    stored_fields: Set<String>,
+    stored_fields: StoredFields,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     docvalue_fields: Set<String>,
@@ -195,11 +195,9 @@ impl Search {
     /// A collection of stored fields
     pub fn stored_fields<T>(mut self, stored_fields: T) -> Self
     where
-        T: IntoIterator,
-        T::Item: ToString,
+        T: Into<StoredFields>,
     {
-        self.stored_fields
-            .extend(stored_fields.into_iter().map(|x| x.to_string()));
+        self.stored_fields = stored_fields.into();
         self
     }
 

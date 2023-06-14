@@ -99,6 +99,7 @@
     warnings,
     while_true
 )]
+#![allow(ambiguous_glob_reexports)]
 
 #[cfg(test)]
 #[macro_use]
