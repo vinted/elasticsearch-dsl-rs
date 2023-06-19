@@ -172,15 +172,29 @@ impl Function {
 ///
 /// This can sometimes be desired since boost value set on specific queries gets normalized, while
 /// for this score function it does not
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct Weight {
     weight: f32,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    filter: Option<Query>,
 }
 
 impl Weight {
     /// Creates an instance of [Weight](Weight)
     pub fn new(weight: f32) -> Self {
-        Self { weight }
+        Self {
+            weight,
+            filter: None,
+        }
+    }
+
+    /// Add function filter
+    pub fn filter<T>(mut self, filter: T) -> Self
+    where
+        T: Into<Option<Query>>,
+    {
+        self.filter = filter.into();
+        self
     }
 }
 
@@ -202,6 +216,12 @@ impl Weight {
 #[derive(Debug, Default, Clone, PartialEq, Serialize)]
 pub struct RandomScore {
     random_score: RandomScoreInner,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    filter: Option<Query>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    weight: Option<f32>,
 }
 
 #[derive(Debug, Default, Clone, PartialEq, Serialize)]
@@ -217,6 +237,26 @@ impl RandomScore {
     /// Creates an instance of [RandomScore](RandomScore)
     pub fn new() -> Self {
         Default::default()
+    }
+
+    /// Add function filter
+    pub fn filter<T>(mut self, filter: T) -> Self
+    where
+        T: Into<Option<Query>>,
+    {
+        self.filter = filter.into();
+        self
+    }
+
+    /// The `weight` score allows you to multiply the score by the provided `weight`. This can sometimes be desired
+    /// since boost value set on specific queries gets normalized, while for this score function it does not.
+    /// The number value is of type float.
+    pub fn weight<T>(mut self, weight: T) -> Self
+    where
+        T: num_traits::AsPrimitive<f32>,
+    {
+        self.weight = Some(weight.as_());
+        self
     }
 
     /// Sets seed value
@@ -262,6 +302,12 @@ impl RandomScore {
 #[derive(Debug, Clone, PartialEq, Serialize)]
 pub struct FieldValueFactor {
     field_value_factor: FieldValueFactorInner,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    filter: Option<Query>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    weight: Option<f32>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -293,7 +339,29 @@ impl FieldValueFactor {
                 modifier: None,
                 missing: None,
             },
+            filter: None,
+            weight: None,
         }
+    }
+
+    /// Add function filter
+    pub fn filter<T>(mut self, filter: T) -> Self
+    where
+        T: Into<Option<Query>>,
+    {
+        self.filter = filter.into();
+        self
+    }
+
+    /// The `weight` score allows you to multiply the score by the provided `weight`. This can sometimes be desired
+    /// since boost value set on specific queries gets normalized, while for this score function it does not.
+    /// The number value is of type float.
+    pub fn weight<T>(mut self, weight: T) -> Self
+    where
+        T: num_traits::AsPrimitive<f32>,
+    {
+        self.weight = Some(weight.as_());
+        self
     }
 
     /// Factor to multiply the field value with
@@ -403,7 +471,12 @@ impl_origin_for_numbers![i8, i16, i32, i64, u8, u16, u32, u64, f32, f64];
 #[derive(Debug, Clone, PartialEq)]
 pub struct Decay<T: Origin> {
     function: DecayFunction,
+
     inner: DecayFieldInner<T>,
+
+    filter: Option<Query>,
+
+    weight: Option<f32>,
 }
 #[derive(Debug, Clone, PartialEq)]
 struct DecayFieldInner<T: Origin> {
@@ -458,7 +531,29 @@ where
                     decay: None,
                 },
             },
+            filter: None,
+            weight: None,
         }
+    }
+
+    /// Add function filter
+    pub fn filter<T>(mut self, filter: T) -> Self
+    where
+        T: Into<Option<Query>>,
+    {
+        self.filter = filter.into();
+        self
+    }
+
+    /// The `weight` score allows you to multiply the score by the provided `weight`. This can sometimes be desired
+    /// since boost value set on specific queries gets normalized, while for this score function it does not.
+    /// The number value is of type float.
+    pub fn weight<T>(mut self, weight: T) -> Self
+    where
+        T: num_traits::AsPrimitive<f32>,
+    {
+        self.weight = Some(weight.as_());
+        self
     }
 
     /// If an `offset` is defined, the decay function will only compute the decay function for
@@ -483,9 +578,17 @@ impl<T: Origin> Serialize for Decay<T> {
     where
         S: Serializer,
     {
-        let mut map = serializer.serialize_map(Some(1))?;
+        let mut map = serializer.serialize_map(Some(3))?;
 
         map.serialize_entry(&self.function, &self.inner)?;
+
+        if let Some(filter) = &self.filter {
+            map.serialize_entry("filter", filter)?;
+        }
+
+        if let Some(weight) = &self.weight {
+            map.serialize_entry("weight", weight)?;
+        }
 
         map.end()
     }

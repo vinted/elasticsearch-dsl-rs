@@ -14,8 +14,9 @@ use crate::util::*;
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// Query::function_score(Query::term("test", 1))
-///     .function(RandomScore::new())
+/// Query::function_score()
+///     .query(Query::term("test", 1))
+///     .function(RandomScore::new().filter(Query::term("test", 1)).weight(2.0))
 ///     .function(Weight::new(2.0))
 ///     .max_boost(2.2)
 ///     .min_score(2.3)
@@ -28,7 +29,8 @@ use crate::util::*;
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct FunctionScoreQuery {
-    query: Box<Query>,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    query: Option<Box<Query>>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     functions: Vec<Function>,
@@ -54,12 +56,9 @@ pub struct FunctionScoreQuery {
 
 impl Query {
     /// Creates an instance of [`FunctionScoreQuery`]
-    pub fn function_score<T>(query: T) -> FunctionScoreQuery
-    where
-        T: Into<Query>,
-    {
+    pub fn function_score() -> FunctionScoreQuery {
         FunctionScoreQuery {
-            query: Box::new(query.into()),
+            query: None,
             functions: Default::default(),
             max_boost: None,
             min_score: None,
@@ -72,6 +71,15 @@ impl Query {
 }
 
 impl FunctionScoreQuery {
+    /// Base function score query
+    pub fn query<T>(mut self, query: T) -> Self
+    where
+        T: Into<Option<Query>>,
+    {
+        self.query = query.into().map(Box::new);
+        self
+    }
+
     /// Push function to the list
     pub fn function<T>(mut self, function: T) -> Self
     where
@@ -139,16 +147,9 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize_query(
-            Query::function_score(Query::term("test", 1)).function(RandomScore::new()),
+            Query::function_score().function(RandomScore::new()),
             json!({
                 "function_score": {
-                    "query": {
-                        "term": {
-                            "test": {
-                                "value": 1
-                            }
-                        }
-                    },
                     "functions": [
                         {
                             "random_score": {}
@@ -159,7 +160,8 @@ mod tests {
         );
 
         assert_serialize_query(
-            Query::function_score(Query::term("test", 1))
+            Query::function_score()
+                .query(Query::term("test", 1))
                 .function(RandomScore::new())
                 .function(Weight::new(2.0))
                 .max_boost(2.2)
@@ -194,5 +196,100 @@ mod tests {
                 }
             }),
         );
+    }
+
+    #[test]
+    fn issue_24() {
+        let _ = json!({
+            "function_score": {
+                "boost_mode": "replace",
+                "functions": [
+                    {
+                        "filter": { "term": { "type": "stop" } },
+                        "field_value_factor": {
+                            "field": "weight",
+                            "factor": 1.0,
+                            "missing": 1.0
+                        },
+                        "weight": 1.0
+                    },
+                    {
+                        "filter": { "term": { "type": "address" } },
+                        "filter": { "term": { "type": "addr" } },
+                        "field_value_factor": {
+                            "field": "weight",
+                            "factor": 1.0,
+                            "missing": 1.0
+                        },
+                        "weight": 1.0
+                    },
+                    {
+                        "filter": { "term": { "type": "admin" } },
+                        "field_value_factor": {
+                            "field": "weight",
+                            "factor": 1.0,
+                            "missing": 1.0
+                        },
+                        "weight": 1.0
+                    },
+                    {
+                        "filter": { "term": { "type": "poi" } },
+                        "field_value_factor": {
+                            "field": "weight",
+                            "factor": 1.0,
+                            "missing": 1.0
+                        },
+                        "weight": 1.0
+                    },
+                    {
+                        "filter": { "term": { "type": "street" } },
+                        "field_value_factor": {
+                            "field": "weight",
+                            "factor": 1.0,
+                            "missing": 1.0
+                        },
+                        "weight": 1.0
+                    }
+                ]
+            }
+        });
+
+        let _ = Query::function_score()
+            .boost_mode(FunctionBoostMode::Replace)
+            .function(
+                FieldValueFactor::new("weight")
+                    .factor(1.0)
+                    .missing(1.0)
+                    .weight(1.0)
+                    .filter(Query::term("type", "stop")),
+            )
+            .function(
+                FieldValueFactor::new("weight")
+                    .factor(1.0)
+                    .missing(1.0)
+                    .weight(1.0)
+                    .filter(Query::terms("type", ["address", "addr"])),
+            )
+            .function(
+                FieldValueFactor::new("weight")
+                    .factor(1.0)
+                    .missing(1.0)
+                    .weight(1.0)
+                    .filter(Query::term("type", "admin")),
+            )
+            .function(
+                FieldValueFactor::new("weight")
+                    .factor(1.0)
+                    .missing(1.0)
+                    .weight(1.0)
+                    .filter(Query::term("type", "poi")),
+            )
+            .function(
+                FieldValueFactor::new("weight")
+                    .factor(1.0)
+                    .missing(1.0)
+                    .weight(1.0)
+                    .filter(Query::term("type", "street")),
+            );
     }
 }
