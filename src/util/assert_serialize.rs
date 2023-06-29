@@ -17,10 +17,13 @@ where
 #[cfg(test)]
 pub(crate) fn assert_serialize_query<T>(subject: T, expectation: serde_json::Value)
 where
-    T: Into<crate::Query>,
+    T: Into<crate::Query> + Clone,
 {
-    let subject = crate::Search::new().query(subject);
-    let expectation = json!({ "query": expectation });
+    let subject = crate::Search::new()
+        .query(subject.clone())
+        .post_filter(subject);
+
+    let expectation = json!({ "query": expectation, "post_filter": expectation });
 
     assert_serialize(subject, expectation)
 }
