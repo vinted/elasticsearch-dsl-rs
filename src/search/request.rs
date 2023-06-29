@@ -56,6 +56,9 @@ pub struct Search {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     docvalue_fields: Set<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    post_filter: Option<Query>,
 }
 
 impl Search {
@@ -141,6 +144,16 @@ impl Search {
         Q: Into<Query>,
     {
         self.query = Some(query.into());
+        self
+    }
+
+    /// When you use the `post_filter` parameter to filter search results, the search hits are filtered after the
+    /// aggregations are calculated. A post filter has no impact on the aggregation results.
+    pub fn post_filter<Q>(mut self, post_filter: Q) -> Self
+    where
+        Q: Into<Query>,
+    {
+        self.post_filter = Some(post_filter.into());
         self
     }
 
