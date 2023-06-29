@@ -58,6 +58,9 @@ pub struct Search {
     docvalue_fields: Set<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    script_fields: Map<String, ScriptField>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     post_filter: Option<Query>,
 }
 
@@ -73,6 +76,16 @@ impl Search {
         S: ToString,
     {
         let _ = self.runtime_mappings.insert(name.to_string(), mapping);
+        self
+    }
+
+    /// Add script fields to the search request
+    pub fn script_fields<S, T>(mut self, name: S, script: T) -> Self
+    where
+        S: ToString,
+        T: Into<ScriptField>,
+    {
+        let _ = self.script_fields.insert(name.to_string(), script.into());
         self
     }
 
