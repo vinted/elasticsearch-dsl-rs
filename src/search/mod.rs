@@ -20,6 +20,7 @@ pub mod queries;
 pub mod request;
 pub mod rescoring;
 pub mod runtime_mappings;
+pub mod script_fields;
 pub mod sort;
 pub mod suggesters;
 
@@ -33,5 +34,6 @@ pub use self::request::*;
 pub use self::rescoring::*;
 pub use self::response::*;
 pub use self::runtime_mappings::*;
+pub use self::script_fields::*;
 pub use self::sort::*;
 pub use self::suggesters::*;
