@@ -18,6 +18,7 @@ pub struct SearchResponse {
 
     /// Scroll Id
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    #[serde(rename = "_scroll_id")]
     pub scroll_id: Option<String>,
 
     /// Dynamically fetched fields
