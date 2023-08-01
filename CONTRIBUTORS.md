@@ -10,4 +10,5 @@ Shout out to our top contributors!
 - [dainiusjocas](https://api.github.com/users/dainiusjocas)
 - [Jakimcikas](https://api.github.com/users/Jakimcikas)
 - [jbcrail](https://api.github.com/users/jbcrail)
+- [fulmicoton](https://api.github.com/users/fulmicoton)
 - [ypenglyn](https://api.github.com/users/ypenglyn)
