@@ -2,7 +2,7 @@ use super::*;
 use crate::util::*;
 
 /// A collection of terms
-#[derive(Clone, PartialEq, Serialize)]
+#[derive(Clone, PartialEq, Serialize, Default)]
 pub struct Terms(Vec<Term>);
 
 impl std::fmt::Debug for Terms {

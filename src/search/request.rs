@@ -62,6 +62,9 @@ pub struct Search {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     post_filter: Option<Query>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    search_after: Terms,
 }
 
 impl Search {
@@ -235,6 +238,15 @@ impl Search {
     {
         self.docvalue_fields
             .extend(docvalue_fields.into_iter().map(|x| x.to_string()));
+        self
+    }
+
+    /// Search after a set of sort values.
+    pub fn search_after<T>(mut self, sort_values: T) -> Self
+    where
+        T: Into<Terms>,
+    {
+        self.search_after = sort_values.into();
         self
     }
 
