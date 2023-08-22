@@ -44,13 +44,15 @@ impl Query {
 }
 
 impl SpanNearQuery {
-    /// TODO
+    /// Controls whether span matches are required to be in-order.
     pub fn in_order(mut self, in_order: bool) -> Self {
         self.in_order = Some(in_order);
         self
     }
 
-    /// TODO
+    /// The slop parameter allows you to specify the number of positions by which the terms in the query can be
+    /// transposed to match a document. A slop value of 0 (default) means that the terms must appear in the exact
+    /// order specified in the query.
     pub fn slop(mut self, slop: i32) -> Self {
         self.slop = Some(slop);
         self
