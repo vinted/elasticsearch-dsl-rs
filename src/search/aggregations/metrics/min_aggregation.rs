@@ -16,7 +16,11 @@ pub struct MinAggregation {
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 struct MinAggregationInner {
-    field: String,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    field: Option<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    script: Option<Script>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     missing: Option<Number>,
@@ -32,7 +36,21 @@ impl Aggregation {
     {
         MinAggregation {
             min: MinAggregationInner {
-                field: field.to_string(),
+                field: field.to_string().into(),
+                script: None,
+                missing: None,
+            },
+        }
+    }
+
+    /// Creates an instance of [`MinAggregation`]
+    ///
+    /// - `script` - script to aggregate
+    pub fn min_script(script: Script) -> MinAggregation {
+        MinAggregation {
+            min: MinAggregationInner {
+                script: script.into(),
+                field: None,
                 missing: None,
             },
         }
@@ -68,6 +86,17 @@ mod tests {
                 "min": {
                     "field": "test_field",
                     "missing": 100.1
+                }
+            }),
+        );
+
+        assert_serialize_aggregation(
+            Aggregation::min_script(Script::source("_score")),
+            json!({
+                "min": {
+                    "script": {
+                        "source": "_score"
+                    }
                 }
             }),
         );

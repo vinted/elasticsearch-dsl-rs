@@ -12,7 +12,11 @@ pub struct SumAggregation {
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 struct SumAggregationInner {
-    field: String,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    field: Option<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    script: Option<Script>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     missing: Option<Number>,
@@ -28,7 +32,21 @@ impl Aggregation {
     {
         SumAggregation {
             sum: SumAggregationInner {
-                field: field.to_string(),
+                field: field.to_string().into(),
+                script: None,
+                missing: None,
+            },
+        }
+    }
+
+    /// Creates an instance of [`SumAggregation`]
+    ///
+    /// - `script` - script to aggregate
+    pub fn sum_script(script: Script) -> SumAggregation {
+        SumAggregation {
+            sum: SumAggregationInner {
+                script: script.into(),
+                field: None,
                 missing: None,
             },
         }
@@ -65,6 +83,17 @@ mod tests {
                 "sum": {
                     "field": "test_field",
                     "missing": 100.1
+                }
+            }),
+        );
+
+        assert_serialize_aggregation(
+            Aggregation::sum_script(Script::source("_score")),
+            json!({
+                "sum": {
+                    "script": {
+                        "source": "_score"
+                    }
                 }
             }),
         );

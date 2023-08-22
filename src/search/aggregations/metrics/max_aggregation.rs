@@ -16,7 +16,11 @@ pub struct MaxAggregation {
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 struct MaxAggregationInner {
-    field: String,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    field: Option<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    script: Option<Script>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     missing: Option<Number>,
@@ -32,7 +36,21 @@ impl Aggregation {
     {
         MaxAggregation {
             max: MaxAggregationInner {
-                field: field.to_string(),
+                field: field.to_string().into(),
+                script: None,
+                missing: None,
+            },
+        }
+    }
+
+    /// Creates an instance of [`MaxAggregation`]
+    ///
+    /// - `script` - script to aggregate
+    pub fn max_script(script: Script) -> MaxAggregation {
+        MaxAggregation {
+            max: MaxAggregationInner {
+                script: script.into(),
+                field: None,
                 missing: None,
             },
         }
@@ -68,6 +86,17 @@ mod tests {
                 "max": {
                     "field": "test_field",
                     "missing": 100.1
+                }
+            }),
+        );
+
+        assert_serialize_aggregation(
+            Aggregation::max_script(Script::source("_score")),
+            json!({
+                "max": {
+                    "script": {
+                        "source": "_score"
+                    }
                 }
             }),
         );
