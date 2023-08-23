@@ -1,6 +1,6 @@
 [package]
 name = "elasticsearch-dsl"
-version = "0.4.16"
+version = "0.4.17"
 authors = [
     "Evaldas Buinauskas <evaldas.buinauskas@vinted.com>",
     "Boost <boost@vinted.com>",
