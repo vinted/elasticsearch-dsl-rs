@@ -11,7 +11,7 @@ use crate::util::*;
 /// # let query =
 /// Query::has_child("child", Query::term("tag", "elasticsearch"));
 /// ```
-/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-HasChild-query.html>
+/// <https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-has-child-query.html>
 #[derive(Debug, Clone, PartialEq, Serialize)]
 #[serde(remote = "Self")]
 pub struct HasChildQuery {
