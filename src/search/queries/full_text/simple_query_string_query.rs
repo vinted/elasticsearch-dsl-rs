@@ -172,7 +172,7 @@ impl SimpleQueryStringQuery {
     where
         I: IntoIterator<Item = SimpleQueryStringQueryFlags>,
     {
-        self.flags.extend(flags.);
+        self.flags.extend(flags);
         self
     }
 
