@@ -83,7 +83,7 @@ impl RegexpQuery {
     where
         I: IntoIterator<Item = RegexpFlag>,
     {
-        self.flags.extend(flags.into_iter());
+        self.flags.extend(flags);
         self
     }
 
