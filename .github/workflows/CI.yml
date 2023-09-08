@@ -26,10 +26,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-          components: rustfmt, clippy, llvm-tools-preview
-
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@cargo-llvm-cov
+          components: rustfmt, clippy
 
       - name: Install nextest
         uses: taiki-e/install-action@v1
