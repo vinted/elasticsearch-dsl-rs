@@ -68,15 +68,6 @@ jobs:
           command: test
           args: --doc
 
-      - name: Collect coverage data
-        run: cargo llvm-cov nextest --lcov --output-path lcov.info
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: lcov.info
-          fail_ci_if_error: true
-
       - name: Run cargo doc
         uses: actions-rs/cargo@v1
         with:
