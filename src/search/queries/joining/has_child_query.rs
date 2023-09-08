@@ -32,6 +32,9 @@ pub struct HasChildQuery {
     score_mode: Option<HasChildScoreMode>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    inner_hits: Option<Box<InnerHits>>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     boost: Option<f32>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -56,6 +59,7 @@ impl Query {
             max_children: None,
             min_children: None,
             score_mode: None,
+            inner_hits: None,
             boost: None,
             _name: None,
         }
@@ -93,6 +97,29 @@ impl HasChildQuery {
     /// relevance score.
     pub fn score_mode(mut self, score_mode: HasChildScoreMode) -> Self {
         self.score_mode = Some(score_mode);
+        self
+    }
+
+    /// The [parent-join](https://www.elastic.co/guide/en/elasticsearch/reference/current/parent-join.html)
+    /// and [nested](https://www.elastic.co/guide/en/elasticsearch/reference/current/nested.html)
+    /// features allow the return of documents that have matches in a different scope. In the
+    /// parent/child case, parent documents are returned based on matches in child documents or
+    /// child documents are returned based on matches in parent documents. In the nested case,
+    /// documents are returned based on matches in nested inner objects.
+    ///
+    /// In both cases, the actual matches in the different scopes that caused a document to be
+    /// returned are hidden. In many cases, it’s very useful to know which inner nested objects
+    /// (in the case of nested) or children/parent documents (in the case of parent/child) caused
+    /// certain information to be returned. The inner hits feature can be used for this. This
+    /// feature returns per search hit in the search response additional nested hits that caused a
+    /// search hit to match in a different scope.
+    ///
+    /// Inner hits can be used by defining an `inner_hits` definition on a `nested`, `has_child`
+    /// or `has_parent` query and filter.
+    ///
+    /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/inner-hits.html>
+    pub fn inner_hits(mut self, inner_hits: InnerHits) -> Self {
+        self.inner_hits = Some(Box::new(inner_hits));
         self
     }
 
@@ -134,8 +161,9 @@ mod tests {
                 .boost(2)
                 .name("test")
                 .ignore_unmapped(true)
-                .max_children(3u32)
-                .min_children(2u32)
+                .max_children(3)
+                .min_children(2)
+                .inner_hits(InnerHits::new())
                 .score_mode(HasChildScoreMode::Max),
             json!({
                 "has_child": {
@@ -151,6 +179,7 @@ mod tests {
                             }
                         }
                     },
+                    "inner_hits": {},
                     "boost": 2.0,
                     "_name": "test"
                 }
