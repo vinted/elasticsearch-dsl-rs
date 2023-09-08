@@ -64,6 +64,9 @@ pub struct Search {
     post_filter: Option<Query>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    pit: Option<PointInTime>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     search_after: Terms,
 }
 
@@ -238,6 +241,12 @@ impl Search {
     {
         self.docvalue_fields
             .extend(docvalue_fields.into_iter().map(|x| x.to_string()));
+        self
+    }
+
+    /// Point in time
+    pub fn pit(mut self, pit: PointInTime) -> Self {
+        self.pit = Some(pit);
         self
     }
 
