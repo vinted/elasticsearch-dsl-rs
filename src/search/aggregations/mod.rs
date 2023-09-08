@@ -69,7 +69,8 @@ aggregation!(
     Sampler(SamplerAggregation),
     Filter(FilterAggregation),
     DiversifiedSampler(DiversifiedSamplerAggregation),
-    Boxplot(BoxplotAggregation)
+    Boxplot(BoxplotAggregation),
+    DateHistogram(DateHistogramAggregation),
 );
 
 /// Type alias for a collection of aggregations

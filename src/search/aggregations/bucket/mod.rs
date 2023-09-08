@@ -19,11 +19,13 @@
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket.html>
 
+mod date_histogram_aggregation;
 mod diversified_sampler_aggregation;
 mod filter_aggregation;
 mod sampler_aggregation;
 mod terms_aggregation;
 
+pub use self::date_histogram_aggregation::*;
 pub use self::diversified_sampler_aggregation::*;
 pub use self::filter_aggregation::*;
 pub use self::sampler_aggregation::*;
