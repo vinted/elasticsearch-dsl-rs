@@ -68,6 +68,9 @@ pub struct Search {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     search_after: Terms,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    timeout: Option<Time>,
 }
 
 impl Search {
@@ -256,6 +259,17 @@ impl Search {
         T: Into<Terms>,
     {
         self.search_after = sort_values.into();
+        self
+    }
+
+    /// parameter to specify a duration you’d like to wait on each shard to complete.
+    ///
+    /// <https://www.elastic.co/guide/en/elasticsearch/reference/8.9/search-your-data.html#search-timeout>
+    pub fn timeout<T>(mut self, timeout: T) -> Self
+    where
+        T: Into<Time>,
+    {
+        self.timeout = Some(timeout.into());
         self
     }
 
