@@ -1,3 +1,4 @@
+use crate::StringOrVecString;
 use crate::search::*;
 use crate::util::*;
 use serde::Serialize;
@@ -31,6 +32,14 @@ struct TermsAggregationInner {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     missing: Option<Term>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    include: Option<StringOrVecString>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    exclude: Option<StringOrVecString>,
+
+
 }
 
 impl Aggregation {
@@ -49,6 +58,8 @@ impl Aggregation {
                 order: Default::default(),
                 min_doc_count: None,
                 missing: None,
+                include: None,
+                exclude: None
             },
             aggs: Aggregations::new(),
         }
@@ -115,6 +126,31 @@ impl TermsAggregation {
         self
     }
 
+    /// Aggregations can be filtered by using the `include` parameter. 
+    /// This can either be a string containing a [regular expression](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html#_filtering_values_with_regular_expressions_2)
+    /// or a [vector of strings](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html#_filtering_values_with_exact_values_2) 
+    /// to match exactly.
+    pub fn include<T>(mut self, include: T) -> Self
+    where 
+        T: Into<StringOrVecString>
+    {
+        self.terms.include = Some(include.into());
+        self        
+    }
+
+
+    /// The `exclude` parameter allows for filtering values out of an aggregation.
+    /// This can either be a string containing a [regular expression](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html#_filtering_values_with_regular_expressions_2)
+    /// or a [vector of strings](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html#_filtering_values_with_exact_values_2) 
+    /// to match exactly.
+    pub fn exclude<T>(mut self, exclude: T) -> Self
+    where 
+        T: Into<StringOrVecString>
+    {
+        self.terms.exclude = Some(exclude.into());
+        self        
+    }
+
     add_aggregate!();
 }
 
@@ -127,6 +163,31 @@ mod tests {
         assert_serialize_aggregation(
             Aggregation::terms("test_field"),
             json!({ "terms": { "field": "test_field" } }),
+        );
+
+        assert_serialize_aggregation(
+            Aggregation::terms("test_field")
+                .size(5)
+                .min_doc_count(2)
+                .show_term_doc_count_error(false)
+                .missing("N/A")
+                .include(["mazda", "honda"])
+                .exclude("water_.*")
+                .order(TermsOrder::new("test_order", SortOrder::Asc)),
+            json!({
+                "terms": {
+                    "field": "test_field",
+                    "size": 5,
+                    "min_doc_count": 2,
+                    "show_term_doc_count_error": false,
+                    "missing": "N/A",
+                    "include": ["mazda", "honda"],
+                    "exclude": "water_.*",
+                    "order": [
+                        { "test_order": "asc" }
+                    ]
+                }
+            }),
         );
 
         assert_serialize_aggregation(
