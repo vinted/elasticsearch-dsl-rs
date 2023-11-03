@@ -108,7 +108,7 @@ function!(Function {
     DecayU16(Decay<u16>),
     DecayU32(Decay<u32>),
     DecayU64(Decay<u64>),
-    Script(Script),
+    ScriptScore(ScriptScore),
 });
 
 impl Function {
@@ -160,11 +160,8 @@ impl Function {
     /// Creates an instance of script
     ///
     /// - `source` - script source
-    pub fn script<T>(source: T) -> Script
-    where
-        T: ToString,
-    {
-        Script::new(source)
+    pub fn script(source: Script) -> ScriptScore {
+        ScriptScore::new(source)
     }
 }
 
@@ -627,45 +624,23 @@ pub enum DecayFunction {
 /// optionally with a computation derived from other numeric field values in the doc using a script
 /// expression
 #[derive(Debug, Clone, PartialEq, Serialize)]
-pub struct Script {
-    script_score: ScriptInnerWrapper,
+pub struct ScriptScore {
+    script_score: ScriptWrapper,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize)]
-struct ScriptInnerWrapper {
-    script: ScriptInner,
+struct ScriptWrapper {
+    script: Script,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize)]
-struct ScriptInner {
-    source: String,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
-    params: Option<serde_json::Value>,
-}
-
-impl Script {
+impl ScriptScore {
     /// Creates an instance of [Script]
     ///
-    /// - `source` - script source
-    pub fn new<T>(source: T) -> Self
-    where
-        T: ToString,
-    {
+    /// - `script` - script source
+    pub fn new(script: Script) -> Self {
         Self {
-            script_score: ScriptInnerWrapper {
-                script: ScriptInner {
-                    source: source.to_string(),
-                    params: None,
-                },
-            },
+            script_score: ScriptWrapper { script },
         }
-    }
-
-    /// Sets params value
-    pub fn params(mut self, params: serde_json::Value) -> Self {
-        self.script_score.script.params = Some(params);
-        self
     }
 }
 
@@ -704,5 +679,16 @@ mod tests {
                 }
             }),
         );
+
+        assert_serialize(
+            ScriptScore::new(Script::source("Math.log(2 + doc['my-int'].value)")),
+            json!({
+                "script_score": {
+                    "script": {
+                        "source": "Math.log(2 + doc['my-int'].value)"
+                    }
+                }
+            }),
+        )
     }
 }
