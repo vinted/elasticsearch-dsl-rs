@@ -110,7 +110,7 @@ where
 }
 
 impl Query {
-    /// Creates an instance of [DistanceFeatureQuery](DistanceFeatureQuery)
+    /// Creates an instance of [`DistanceFeatureQuery`]
     ///
     /// - `field` - Name of the field used to calculate distances. This field must meet the following criteria:<br/>
     ///   - Be a [`date`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html),

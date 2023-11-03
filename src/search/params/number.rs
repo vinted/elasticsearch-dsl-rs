@@ -1,7 +1,7 @@
 use std::cmp::Ordering;
 
 /// Numeric enum
-#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
 pub struct Number(N);
 
 #[derive(Clone, Copy, Serialize, Deserialize)]
@@ -257,12 +257,6 @@ impl PartialOrd for N {
             (N::F64(value), N::F32(other)) => (*value as f32).partial_cmp(other),
             (N::F64(value), N::F64(other)) => value.partial_cmp(other),
         }
-    }
-}
-
-impl Ord for N {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).unwrap_or(Ordering::Less)
     }
 }
 
