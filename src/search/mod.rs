@@ -23,6 +23,7 @@ pub mod runtime_mappings;
 pub mod script_fields;
 pub mod sort;
 pub mod suggesters;
+pub mod collapse;
 
 // Public re-exports
 pub use self::aggregations::*;

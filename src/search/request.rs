@@ -1,4 +1,5 @@
 //! Allows you to execute a search query and get back search hits that match the query.
+use crate::collapse::Collapse;
 use crate::search::*;
 use crate::util::*;
 use crate::Map;
@@ -71,6 +72,10 @@ pub struct Search {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     timeout: Option<Time>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    collapse: Option<Collapse>,
+
 }
 
 impl Search {
@@ -271,6 +276,17 @@ impl Search {
     {
         self.timeout = Some(timeout.into());
         self
+    }
+    
+    /// parameter to specify collapsing results on some field
+    ///
+    /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/collapse-search-results.html>
+    pub fn collapse<C>(mut self, collapse: C) -> Self
+    where
+        C: Into<Collapse>
+    {
+        self.collapse = Some(collapse.into());
+        self        
     }
 
     add_aggregate!();
