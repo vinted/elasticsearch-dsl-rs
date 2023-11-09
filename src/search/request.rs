@@ -286,7 +286,7 @@ impl Search {
         C: Into<Collapse>
     {
         self.collapse = Some(collapse.into());
-        self        
+        self
     }
 
     add_aggregate!();
