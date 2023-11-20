@@ -475,6 +475,7 @@ pub struct Decay<T: Origin> {
 
     weight: Option<f32>,
 }
+
 #[derive(Debug, Clone, PartialEq)]
 struct DecayFieldInner<T: Origin> {
     field: String,
@@ -689,6 +690,6 @@ mod tests {
                     }
                 }
             }),
-        )
+        );
     }
 }
