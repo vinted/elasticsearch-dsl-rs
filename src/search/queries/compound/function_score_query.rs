@@ -320,7 +320,7 @@ mod tests {
                                    "factor": 10.0,
                                    "field": "weight",
                                    "missing": 0.0,
-                                   "modifier": "log1_p"
+                                   "modifier": "log1p"
                                  },
                                  "weight": 0.3
                                }
