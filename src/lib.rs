@@ -27,34 +27,32 @@
 //! ```rust
 //! use elasticsearch_dsl::*;
 //!
-//! fn main() {
-//!     let query = Search::new()
-//!         .source(false)
-//!         .stats("statistics")
-//!         .from(0)
-//!         .size(30)
-//!         .query(
-//!             Query::bool()
-//!                 .must(Query::multi_match(
-//!                     ["title", "description"],
-//!                     "you know, for search",
-//!                 ))
-//!                 .filter(Query::terms("tags", ["elasticsearch"]))
-//!                 .should(Query::term("verified", true).boost(10)),
-//!         )
-//!         .aggregate(
-//!             "country_ids",
-//!             Aggregation::terms("country_id")
-//!                 .aggregate("catalog_ids", Aggregation::terms("catalog_id"))
-//!                 .aggregate("company_ids", Aggregation::terms("company_id"))
-//!                 .aggregate(
-//!                     "top1",
-//!                     Aggregation::top_hits()
-//!                         .size(1)
-//!                         .sort(FieldSort::ascending("user_id")),
-//!                 ),
-//!         ).rescore(Rescore::new(Query::term("field", 1)).query_weight(1.2));
-//! }
+//! let query = Search::new()
+//!     .source(false)
+//!     .stats("statistics")
+//!     .from(0)
+//!     .size(30)
+//!     .query(
+//!         Query::bool()
+//!             .must(Query::multi_match(
+//!                 ["title", "description"],
+//!                 "you know, for search",
+//!             ))
+//!             .filter(Query::terms("tags", ["elasticsearch"]))
+//!             .should(Query::term("verified", true).boost(10)),
+//!     )
+//!     .aggregate(
+//!         "country_ids",
+//!         Aggregation::terms("country_id")
+//!             .aggregate("catalog_ids", Aggregation::terms("catalog_id"))
+//!             .aggregate("company_ids", Aggregation::terms("company_id"))
+//!             .aggregate(
+//!                 "top1",
+//!                 Aggregation::top_hits()
+//!                     .size(1)
+//!                     .sort(FieldSort::ascending("user_id")),
+//!             ),
+//!     ).rescore(Rescore::new(Query::term("field", 1)).query_weight(1.2));
 //! ```
 //!
 //! See examples for more.
@@ -80,7 +78,6 @@
     overflowing_literals,
     path_statements,
     patterns_in_fns_without_body,
-    private_in_public,
     trivial_casts,
     trivial_numeric_casts,
     unconditional_recursion,
