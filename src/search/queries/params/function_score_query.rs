@@ -385,7 +385,7 @@ impl FieldValueFactor {
 ///
 /// Defaults to [none](FieldValueFactorModifier::None)
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
-#[serde(rename_all = "snake_case")]
+#[serde(rename_all = "lowercase")]
 pub enum FieldValueFactorModifier {
     /// Do not apply any multiplier to the field value
     None,
@@ -475,6 +475,7 @@ pub struct Decay<T: Origin> {
 
     weight: Option<f32>,
 }
+
 #[derive(Debug, Clone, PartialEq)]
 struct DecayFieldInner<T: Origin> {
     field: String,
@@ -689,6 +690,6 @@ mod tests {
                     }
                 }
             }),
-        )
+        );
     }
 }

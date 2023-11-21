@@ -134,7 +134,7 @@ impl FunctionScoreQuery {
 
 impl ShouldSkip for FunctionScoreQuery {
     fn should_skip(&self) -> bool {
-        self.query.should_skip() || self.functions.should_skip()
+        self.functions.should_skip()
     }
 }
 
@@ -291,5 +291,46 @@ mod tests {
                     .weight(1.0)
                     .filter(Query::term("type", "street")),
             );
+    }
+
+    #[test]
+    fn should_not_skip_serializing_function_score_with_empty_query_gh_257() {
+        assert_serialize(
+            Query::bool().should(
+                Query::function_score()
+                    .function(
+                        Function::field_value_factor("weight")
+                            .factor(10.0)
+                            .missing(0.0)
+                            .modifier(FieldValueFactorModifier::Log1P)
+                            .weight(0.3),
+                    )
+                    .score_mode(FunctionScoreMode::Max)
+                    .boost_mode(FunctionBoostMode::Replace),
+            ),
+            json!( {
+                     "bool": {
+                       "should": [
+                         {
+                           "function_score": {
+                             "boost_mode": "replace",
+                             "functions": [
+                               {
+                                 "field_value_factor": {
+                                   "factor": 10.0,
+                                   "field": "weight",
+                                   "missing": 0.0,
+                                   "modifier": "log1p"
+                                 },
+                                 "weight": 0.3
+                               }
+                             ],
+                             "score_mode": "max"
+                           }
+                         }
+                       ]
+                    }
+            }),
+        )
     }
 }
