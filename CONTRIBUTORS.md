@@ -12,6 +12,7 @@ Shout out to our top contributors!
 - [Jakimcikas](https://api.github.com/users/Jakimcikas)
 - [jbcrail](https://api.github.com/users/jbcrail)
 - [mykolas-kairys](https://api.github.com/users/mykolas-kairys)
+- [oknozor](https://api.github.com/users/oknozor)
 - [fulmicoton](https://api.github.com/users/fulmicoton)
 - [ypenglyn](https://api.github.com/users/ypenglyn)
 - [yaymukund](https://api.github.com/users/yaymukund)
