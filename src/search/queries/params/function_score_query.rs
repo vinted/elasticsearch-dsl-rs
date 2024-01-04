@@ -108,6 +108,8 @@ function!(Function {
     DecayU16(Decay<u16>),
     DecayU32(Decay<u32>),
     DecayU64(Decay<u64>),
+    DecayF32(Decay<f32>),
+    DecayF64(Decay<f64>),
     ScriptScore(ScriptScore),
 });
 
@@ -687,6 +689,21 @@ mod tests {
                 "script_score": {
                     "script": {
                         "source": "Math.log(2 + doc['my-int'].value)"
+                    }
+                }
+            }),
+        );
+    }
+
+    #[test]
+    fn float_decay() {
+        assert_serialize(
+            Decay::new(DecayFunction::Linear, "test", 0.1, 0.5),
+            json!({
+                "linear": {
+                    "test": {
+                        "origin": 0.1,
+                        "scale": 0.5
                     }
                 }
             }),
