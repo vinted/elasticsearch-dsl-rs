@@ -15,4 +15,5 @@ Shout out to our top contributors!
 - [oknozor](https://api.github.com/users/oknozor)
 - [fulmicoton](https://api.github.com/users/fulmicoton)
 - [ypenglyn](https://api.github.com/users/ypenglyn)
+- [alpoi-x](https://api.github.com/users/alpoi-x)
 - [yaymukund](https://api.github.com/users/yaymukund)
