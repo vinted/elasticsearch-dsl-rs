@@ -62,7 +62,7 @@ impl Origin for GeoLocation {
 /// # use elasticsearch_dsl::queries::params::*;
 /// # use chrono::prelude::*;
 /// # let query =
-/// Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Time::Days(7))
+/// Query::distance_feature("test", Utc.with_ymd_and_hms(2014, 7, 8, 9, 1, 0).unwrap(), Time::Days(7))
 ///     .boost(1.5)
 ///     .name("test");
 /// ```
@@ -84,7 +84,7 @@ impl Origin for GeoLocation {
 /// # use elasticsearch_dsl::queries::*;
 /// # use elasticsearch_dsl::queries::params::*;
 /// # let query =
-/// Query::distance_feature("test", Utc.ymd(2014, 7, 8).and_hms(9, 1, 0), Distance::Kilometers(15))
+/// Query::distance_feature("test", Utc.with_ymd_and_hms(2014, 7, 8, 9, 1, 0).unwrap(), Distance::Kilometers(15))
 ///     .boost(1.5)
 ///     .name("test");
 /// ```
