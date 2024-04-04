@@ -71,6 +71,10 @@ pub struct Search {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     timeout: Option<Time>,
+
+    #[serde(flatten)]
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    extra: Map<String, serde_json::Value>,
 }
 
 impl Search {
@@ -273,5 +277,58 @@ impl Search {
         self
     }
 
+    /// Extra fields for something not yet supported.
+    ///
+    /// ```
+    /// # use elasticsearch_dsl::Search;
+    /// # use serde_json::json;
+    /// # let search =
+    /// Search::new()
+    ///     .size(10)
+    ///     .extra([
+    ///         (
+    ///             "knn".to_owned(),
+    ///             json!({ "field": "abc" }),
+    ///         ),
+    ///         (
+    ///             "terminate_after".to_owned(),
+    ///             json!(42)
+    ///         ),
+    ///     ].into());
+    /// ```
+    pub fn extra(mut self, extra: Map<String, serde_json::Value>) -> Self {
+        self.extra = extra;
+        self
+    }
+
     add_aggregate!();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn serializes_to_empty_object_by_default() {
+        assert_serialize(Search::new(), json!({}));
+        assert_serialize(Search::default(), json!({}));
+    }
+
+    #[test]
+    fn serializes_extra_fields() {
+        assert_serialize(
+            Search::new().size(10).extra(
+                [
+                    ("knn".to_owned(), json!({ "field": "abc" })),
+                    ("terminate_after".to_owned(), json!(42)),
+                ]
+                .into(),
+            ),
+            json!({
+                "size": 10,
+                "knn": { "field": "abc" },
+                "terminate_after": 42,
+            }),
+        );
+    }
 }
