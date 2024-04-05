@@ -204,6 +204,7 @@ query!(
     SpanOr(SpanOrQuery),
     SpanTerm(SpanTermQuery),
     SpanWithin(SpanWithinQuery),
+    Knn(KnnQuery),
 );
 
 #[cfg(test)]
