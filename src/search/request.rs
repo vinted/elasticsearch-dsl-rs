@@ -72,6 +72,9 @@ pub struct Search {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     timeout: Option<Time>,
 
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    knn: Vec<Knn>,
+
     #[serde(flatten)]
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     extra: Map<String, serde_json::Value>,
@@ -268,12 +271,20 @@ impl Search {
 
     /// parameter to specify a duration you’d like to wait on each shard to complete.
     ///
-    /// <https://www.elastic.co/guide/en/elasticsearch/reference/8.9/search-your-data.html#search-timeout>
+    /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-your-data.html#search-timeout>
     pub fn timeout<T>(mut self, timeout: T) -> Self
     where
         T: Into<Time>,
     {
         self.timeout = Some(timeout.into());
+        self
+    }
+
+    /// Defines the kNN query to run.
+    ///
+    /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-api-knn>
+    pub fn knn(mut self, knn: Knn) -> Self {
+        self.knn.push(knn);
         self
     }
 
