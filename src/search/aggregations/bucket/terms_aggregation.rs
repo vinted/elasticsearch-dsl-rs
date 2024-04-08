@@ -31,6 +31,12 @@ struct TermsAggregationInner {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     missing: Option<Term>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    include: Option<TermsInclude>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    exclude: Option<TermsExclude>,
 }
 
 impl Aggregation {
@@ -49,6 +55,8 @@ impl Aggregation {
                 order: Default::default(),
                 min_doc_count: None,
                 missing: None,
+                include: None,
+                exclude: None,
             },
             aggs: Aggregations::new(),
         }
@@ -115,6 +123,24 @@ impl TermsAggregation {
         self
     }
 
+    /// The `include` parameter can be set to include only specific terms in the response.
+    pub fn include<T>(mut self, include: T) -> Self
+    where
+        T: Into<TermsInclude>,
+    {
+        self.terms.include = Some(include.into());
+        self
+    }
+
+    /// The `exclude` parameter can be set to exclude specific terms from the response.
+    pub fn exclude<T>(mut self, exclude: T) -> Self
+    where
+        T: Into<TermsExclude>,
+    {
+        self.terms.exclude = Some(exclude.into());
+        self
+    }
+
     add_aggregate!();
 }
 
@@ -155,15 +181,22 @@ mod tests {
                 .size(0)
                 .order(TermsOrder::ascending("test_order"))
                 .missing(123)
+                .include(["mazda", "honda"])
+                .exclude("water_.*")
                 .aggregate(
                     "test_sub_agg",
-                    Aggregation::terms("test_field2").size(3).missing(false),
+                    Aggregation::terms("test_field2")
+                        .size(3)
+                        .missing(false)
+                        .include([0, 20]),
                 ),
             json!({
                 "terms": {
                     "field": "test_field",
                     "size": 0,
                     "missing": 123,
+                    "include": ["mazda", "honda"],
+                    "exclude": "water_.*",
                     "order": [
                         { "test_order": "asc" }
                     ]
@@ -173,7 +206,11 @@ mod tests {
                         "terms": {
                             "field": "test_field2",
                             "size": 3,
-                            "missing": false
+                            "missing": false,
+                            "include": {
+                                "partition": 0,
+                                "num_partitions": 20
+                            }
                         }
                     }
                 }
