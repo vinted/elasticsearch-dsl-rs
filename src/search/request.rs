@@ -75,6 +75,9 @@ pub struct Search {
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     knn: Vec<Knn>,
 
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    collapse: Option<Collapse>,
+
     #[serde(flatten)]
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     extra: Map<String, serde_json::Value>,
@@ -285,6 +288,17 @@ impl Search {
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-api-knn>
     pub fn knn(mut self, knn: Knn) -> Self {
         self.knn.push(knn);
+        self
+    }
+
+    /// Parameter to specify collapsing results on some field
+    ///
+    /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/collapse-search-results.html>
+    pub fn collapse<C>(mut self, collapse: C) -> Self
+    where
+        C: Into<Collapse>,
+    {
+        self.collapse = Some(collapse.into());
         self
     }
 
