@@ -26,6 +26,9 @@ pub struct InnerHits {
     _source: Option<SourceFilter>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    name: Option<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     from: Option<u64>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -39,6 +42,14 @@ pub struct InnerHits {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     docvalue_fields: Set<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    collapse: Option<InnerHitsCollapse>,
+}
+
+#[derive(Debug, Default, Clone, PartialEq, Serialize)]
+struct InnerHitsCollapse {
+    field: String,
 }
 
 impl InnerHits {
@@ -53,6 +64,15 @@ impl InnerHits {
         T: Into<SourceFilter>,
     {
         self._source = Some(source.into());
+        self
+    }
+
+    /// Inner hit name, useful when multiple `inner_hits` exist in a single search request
+    pub fn name<T>(mut self, name: T) -> Self
+    where
+        T: ToString,
+    {
+        self.name = Some(name.to_string());
         self
     }
 
@@ -99,6 +119,17 @@ impl InnerHits {
     {
         self.docvalue_fields
             .extend(docvalue_fields.into_iter().map(|x| x.to_string()));
+        self
+    }
+
+    /// A field to collapse by
+    pub fn collapse<T>(mut self, collapse: T) -> Self
+    where
+        T: ToString,
+    {
+        self.collapse = Some(InnerHitsCollapse {
+            field: collapse.to_string(),
+        });
         self
     }
 }
