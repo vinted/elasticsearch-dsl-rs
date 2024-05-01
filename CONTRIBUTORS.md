@@ -9,6 +9,7 @@ Shout out to our top contributors!
 - [FrederickFrance](https://api.github.com/users/FrederickFrance)
 - [oleg-vinted](https://api.github.com/users/oleg-vinted)
 - [dainiusjocas](https://api.github.com/users/dainiusjocas)
+- [DmitrySamoylov](https://api.github.com/users/DmitrySamoylov)
 - [Jakimcikas](https://api.github.com/users/Jakimcikas)
 - [jbcrail](https://api.github.com/users/jbcrail)
 - [mykolas-kairys](https://api.github.com/users/mykolas-kairys)
