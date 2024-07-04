@@ -71,6 +71,8 @@ aggregation!(
     DiversifiedSampler(DiversifiedSamplerAggregation),
     Boxplot(BoxplotAggregation),
     DateHistogram(DateHistogramAggregation),
+    BucketSelector(BucketSelectorAggregation),
+    Children(ChildrenAggregation),
 );
 
 /// Type alias for a collection of aggregations

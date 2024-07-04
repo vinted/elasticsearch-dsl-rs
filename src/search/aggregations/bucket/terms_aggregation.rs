@@ -15,7 +15,8 @@ pub struct TermsAggregation {
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 struct TermsAggregationInner {
-    field: String,
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    field: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     size: Option<u64>,
@@ -37,6 +38,9 @@ struct TermsAggregationInner {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     exclude: Option<TermsExclude>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    script: Option<Script>,
 }
 
 impl Aggregation {
@@ -49,7 +53,7 @@ impl Aggregation {
     {
         TermsAggregation {
             terms: TermsAggregationInner {
-                field: field.to_string(),
+                field: Some(field.to_string()),
                 size: None,
                 show_term_doc_count_error: None,
                 order: Default::default(),
@@ -57,6 +61,25 @@ impl Aggregation {
                 missing: None,
                 include: None,
                 exclude: None,
+                script: None,
+            },
+            aggs: Aggregations::new(),
+        }
+    }
+
+    /// Creates an instance of [`TermsAggregation`] with a script
+    pub fn terms_with_script(script: Script) -> TermsAggregation {
+        TermsAggregation {
+            terms: TermsAggregationInner {
+                field: None,
+                size: None,
+                show_term_doc_count_error: None,
+                order: Default::default(),
+                min_doc_count: None,
+                missing: None,
+                include: None,
+                exclude: None,
+                script: Some(script),
             },
             aggs: Aggregations::new(),
         }
@@ -141,6 +164,21 @@ impl TermsAggregation {
         self
     }
 
+    /// Sets the script for the aggregation.
+    pub fn script(mut self, script: Script) -> Self {
+        self.terms.script = Some(script);
+        self
+    }
+
+    /// The field can be Keyword, Numeric, ip, boolean, or binary.
+    pub fn field<T>(mut self, field: T) -> Self
+    where
+        T: Into<String>
+    {
+        self.terms.field = Some(field.into());
+        self
+    }
+
     add_aggregate!();
 }
 
@@ -213,6 +251,22 @@ mod tests {
                             }
                         }
                     }
+                }
+            }),
+        );
+
+        assert_serialize_aggregation(
+            Aggregation::terms_with_script(
+                Script::source("if (!doc['field1'].isEmpty()) { return 'f2'; } if (!doc['field2'].isEmpty()) { return 'f1'; } return 'unknown';")
+                    .lang("painless")
+            ).size(10),
+            json!({
+                "terms": {
+                    "script": {
+                        "source": "if (!doc['field1'].isEmpty()) { return 'f2'; } if (!doc['field2'].isEmpty()) { return 'f1'; } return 'unknown';",
+                        "lang": "painless"
+                    },
+                    "size": 10
                 }
             }),
         );
