@@ -1,4 +1,5 @@
-use serde::{Serialize, Serializer};
+use std::collections::HashMap;
+use serde::Serialize;
 
 use crate::search::*;
 use crate::util::*;
@@ -7,31 +8,14 @@ use crate::util::*;
 ///
 /// This can either be a single path, referencing a single metric, or multiple paths
 /// in case of more complex aggregations.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize)]
+#[serde(untagged)]
 pub enum BucketsPath {
     /// A single path referencing a metric.
     Single(String),
     /// Multiple paths in the form of key-value pairs.
     /// Each key corresponds to an alias, and each value is a path to the metric.
-    Multi(Vec<(String, String)>),
-}
-
-impl Serialize for BucketsPath {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match self {
-            BucketsPath::Single(path) => serializer.serialize_str(path),
-            BucketsPath::Multi(paths) => {
-                let mut map = std::collections::HashMap::new();
-                for (key, value) in paths {
-                    let _ = map.insert(key, value);
-                }
-                map.serialize(serializer)
-            }
-        }
-    }
+    Multi(HashMap<String, String>),
 }
 
 impl From<&str> for BucketsPath {
@@ -54,7 +38,7 @@ impl From<Vec<(&str, &str)>> for BucketsPath {
 
 impl From<Vec<(String, String)>> for BucketsPath {
     fn from(paths: Vec<(String, String)>) -> Self {
-        BucketsPath::Multi(paths)
+        BucketsPath::Multi(paths.into_iter().collect())
     }
 }
 
