@@ -14,12 +14,12 @@ pub enum SortSpecialField {
     ShardDocumentOrder,
 }
 
-impl ToString for SortSpecialField {
-    fn to_string(&self) -> String {
-        String::from(match self {
-            Self::Score => "_score",
-            Self::DocumentIndexOrder => "_doc",
-            Self::ShardDocumentOrder => "_shard_doc",
-        })
+impl std::fmt::Display for SortSpecialField {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            Self::Score => "_score".fmt(f),
+            Self::DocumentIndexOrder => "_doc".fmt(f),
+            Self::ShardDocumentOrder => "_shard_doc".fmt(f),
+        }
     }
 }
