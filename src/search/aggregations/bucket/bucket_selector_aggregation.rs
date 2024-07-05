@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use serde::Serialize;
 
 use crate::search::*;
+use crate::types::Map;
 use crate::util::*;
 
 /// Specifies the path to the buckets to filter in a bucket selector aggregation.
@@ -15,7 +15,7 @@ pub enum BucketsPath {
     Single(String),
     /// Multiple paths in the form of key-value pairs.
     /// Each key corresponds to an alias, and each value is a path to the metric.
-    Multi(HashMap<String, String>),
+    Multi(Map<String, String>),
 }
 
 impl From<&str> for BucketsPath {
