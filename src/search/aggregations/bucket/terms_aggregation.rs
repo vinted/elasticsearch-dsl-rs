@@ -173,7 +173,7 @@ impl TermsAggregation {
     /// The field can be Keyword, Numeric, ip, boolean, or binary.
     pub fn field<T>(mut self, field: T) -> Self
     where
-        T: Into<String>
+        T: Into<String>,
     {
         self.terms.field = Some(field.into());
         self
