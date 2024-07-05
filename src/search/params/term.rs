@@ -399,7 +399,7 @@ impl std::fmt::Display for TermSerializeError {
 
 impl std::error::Error for TermSerializeError {}
 
-impl serde::ser::Error for TermSerializeError {
+impl ser::Error for TermSerializeError {
     fn custom<T>(_msg: T) -> Self
     where
         T: std::fmt::Display,
