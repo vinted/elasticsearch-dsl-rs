@@ -155,9 +155,9 @@ impl ser::Serializer for Serializer {
         Err(TermSerializeError::NoTerm)
     }
 
-    fn serialize_some<T: ?Sized>(self, value: &T) -> Result<Self::Ok, Self::Error>
+    fn serialize_some<T>(self, value: &T) -> Result<Self::Ok, Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         value.serialize(self)
     }
@@ -179,18 +179,18 @@ impl ser::Serializer for Serializer {
         self.serialize_str(variant)
     }
 
-    fn serialize_newtype_struct<T: ?Sized>(
+    fn serialize_newtype_struct<T>(
         self,
         _name: &'static str,
         value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         value.serialize(self)
     }
 
-    fn serialize_newtype_variant<T: ?Sized>(
+    fn serialize_newtype_variant<T>(
         self,
         _name: &'static str,
         _variant_index: u32,
@@ -198,7 +198,7 @@ impl ser::Serializer for Serializer {
         _value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
@@ -256,9 +256,9 @@ impl ser::SerializeSeq for Serializer {
     type Ok = Term;
     type Error = TermSerializeError;
 
-    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
+    fn serialize_element<T>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
@@ -272,9 +272,9 @@ impl ser::SerializeTuple for Serializer {
     type Ok = Term;
     type Error = TermSerializeError;
 
-    fn serialize_element<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
+    fn serialize_element<T>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
@@ -288,9 +288,9 @@ impl ser::SerializeTupleStruct for Serializer {
     type Ok = Term;
     type Error = TermSerializeError;
 
-    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
+    fn serialize_field<T>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
@@ -303,9 +303,9 @@ impl ser::SerializeTupleVariant for Serializer {
     type Ok = Term;
     type Error = TermSerializeError;
 
-    fn serialize_field<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
+    fn serialize_field<T>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
@@ -319,16 +319,16 @@ impl ser::SerializeMap for Serializer {
     type Ok = Term;
     type Error = TermSerializeError;
 
-    fn serialize_key<T: ?Sized>(&mut self, _key: &T) -> Result<(), Self::Error>
+    fn serialize_key<T>(&mut self, _key: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
 
-    fn serialize_value<T: ?Sized>(&mut self, _value: &T) -> Result<(), Self::Error>
+    fn serialize_value<T>(&mut self, _value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
@@ -342,13 +342,9 @@ impl ser::SerializeStruct for Serializer {
     type Ok = Term;
     type Error = TermSerializeError;
 
-    fn serialize_field<T: ?Sized>(
-        &mut self,
-        _key: &'static str,
-        _value: &T,
-    ) -> Result<(), Self::Error>
+    fn serialize_field<T>(&mut self, _key: &'static str, _value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
@@ -362,13 +358,9 @@ impl ser::SerializeStructVariant for Serializer {
     type Ok = Term;
     type Error = TermSerializeError;
 
-    fn serialize_field<T: ?Sized>(
-        &mut self,
-        _key: &'static str,
-        _value: &T,
-    ) -> Result<(), Self::Error>
+    fn serialize_field<T>(&mut self, _key: &'static str, _value: &T) -> Result<(), Self::Error>
     where
-        T: Serialize,
+        T: Serialize + ?Sized,
     {
         Err(TermSerializeError::NotTerm)
     }
@@ -399,7 +391,7 @@ impl std::fmt::Display for TermSerializeError {
 
 impl std::error::Error for TermSerializeError {}
 
-impl serde::ser::Error for TermSerializeError {
+impl ser::Error for TermSerializeError {
     fn custom<T>(_msg: T) -> Self
     where
         T: std::fmt::Display,
