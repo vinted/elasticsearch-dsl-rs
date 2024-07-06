@@ -73,6 +73,7 @@ aggregation!(
     DateHistogram(DateHistogramAggregation),
     BucketSelector(BucketSelectorAggregation),
     Children(ChildrenAggregation),
+    Composite(CompositeAggregation),
 );
 
 /// Type alias for a collection of aggregations
