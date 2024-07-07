@@ -27,6 +27,7 @@ mod terms_aggregation;
 mod bucket_selector_aggregation;
 mod children_aggregation;
 mod composite_aggregation;
+mod nested_aggregation;
 
 pub use self::date_histogram_aggregation::*;
 pub use self::diversified_sampler_aggregation::*;
@@ -36,3 +37,4 @@ pub use self::terms_aggregation::*;
 pub use self::bucket_selector_aggregation::*;
 pub use self::children_aggregation::*;
 pub use self::composite_aggregation::*;
+pub use self::nested_aggregation::*;

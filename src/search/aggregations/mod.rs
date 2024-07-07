@@ -74,6 +74,7 @@ aggregation!(
     BucketSelector(BucketSelectorAggregation),
     Children(ChildrenAggregation),
     Composite(CompositeAggregation),
+    Nested(NestedAggregation),
 );
 
 /// Type alias for a collection of aggregations

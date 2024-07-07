@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use serde::{Serialize, Serializer, ser::SerializeStruct};
+use serde::{Serialize, Serializer };
 use serde_json::Value;
 
 /// A multi-bucket aggregation that creates composite buckets from different sources.
@@ -23,9 +23,6 @@ struct CompositeAggregationInner {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     after: Option<AfterKey>,
-
-    #[serde(skip_serializing_if = "ShouldSkip::should_skip", serialize_with = "serialize_source_filter", rename="_source")]
-    source: Option<SourceFilter>,
 }
 
 impl Aggregation {
@@ -38,7 +35,6 @@ impl Aggregation {
                 sources,
                 size: None,
                 after: None,
-                source: None,
             },
             aggs: Aggregations::new(),
         }
@@ -65,18 +61,6 @@ impl CompositeAggregation {
         self
     }
 
-    /// Indicates which source fields to include for matching documents.
-    ///
-    /// - `includes` - A vector of field names to include in the source.
-    pub fn source_includes<T>(mut self, includes: T) -> Self
-    where
-        T: Into<Vec<String>>,
-    {
-        let includes = includes.into();
-        self.composite.source = Some(SourceFilter::Includes(includes));
-        self
-    }
-
     add_aggregate!();
 }
 
@@ -94,6 +78,9 @@ impl From<Value> for AfterKey {
 }
 
 impl AfterKey {
+    /// Creates a new `AfterKey` instance from a JSON value.
+    ///
+    /// - `value` - The JSON value representing the `after` key.
     pub fn new(value: Value) -> Self {
         AfterKey(value)
     }
@@ -102,16 +89,25 @@ impl AfterKey {
 /// Represents different types of sources for a composite aggregation.
 #[derive(Debug, Clone, PartialEq)]
 pub enum CompositeSource {
+    /// Terms source for the composite aggregation.
     Terms {
+        /// The unique identifier for the terms source.
         name: String,
+        /// The terms composite source.
         terms: TermsCompositeSource,
     },
+    /// Histogram source for the composite aggregation.
     Histogram {
+        /// The unique identifier for the histogram source.
         name: String,
+        /// The histogram composite source.
         histogram: HistogramCompositeSource,
     },
+    /// Date histogram source for the composite aggregation.
     DateHistogram {
+        /// The unique identifier for the date histogram source.
         name: String,
+        /// The date histogram composite source.
         date_histogram: DateHistogramCompositeSource,
     },
 }
@@ -274,35 +270,6 @@ impl DateHistogramCompositeSource {
     }
 }
 
-fn serialize_source_filter<S>(source_filter: &Option<SourceFilter>, serializer: S) -> Result<S::Ok, S::Error>
-where
-    S: Serializer,
-{
-    if let Some(source_filter) = source_filter {
-        match source_filter {
-            SourceFilter::Enable(enabled) => serializer.serialize_bool(*enabled),
-            SourceFilter::Include(include) => {
-                let mut state = serializer.serialize_struct("_source", 1)?;
-                state.serialize_field("includes", &vec![include])?;
-                state.end()
-            }
-            SourceFilter::Includes(includes) => {
-                let mut state = serializer.serialize_struct("_source", 1)?;
-                state.serialize_field("includes", includes)?;
-                state.end()
-            }
-            SourceFilter::IncludesExcludes { includes, excludes } => {
-                let mut state = serializer.serialize_struct("_source", 2)?;
-                state.serialize_field("includes", includes)?;
-                state.serialize_field("excludes", excludes)?;
-                state.end()
-            }
-        }
-    } else {
-        serializer.serialize_none()
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -328,14 +295,10 @@ mod tests {
         );
 
         assert_serialize_aggregation(
-            Aggregation::composite(vec![CompositeSource::terms("test_field", "field_name")])
-                .source_includes(vec!["integer0".to_string(), "str0".to_string(), "txi".to_string(), "txd".to_string(), "cdt".to_string()]),
+            Aggregation::composite(vec![CompositeSource::terms("test_field", "field_name")]),
             json!({
                 "composite": {
                     "sources": [{ "test_field": { "terms": { "field": "field_name" } } }],
-                    "_source": {
-                        "includes": ["integer0", "str0", "txi", "txd", "cdt"]
-                    }
                 }
             }),
         );

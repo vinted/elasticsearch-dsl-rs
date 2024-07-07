@@ -81,6 +81,9 @@ pub struct Search {
     #[serde(flatten)]
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     extra: Map<String, serde_json::Value>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    track_scores: Option<bool>,
 }
 
 impl Search {
@@ -205,6 +208,13 @@ impl Search {
         T: Into<TrackTotalHits>,
     {
         self.track_total_hits = Some(track_total_hits.into());
+        self
+    }
+
+    /// If true, calculate and return document scores, even if the scores are not used for sorting.
+    pub fn track_scores(mut self, enabled: bool) -> Self
+    {
+        self.track_scores = Some(enabled);
         self
     }
 
@@ -342,7 +352,7 @@ mod tests {
     #[test]
     fn serializes_extra_fields() {
         assert_serialize(
-            Search::new().size(10).extra(
+            Search::new().size(10).track_scores(false).extra(
                 [
                     ("knn".to_owned(), json!({ "field": "abc" })),
                     ("terminate_after".to_owned(), json!(42)),
@@ -351,6 +361,7 @@ mod tests {
             ),
             json!({
                 "size": 10,
+                "track_scores": false,
                 "knn": { "field": "abc" },
                 "terminate_after": 42,
             }),
