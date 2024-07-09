@@ -32,7 +32,12 @@ impl From<String> for BucketsPath {
 
 impl From<Vec<(&str, &str)>> for BucketsPath {
     fn from(paths: Vec<(&str, &str)>) -> Self {
-        BucketsPath::Multi(paths.into_iter().map(|(k, v)| (k.to_string(), v.to_string())).collect())
+        BucketsPath::Multi(
+            paths
+                .into_iter()
+                .map(|(k, v)| (k.to_string(), v.to_string()))
+                .collect(),
+        )
     }
 }
 
@@ -41,7 +46,6 @@ impl From<Vec<(String, String)>> for BucketsPath {
         BucketsPath::Multi(paths.into_iter().collect())
     }
 }
-
 
 #[derive(Debug, Clone, Serialize, PartialEq)]
 /// A parent pipeline aggregation which allows the user to specify a script to run
@@ -119,7 +123,10 @@ mod tests {
     #[test]
     fn serialization() {
         assert_serialize_aggregation(
-            Aggregation::bucket_selector("the_sum", Script::source("params.the_sum > 1000").lang("painless")),
+            Aggregation::bucket_selector(
+                "the_sum",
+                Script::source("params.the_sum > 1000").lang("painless"),
+            ),
             json!({
                 "bucket_selector": {
                     "buckets_path": "the_sum",
@@ -132,9 +139,12 @@ mod tests {
         );
 
         assert_serialize_aggregation(
-            Aggregation::bucket_selector("the_sum", Script::source("params.the_sum > 1000").lang("painless"))
-                .gap_policy(GapPolicy::Skip)
-                .format("###.00"),
+            Aggregation::bucket_selector(
+                "the_sum",
+                Script::source("params.the_sum > 1000").lang("painless"),
+            )
+            .gap_policy(GapPolicy::Skip)
+            .format("###.00"),
             json!({
                 "bucket_selector": {
                     "buckets_path": "the_sum",
@@ -149,7 +159,10 @@ mod tests {
         );
 
         assert_serialize_aggregation(
-            Aggregation::bucket_selector(vec![("sum_value", "the_sum")], Script::source("params.sum_value > 1000").lang("painless")),
+            Aggregation::bucket_selector(
+                vec![("sum_value", "the_sum")],
+                Script::source("params.sum_value > 1000").lang("painless"),
+            ),
             json!({
                 "bucket_selector": {
                     "buckets_path": {

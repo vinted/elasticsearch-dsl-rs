@@ -1,6 +1,6 @@
 use crate::search::*;
 use crate::util::*;
-use serde::{Serialize, Serializer };
+use serde::{Serialize, Serializer};
 use serde_json::Value;
 
 /// A multi-bucket aggregation that creates composite buckets from different sources.
@@ -125,8 +125,14 @@ impl Serialize for CompositeSource {
             CompositeSource::Histogram { name, histogram } => {
                 let _ = map.insert(name.clone(), serde_json::json!({ "histogram": histogram }));
             }
-            CompositeSource::DateHistogram { name, date_histogram } => {
-                let _ = map.insert(name.clone(), serde_json::json!({ "date_histogram": date_histogram }));
+            CompositeSource::DateHistogram {
+                name,
+                date_histogram,
+            } => {
+                let _ = map.insert(
+                    name.clone(),
+                    serde_json::json!({ "date_histogram": date_histogram }),
+                );
             }
         }
         map.serialize(serializer)

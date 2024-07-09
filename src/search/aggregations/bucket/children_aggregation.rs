@@ -53,10 +53,7 @@ mod tests {
         );
 
         assert_serialize_aggregation(
-            Aggregation::children("answer").aggregate(
-                "avg_score",
-                Aggregation::avg("score"),
-            ),
+            Aggregation::children("answer").aggregate("avg_score", Aggregation::avg("score")),
             json!({
                 "children": {
                     "type": "answer"

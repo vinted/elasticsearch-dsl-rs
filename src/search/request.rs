@@ -212,8 +212,7 @@ impl Search {
     }
 
     /// If true, calculate and return document scores, even if the scores are not used for sorting.
-    pub fn track_scores(mut self, enabled: bool) -> Self
-    {
+    pub fn track_scores(mut self, enabled: bool) -> Self {
         self.track_scores = Some(enabled);
         self
     }

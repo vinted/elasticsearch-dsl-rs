@@ -48,10 +48,8 @@ mod tests {
         );
 
         assert_serialize_aggregation(
-            Aggregation::nested("nested_path").aggregate(
-                "sub_agg",
-                Aggregation::terms("test_field"),
-            ),
+            Aggregation::nested("nested_path")
+                .aggregate("sub_agg", Aggregation::terms("test_field")),
             json!({
                 "nested": {
                     "path": "nested_path"
