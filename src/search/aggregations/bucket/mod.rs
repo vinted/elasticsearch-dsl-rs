@@ -22,11 +22,13 @@
 mod date_histogram_aggregation;
 mod diversified_sampler_aggregation;
 mod filter_aggregation;
+mod geotile_grid_aggregation;
 mod sampler_aggregation;
 mod terms_aggregation;
 
 pub use self::date_histogram_aggregation::*;
 pub use self::diversified_sampler_aggregation::*;
 pub use self::filter_aggregation::*;
+pub use self::geotile_grid_aggregation::*;
 pub use self::sampler_aggregation::*;
 pub use self::terms_aggregation::*;
