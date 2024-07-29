@@ -71,6 +71,7 @@ aggregation!(
     DiversifiedSampler(DiversifiedSamplerAggregation),
     Boxplot(BoxplotAggregation),
     DateHistogram(DateHistogramAggregation),
+    GeotileGrid(GeotileGridAggregation),
 );
 
 /// Type alias for a collection of aggregations
