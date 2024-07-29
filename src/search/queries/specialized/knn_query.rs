@@ -9,8 +9,8 @@ use serde::Serialize;
 /// search request. _knn_ query is reserved for expert cases, where there is a need to combine this query with other queries.
 ///
 /// > `knn` query doesn’t have a separate `k` parameter. `k` is defined by `size` parameter of a search request
-/// similar to other queries. `knn` query collects `num_candidates` results from each shard, then merges them to get
-/// the top `size` results.
+/// > similar to other queries. `knn` query collects `num_candidates` results from each shard, then merges them to get
+/// > the top `size` results.
 ///
 /// To create a knn query:
 /// ```
@@ -85,7 +85,7 @@ impl Query {
     ///
     /// - `field` - The name of the vector field to search against. Must be a dense_vector field with indexing enabled.
     /// - `query_vector` - Query vector. Must have the same number of dimensions as the vector field you are searching
-    /// against.
+    ///   against.
     pub fn knn<T>(field: T, query_vector: Vec<f32>) -> KnnQuery
     where
         T: ToString,

@@ -98,18 +98,18 @@ pub enum ScriptLang {
     /// Painless provides numerous capabilities that center around the following core principles:
     ///
     /// - **Safety**: Ensuring the security of your cluster is of utmost importance. To that end, Painless
-    /// uses a fine-grained allowlist with a granularity down to the members of a class. Anything
-    /// that is not part of the allowlist results in a compilation error. See the [Painless API
-    /// Reference](https://www.elastic.co/guide/en/elasticsearch/painless/7.15/painless-api-reference.html)
-    /// for a complete list of available classes, methods, and fields per script context.
+    ///   uses a fine-grained allowlist with a granularity down to the members of a class. Anything
+    ///   that is not part of the allowlist results in a compilation error. See the [Painless API
+    ///   Reference](https://www.elastic.co/guide/en/elasticsearch/painless/7.15/painless-api-reference.html)
+    ///   for a complete list of available classes, methods, and fields per script context.
     ///
     /// - **Performance**: Painless compiles directly into JVM bytecode to take advantage of all possible
-    /// optimizations that the JVM provides. Also, Painless typically avoids features that require
-    /// additional slower checks at runtime.
+    ///   optimizations that the JVM provides. Also, Painless typically avoids features that require
+    ///   additional slower checks at runtime.
     ///
     /// - **Simplicity**: Painless implements a syntax with a natural familiarity to anyone with some
-    /// basic coding experience. Painless uses a subset of Java syntax with some additional
-    /// improvements to enhance readability and remove boilerplate.
+    ///   basic coding experience. Painless uses a subset of Java syntax with some additional
+    ///   improvements to enhance readability and remove boilerplate.
     ///
     /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting-painless.html>
     Painless,

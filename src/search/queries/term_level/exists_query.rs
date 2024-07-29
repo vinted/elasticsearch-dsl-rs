@@ -34,8 +34,8 @@ impl Query {
     /// Creates an instance of [`ExistsQuery`]
     ///
     /// - `field` - Name of the field you wish to search.
-    /// While a field is deemed non-existent if the JSON value is `null` or `[]`,
-    /// these values will indicate the field does exist:
+    ///   While a field is deemed non-existent if the JSON value is `null` or `[]`,
+    ///   these values will indicate the field does exist:
     ///   - Empty strings, such as `""` or `"-"`
     ///   - Arrays containing `null` and another value, such as `[null, "foo"]`
     ///   - A custom [`null-value`](https://www.elastic.co/guide/en/elasticsearch/reference/current/null-value.html), defined in field mapping

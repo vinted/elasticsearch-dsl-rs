@@ -71,6 +71,7 @@ aggregation!(
     DiversifiedSampler(DiversifiedSamplerAggregation),
     Boxplot(BoxplotAggregation),
     DateHistogram(DateHistogramAggregation),
+    GeotileGrid(GeotileGridAggregation),
     BucketSelector(BucketSelectorAggregation),
     Children(ChildrenAggregation),
     Composite(CompositeAggregation),
