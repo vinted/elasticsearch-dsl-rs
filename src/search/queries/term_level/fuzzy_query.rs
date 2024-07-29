@@ -12,7 +12,7 @@ use serde::Serialize;
 /// - Removing a character (**b**lack → lack)
 /// - Inserting a character (sic → sic**k**)
 /// - Transposing two adjacent characters (**ac**t → **ca**t)
-/// To find similar terms, the fuzzy query creates a set of all possible variations, or expansions, of the search term within a specified edit distance. The query then returns exact matches for each expansion.
+///   To find similar terms, the fuzzy query creates a set of all possible variations, or expansions, of the search term within a specified edit distance. The query then returns exact matches for each expansion.
 ///
 /// To create a fuzzy query with numeric values:
 /// ```

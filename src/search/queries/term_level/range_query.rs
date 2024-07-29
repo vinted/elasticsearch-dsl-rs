@@ -120,8 +120,8 @@ impl RangeQuery {
     /// [`format`](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-date-format.html).
     ///
     /// >If a format or date value is incomplete, the range query replaces
-    /// any missing components with default values. See
-    /// [Missing date components](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html#missing-date-components).
+    /// > any missing components with default values. See
+    /// > [Missing date components](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html#missing-date-components).
     pub fn format<T>(mut self, format: T) -> Self
     where
         T: ToString,

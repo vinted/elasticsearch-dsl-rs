@@ -50,7 +50,7 @@ impl Query {
     ///
     /// - `field` - Field you wish to search.
     /// - `value` - TermsSet you wish to find in the provided field.
-    /// To return a document, the terms_set must exactly match the field value, including whitespace and capitalization.
+    ///   To return a document, the terms_set must exactly match the field value, including whitespace and capitalization.
     pub fn terms_set<S, T, U>(field: S, terms: T, minimum_should_match: U) -> TermsSetQuery
     where
         S: ToString,

@@ -10,8 +10,8 @@ pub enum UnifiedBoundaryScanner {
     ///
     /// > **Warning**<br/>
     /// > The `sentence` scanner splits sentences bigger than `fragment_size` at the first word
-    /// boundary next to `fragment_size`. You can set `fragment_size` to 0 to never split any
-    /// sentence.
+    /// > boundary next to `fragment_size`. You can set `fragment_size` to 0 to never split any
+    /// > sentence.
     Sentence(Option<String>),
 
     /// Break highlighted fragments at the next word boundary, as determined by Java’s

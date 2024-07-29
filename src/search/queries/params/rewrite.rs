@@ -3,7 +3,7 @@ use serde::ser::{Serialize, Serializer};
 /// Method used to rewrite the query.
 ///
 /// > **This parameter is for expert users only. Changing the value of this
-/// parameter can impact search performance and relevance.**
+/// > parameter can impact search performance and relevance.**
 ///
 /// The `rewrite` parameter determines:
 /// - How Lucene calculates the relevance scores for each matching document
