@@ -41,13 +41,13 @@ impl Query {
     ///
     /// - `field` - Field you wish to search.
     /// - `query` - Text, number, boolean value or date you wish to find in the provided
-    /// `<field>`.<br/>
-    /// The `match_phrase` query
-    /// [analyzes](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
-    /// any provided text before performing a search. This means the
-    /// `match_phrase` query can search
-    /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
-    /// fields for analyzed tokens rather than an exact term.
+    ///   `<field>`.<br/>
+    ///   The `match_phrase` query
+    ///   [analyzes](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
+    ///   any provided text before performing a search. This means the
+    ///   `match_phrase` query can search
+    ///   [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
+    ///   fields for analyzed tokens rather than an exact term.
     pub fn match_phrase<T, U>(field: T, query: U) -> MatchPhraseQuery
     where
         T: ToString,

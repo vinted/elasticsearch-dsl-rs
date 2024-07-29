@@ -123,14 +123,14 @@ impl DateHistogramAggregation {
     /// Order field allows changing this behavior.
     ///
     /// > Sorting by ascending `_count` or by sub aggregation is discouraged as it increases the
-    /// [error](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html#search-aggregations-bucket-terms-aggregation-approximate-counts)
-    /// on document counts. It is fine when a single shard is queried, or when the field that is
-    /// being aggregated was used as a routing key at index time: in these cases results will be
-    /// accurate since shards have disjoint values. However otherwise, errors are unbounded.
-    /// One particular case that could still be useful is sorting by
-    /// [min](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html) or
-    /// [max](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html)
-    /// aggregation: counts will not be accurate but at least the top buckets will be correctly picked.
+    /// > [error](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-terms-aggregation.html#search-aggregations-bucket-terms-aggregation-approximate-counts)
+    /// > on document counts. It is fine when a single shard is queried, or when the field that is
+    /// > being aggregated was used as a routing key at index time: in these cases results will be
+    /// > accurate since shards have disjoint values. However otherwise, errors are unbounded.
+    /// > One particular case that could still be useful is sorting by
+    /// > [min](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-min-aggregation.html) or
+    /// > [max](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-max-aggregation.html)
+    /// > aggregation: counts will not be accurate but at least the top buckets will be correctly picked.
     pub fn order<T>(mut self, order: T) -> Self
     where
         T: Into<TermsOrderCollection>,

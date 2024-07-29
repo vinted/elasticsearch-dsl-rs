@@ -46,7 +46,7 @@ impl Query {
     ///
     /// - `type` - Name of the child relationship mapped for the join field.
     /// - `query` - Query you wish to run on child documents of the `type` field. If a child
-    /// document matches the search, the query returns the parent document.
+    ///   document matches the search, the query returns the parent document.
     pub fn has_child<T, U>(r#type: T, query: U) -> HasChildQuery
     where
         T: ToString,

@@ -66,7 +66,7 @@ impl Knn {
     ///
     /// - `field` - The name of the vector field to search against. Must be a dense_vector field with indexing enabled.
     /// - `query_vector` - Query vector. Must have the same number of dimensions as the vector field you are searching
-    /// against.
+    ///   against.
     pub fn query_vector<T>(field: T, query_vector: Vec<f32>) -> Self
     where
         T: ToString,
@@ -174,8 +174,8 @@ impl From<TextEmbedding> for QueryVectorBuilder {
 impl TextEmbedding {
     /// Creates an instance of [`TextEmbedding`]
     /// - `model_id` - The ID of the text embedding model to use to generate the dense vectors from the query string.
-    /// Use the same model that generated the embeddings from the input text in the index you search against. You can
-    /// use the value of the deployment_id instead in the model_id argument.
+    ///   Use the same model that generated the embeddings from the input text in the index you search against. You can
+    ///   use the value of the deployment_id instead in the model_id argument.
     /// - `model_text` - The query string from which the model generates the dense vector representation.
     pub fn new<T, U>(model_id: T, model_text: U) -> Self
     where

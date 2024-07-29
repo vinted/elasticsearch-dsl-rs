@@ -39,7 +39,7 @@ impl Query {
     ///
     /// - `query` - Query used to return documents
     /// - `script` - Script used to compute the score of documents returned by
-    /// the `query`
+    ///   the `query`
     pub fn script_score<Q>(query: Q, script: Script) -> ScriptScoreQuery
     where
         Q: Into<Query>,

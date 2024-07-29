@@ -114,35 +114,35 @@ impl Query {
     ///
     /// - `field` - Name of the field used to calculate distances. This field must meet the following criteria:<br/>
     ///   - Be a [`date`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html),
-    /// [`date_nanos`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date_nanos.html) or
-    /// [`geo_point`](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html) field
+    ///     [`date_nanos`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date_nanos.html) or
+    ///     [`geo_point`](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html) field
     ///   - Have an [index](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-index.html)
-    /// mapping parameter value of `true`, which is the default
+    ///     mapping parameter value of `true`, which is the default
     ///   - Have an [`doc_values`](https://www.elastic.co/guide/en/elasticsearch/reference/current/doc-values.html)
-    /// mapping parameter value of `true`, which is the default
+    ///     mapping parameter value of `true`, which is the default
     /// - `origin` - Date or point of origin used to calculate distances.<br/>
-    /// If the `field` value is a
-    /// [`date`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html) or
-    /// [`date_nanos`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date_nanos.html)
-    /// field, the `origin` value must be a
-    /// [date](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-daterange-aggregation.html#date-format-pattern).
-    /// [Date Math](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#date-math),
-    /// such as `now-1h`, is supported.<br/>
-    /// If the `field` value is a
-    /// [`geo_point`](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html)
-    /// field, the `origin` value must be a geopoint.
+    ///   If the `field` value is a
+    ///   [`date`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html) or
+    ///   [`date_nanos`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date_nanos.html)
+    ///   field, the `origin` value must be a
+    ///   [date](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-daterange-aggregation.html#date-format-pattern).
+    ///   [Date Math](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#date-math),
+    ///   such as `now-1h`, is supported.<br/>
+    ///   If the `field` value is a
+    ///   [`geo_point`](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html)
+    ///   field, the `origin` value must be a geopoint.
     /// - `pivot` - Distance from the `origin` at which relevance scores receive half of the boost value.<br/>
-    /// If the field value is a
-    /// [`date`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html) or
-    /// [`date_nanos`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date_nanos.html)
-    /// field, the `pivot` value must be a
-    /// [`time unit`](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#time-units)
-    /// , such as `1h` or `10d`.<br/>
-    /// If the `field` value is a
-    /// [`geo_point`](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html)
-    /// field, the `pivot` value must be a
-    /// [distance unit](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#distance-units)
-    /// , such as `1km` or `12m`.
+    ///   If the field value is a
+    ///   [`date`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date.html) or
+    ///   [`date_nanos`](https://www.elastic.co/guide/en/elasticsearch/reference/current/date_nanos.html)
+    ///   field, the `pivot` value must be a
+    ///   [`time unit`](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#time-units)
+    ///   , such as `1h` or `10d`.<br/>
+    ///   If the `field` value is a
+    ///   [`geo_point`](https://www.elastic.co/guide/en/elasticsearch/reference/current/geo-point.html)
+    ///   field, the `pivot` value must be a
+    ///   [distance unit](https://www.elastic.co/guide/en/elasticsearch/reference/current/common-options.html#distance-units)
+    ///   , such as `1km` or `12m`.
     pub fn distance_feature<T, O>(
         field: T,
         origin: O,

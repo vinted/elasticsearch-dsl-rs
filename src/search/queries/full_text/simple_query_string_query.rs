@@ -73,7 +73,7 @@ impl Query {
     /// Creates an instance of [`SimpleQueryStringQuery`]
     ///
     /// - `query` - Query string you wish to parse and use for search. See
-    /// [Simple query string syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#simple-query-string-syntax).
+    ///   [Simple query string syntax](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-simple-query-string-query.html#simple-query-string-syntax).
     pub fn simple_query_string<S>(query: S) -> SimpleQueryStringQuery
     where
         S: Into<Text>,

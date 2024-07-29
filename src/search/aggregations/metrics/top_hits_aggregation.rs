@@ -6,9 +6,9 @@ use crate::util::*;
 /// so that the top matching documents can be aggregated per bucket.
 ///
 /// > We do not recommend using `top_hits` as a top-level aggregation.
-/// If you want to group search hits, use the
-/// [`collapse`](https://www.elastic.co/guide/en/elasticsearch/reference/current/collapse-search-results.html)
-/// parameter instead.
+/// > If you want to group search hits, use the
+/// > [`collapse`](https://www.elastic.co/guide/en/elasticsearch/reference/current/collapse-search-results.html)
+/// > parameter instead.
 ///
 /// The `top_hits` aggregation can effectively be used to group result sets
 /// by certain fields via a bucket aggregation. One or more bucket aggregations

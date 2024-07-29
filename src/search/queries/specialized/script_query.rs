@@ -30,7 +30,7 @@ impl Query {
     /// Creates an instance of [`ScriptQuery`]
     ///
     /// - `script` - Contains a script to run as a query. This script must
-    /// return a boolean value, `true` or `false`
+    ///   return a boolean value, `true` or `false`
     pub fn script(script: Script) -> ScriptQuery {
         ScriptQuery {
             script,

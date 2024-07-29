@@ -49,10 +49,10 @@ impl Query {
     /// Creates an instance of [`CombinedFieldsQuery`]
     ///
     /// - `fields` - List of fields to search. Field wildcard patterns are
-    /// allowed. Only text fields are supported, and they must all have the
-    /// same search analyzer.
+    ///   allowed. Only text fields are supported, and they must all have the
+    ///   same search analyzer.
     /// - `query` - Text to search for in the provided `<fields>`.
-    /// The combined_fields query analyzes the provided text before performing a search.
+    ///   The combined_fields query analyzes the provided text before performing a search.
     pub fn combined_fields<F, S>(fields: F, query: S) -> CombinedFieldsQuery
     where
         F: IntoIterator,
