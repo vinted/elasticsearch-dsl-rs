@@ -56,14 +56,14 @@ impl Query {
     ///
     /// - `path` - Path to the nested object you wish to search.
     /// - `query` - Query you wish to run on nested objects in the `path`. If an object
-    /// matches the search, the `nested` query returns the root parent document.<br/>
-    /// You can search nested fields using dot notation that includes the
-    /// complete path, such as `obj1.name`.<br/>
-    /// Multi-level nesting is automatically supported, and detected,
-    /// resulting in an inner nested query to automatically match the relevant
-    /// nesting level, rather than root, if it exists within another nested
-    /// query.<br/>
-    /// Multi-level nested queries are also supported.
+    ///   matches the search, the `nested` query returns the root parent document.<br/>
+    ///   You can search nested fields using dot notation that includes the
+    ///   complete path, such as `obj1.name`.<br/>
+    ///   Multi-level nesting is automatically supported, and detected,
+    ///   resulting in an inner nested query to automatically match the relevant
+    ///   nesting level, rather than root, if it exists within another nested
+    ///   query.<br/>
+    ///   Multi-level nested queries are also supported.
     pub fn nested<T, U>(path: T, query: U) -> NestedQuery
     where
         T: ToString,

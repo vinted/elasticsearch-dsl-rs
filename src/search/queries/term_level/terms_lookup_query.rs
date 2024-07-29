@@ -11,9 +11,9 @@ use crate::util::*;
 /// field is enabled by default.
 ///
 /// > By default, Elasticsearch limits the `terms` query to a maximum of
-/// 65,536 terms. This includes terms fetched using terms lookup. You can
-/// change this limit using the
-/// [`index.max_terms_count setting`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-terms-count).
+/// > 65,536 terms. This includes terms fetched using terms lookup. You can
+/// > change this limit using the
+/// > [`index.max_terms_count setting`](https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules.html#index-max-terms-count).
 ///
 /// To create a terms lookup query:
 /// ```
@@ -57,11 +57,11 @@ impl Query {
     /// - `field` - Field you wish to search.
     /// - `index` - Name of the index from which to fetch field values.
     /// - `id` - [ID](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-id-field.html)
-    /// of the document from which to fetch field values.
+    ///   of the document from which to fetch field values.
     /// - `path` - Name of the field from which to fetch field values. Elasticsearch uses
-    /// these values as search terms for the query. If the field values
-    /// include an array of nested inner objects, you can access those objects
-    /// using dot notation syntax.
+    ///   these values as search terms for the query. If the field values
+    ///   include an array of nested inner objects, you can access those objects
+    ///   using dot notation syntax.
     pub fn terms_lookup<S, T, U, V>(field: S, index: T, id: U, path: V) -> TermsLookupQuery
     where
         S: ToString,

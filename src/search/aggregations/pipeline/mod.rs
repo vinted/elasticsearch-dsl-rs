@@ -4,11 +4,11 @@
 //!
 //! **Parent**
 //! > A family of pipeline aggregations that is provided with the output of its parent aggregation and is able
-//! to compute new buckets or new aggregations to add to existing buckets.
+//! > to compute new buckets or new aggregations to add to existing buckets.
 //!
 //! **Sibling**
 //! > Pipeline aggregations that are provided with the output of a sibling aggregation and are able to compute a
-//! new aggregation which will be at the same level as the sibling aggregation.
+//! > new aggregation which will be at the same level as the sibling aggregation.
 //!
 //! Pipeline aggregations can reference the aggregations they need to perform their computation by using the `buckets_path`
 //! parameter to indicate the paths to the required metrics. The syntax for defining these paths can be found in the
@@ -19,7 +19,7 @@
 //! (i.e. a derivative of a derivative).
 //!
 //! > **NOTE**: Because pipeline aggregations only add to the output, when chaining pipeline aggregations the output of each pipeline aggregation
-//! will be included in the final output.
+//! > will be included in the final output.
 //!
 //! <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-pipeline.html>
 

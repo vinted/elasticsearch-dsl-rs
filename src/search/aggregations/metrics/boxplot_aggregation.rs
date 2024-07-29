@@ -12,7 +12,7 @@ use crate::{Aggregation, Number};
 /// [Computing Accurate Quantiles using T-Digests](https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf)).
 ///
 /// > Boxplot as other percentile aggregations are also [non-deterministic](https://en.wikipedia.org/wiki/Nondeterministic_algorithm).
-/// This means you can get slightly different results using the same data.
+/// > This means you can get slightly different results using the same data.
 ///
 /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-metrics-boxplot-aggregation.html>
 #[derive(Debug, Clone, Serialize, PartialEq)]

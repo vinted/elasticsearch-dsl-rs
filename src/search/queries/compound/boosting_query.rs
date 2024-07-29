@@ -38,17 +38,17 @@ impl Query {
     ///
     /// - `positive` - Query you wish to run. Any returned documents must match this query.
     /// - `negative` - Query used to decrease the
-    /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
-    /// of matching documents.<br/>
-    /// If a returned document matches the `positive` query and this query, the `boosting` query
-    /// calculates the final
-    /// [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
-    /// for the document as follows:
+    ///   [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
+    ///   of matching documents.<br/>
+    ///   If a returned document matches the `positive` query and this query, the `boosting` query
+    ///   calculates the final
+    ///   [relevance score](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
+    ///   for the document as follows:
     ///     1. Take the original relevance score from the `positive` query.
     ///     2. Multiply the score by the `negative_boost` value.
     /// - `negative_boost` - Floating point number between `0` and `1.0` used to decrease the
-    /// [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
-    /// of documents matching the `negative` query.
+    ///   [relevance scores](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-filter-context.html#relevance-scores)
+    ///   of documents matching the `negative` query.
     pub fn boosting<Q, B>(positive: Q, negative: Q, negative_boost: B) -> BoostingQuery
     where
         Q: Into<Query>,

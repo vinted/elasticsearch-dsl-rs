@@ -77,12 +77,12 @@ impl Query {
     ///
     /// - `fields` - Fields you wish to search.
     /// - `query` - Text, number, boolean value or date you wish to find in the provided
-    /// `<field>`. The `match` query
-    /// [analyzes](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
-    /// any provided text before performing a search. This means the `match`
-    /// query can search
-    /// [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
-    /// fields for analyzed tokens rather than an exact term.
+    ///   `<field>`. The `match` query
+    ///   [analyzes](https://www.elastic.co/guide/en/elasticsearch/reference/current/analysis.html)
+    ///   any provided text before performing a search. This means the `match`
+    ///   query can search
+    ///   [`text`](https://www.elastic.co/guide/en/elasticsearch/reference/current/text.html)
+    ///   fields for analyzed tokens rather than an exact term.
     pub fn multi_match<F, S>(fields: F, query: S) -> MultiMatchQuery
     where
         F: IntoIterator,
