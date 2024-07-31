@@ -72,6 +72,10 @@ aggregation!(
     Boxplot(BoxplotAggregation),
     DateHistogram(DateHistogramAggregation),
     GeotileGrid(GeotileGridAggregation),
+    BucketSelector(BucketSelectorAggregation),
+    Children(ChildrenAggregation),
+    Composite(CompositeAggregation),
+    Nested(NestedAggregation),
 );
 
 /// Type alias for a collection of aggregations
