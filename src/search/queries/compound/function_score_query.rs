@@ -104,7 +104,6 @@ impl FunctionScoreQuery {
     }
 
     /// By default, modifying the score does not change which documents match. To exclude documents
-
     /// that do not meet a certain score threshold the `min_score` parameter can be set to the
     /// desired score threshold.
     pub fn min_score<T>(mut self, min_score: T) -> Self
