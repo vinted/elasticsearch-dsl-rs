@@ -1,4 +1,4 @@
-use super::{SortMode, SortOrder};
+use super::{NestedFieldSort, SortMode, SortOrder};
 use crate::util::ShouldSkip;
 use crate::Term;
 use serde::Serialize;
@@ -26,6 +26,9 @@ pub struct FieldSort {
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     missing: Option<Term>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    nested: Option<NestedFieldSort>,
 }
 
 impl FieldSort {
@@ -41,6 +44,7 @@ impl FieldSort {
             unmapped_type: None,
             format: None,
             missing: None,
+            nested: None,
         }
     }
 
@@ -108,6 +112,14 @@ impl FieldSort {
         self.missing = Term::new(missing);
         self
     }
+
+    /// Sorts search hits by fields that are inside one or more nested objects.
+    ///
+    /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/sort-search-results.html#nested-sorting>
+    pub fn nested(mut self, nested: NestedFieldSort) -> Self {
+        self.nested = Some(nested);
+        self
+    }
 }
 
 impl IntoIterator for FieldSort {
@@ -126,7 +138,7 @@ serialize_keyed!(FieldSort: field);
 mod tests {
     use super::*;
     use crate::util::assert_serialize;
-    use crate::SortSpecialField;
+    use crate::{Query, SortSpecialField};
 
     #[test]
     fn serialization() {
@@ -159,6 +171,29 @@ mod tests {
                     "mode": "max",
                     "unmapped_type": "long",
                     "missing": "miss",
+                }
+            }),
+        );
+
+        assert_serialize(
+            FieldSort::ascending("offer.price")
+                .order(SortOrder::Asc)
+                .mode(SortMode::Avg)
+                .nested(NestedFieldSort::path("offer").filter(Query::term("offer.color", "blue"))),
+            json!({
+                "offer.price": {
+                    "mode": "avg",
+                    "order": "asc",
+                    "nested": {
+                        "path": "offer",
+                        "filter": {
+                            "term": {
+                                "offer.color": {
+                                    "value": "blue"
+                                }
+                            }
+                        }
+                    }
                 }
             }),
         );

@@ -6,6 +6,7 @@
 
 mod field_sort;
 mod geo_distance_sort;
+mod nested_field_sort;
 mod script_sort;
 mod sort_;
 mod sort_collection;
@@ -16,6 +17,7 @@ mod sort_special_field;
 
 pub use self::field_sort::*;
 pub use self::geo_distance_sort::*;
+pub use self::nested_field_sort::*;
 pub use self::script_sort::*;
 pub use self::sort_::*;
 pub use self::sort_collection::*;
