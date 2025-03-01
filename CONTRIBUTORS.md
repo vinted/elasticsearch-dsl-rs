@@ -18,6 +18,7 @@ Shout out to our top contributors!
 - [mykolas-kairys](https://api.github.com/users/mykolas-kairys)
 - [oknozor](https://api.github.com/users/oknozor)
 - [fulmicoton](https://api.github.com/users/fulmicoton)
+- [willgardner9](https://api.github.com/users/willgardner9)
 - [ypenglyn](https://api.github.com/users/ypenglyn)
 - [alpoi-x](https://api.github.com/users/alpoi-x)
 - [yaymukund](https://api.github.com/users/yaymukund)
