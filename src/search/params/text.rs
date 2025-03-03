@@ -13,7 +13,7 @@ impl std::fmt::Debug for Text {
 
 impl ShouldSkip for Text {
     fn should_skip(&self) -> bool {
-        self.0.as_ref().map_or(true, ShouldSkip::should_skip)
+        self.0.as_ref().is_none_or(ShouldSkip::should_skip)
     }
 }
 
