@@ -107,7 +107,7 @@ impl ShouldSkip for Rescore {
         self.query
             .rescore_query
             .as_ref()
-            .map_or(true, ShouldSkip::should_skip)
+            .is_none_or(ShouldSkip::should_skip)
     }
 }
 
