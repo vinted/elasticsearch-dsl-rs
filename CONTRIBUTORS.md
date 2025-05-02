@@ -20,5 +20,5 @@ Shout out to our top contributors!
 - [fulmicoton](https://api.github.com/users/fulmicoton)
 - [willgardner9](https://api.github.com/users/willgardner9)
 - [ypenglyn](https://api.github.com/users/ypenglyn)
-- [alpoi-x](https://api.github.com/users/alpoi-x)
+- [alpoi](https://api.github.com/users/alpoi)
 - [yaymukund](https://api.github.com/users/yaymukund)
