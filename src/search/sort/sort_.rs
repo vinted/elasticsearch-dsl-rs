@@ -4,6 +4,7 @@ use std::borrow::Cow;
 /// Sorting criterion
 #[derive(Clone, PartialEq, Serialize)]
 #[serde(untagged)]
+#[allow(clippy::large_enum_variant)]
 pub enum Sort {
     /// Special sort field,
     SpecialField(SortSpecialField),
