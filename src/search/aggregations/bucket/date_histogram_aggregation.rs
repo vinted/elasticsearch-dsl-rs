@@ -37,6 +37,9 @@ struct DateHistogramAggregationInner {
     offset: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
+    format: Option<String>,
+
+    #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
     time_zone: Option<String>,
 
     #[serde(skip_serializing_if = "ShouldSkip::should_skip")]
@@ -59,6 +62,7 @@ impl Aggregation {
                 min_doc_count: None,
                 missing: None,
                 offset: None,
+                format: None,
                 time_zone: None,
                 order: Default::default(),
             },
@@ -105,6 +109,21 @@ impl DateHistogramAggregation {
         T: ToString,
     {
         self.date_histogram.offset = Some(offset.to_string());
+        self
+    }
+
+    /// Sets the format for the date keys returned in the aggregation response.
+    ///
+    /// The `key` for each bucket is returned as a millisecond-since-the-epoch string.
+    /// The `format` parameter can be used to convert this key into a formatted date string
+    /// using the same date format patterns as the `date` field mapping.
+    ///
+    /// <https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations-bucket-datehistogram-aggregation.html#datehistogram-aggregation-keys>
+    pub fn format<T>(mut self, format: T) -> Self
+    where
+        T: ToString,
+    {
+        self.date_histogram.format = Some(format.to_string());
         self
     }
 
@@ -166,6 +185,7 @@ mod tests {
                 )
                 .order(TermsOrder::new("test_order", SortOrder::Asc))
                 .offset("+6h")
+                .format("yyyy-MM-dd")
                 .time_zone("-01:00"),
             json!({
                 "date_histogram": {
@@ -178,6 +198,7 @@ mod tests {
                         { "test_order": "asc" }
                     ],
                     "offset": "+6h",
+                    "format": "yyyy-MM-dd",
                     "time_zone": "-01:00"
                 }
             }),
