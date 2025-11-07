@@ -6,10 +6,11 @@ use std::fmt::Debug;
 
 /// Each document is scored by the defined functions. The parameter `score_mode` specifies how
 /// the computed scores are combined
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum FunctionScoreMode {
     /// Scores are multiplied (default)
+    #[default]
     Multiply,
 
     /// Scores are summed
@@ -28,18 +29,13 @@ pub enum FunctionScoreMode {
     Min,
 }
 
-impl Default for FunctionScoreMode {
-    fn default() -> Self {
-        Self::Multiply
-    }
-}
-
 /// The newly computed score is combined with the score of the query. The parameter
 /// `boost_mode` defines how.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Default)]
 #[serde(rename_all = "snake_case")]
 pub enum FunctionBoostMode {
     /// Query score and function score is multiplied (default)
+    #[default]
     Multiply,
 
     /// Only function score is used, the query score is ignored
@@ -56,12 +52,6 @@ pub enum FunctionBoostMode {
 
     /// Min of query score and function score
     Min,
-}
-
-impl Default for FunctionBoostMode {
-    fn default() -> Self {
-        Self::Multiply
-    }
 }
 
 macro_rules! function {

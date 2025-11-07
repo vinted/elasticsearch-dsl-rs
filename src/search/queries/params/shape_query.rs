@@ -1,10 +1,11 @@
 use serde::Serialize;
 
 /// Relation between coordinates
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Serialize, Default)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum SpatialRelation {
     /// Return all documents whose `shape` field intersects the query geometry
+    #[default]
     Intersects,
 
     /// Return all documents whose `shape` field has nothing in common with the
@@ -16,12 +17,6 @@ pub enum SpatialRelation {
 
     /// Return all documents whose `shape` field contains the query geometry.
     Contains,
-}
-
-impl Default for SpatialRelation {
-    fn default() -> Self {
-        Self::Intersects
-    }
 }
 
 #[cfg(test)]
