@@ -21,4 +21,5 @@ Shout out to our top contributors!
 - [willgardner9](https://api.github.com/users/willgardner9)
 - [ypenglyn](https://api.github.com/users/ypenglyn)
 - [alpoi](https://api.github.com/users/alpoi)
+- [kobe5738](https://api.github.com/users/kobe5738)
 - [yaymukund](https://api.github.com/users/yaymukund)
