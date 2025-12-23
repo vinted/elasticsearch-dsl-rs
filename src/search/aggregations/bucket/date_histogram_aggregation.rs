@@ -194,9 +194,7 @@ mod tests {
                     "fixed_interval": "1h",
                     "min_doc_count": 2,
                     "missing": "2014-11-28T12:00:04Z",
-                    "order": [
-                        { "test_order": "asc" }
-                    ],
+                    "order": { "test_order": "asc" },
                     "offset": "+6h",
                     "format": "yyyy-MM-dd",
                     "time_zone": "-01:00"

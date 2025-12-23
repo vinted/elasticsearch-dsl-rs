@@ -199,7 +199,10 @@ mod tests {
                 .min_doc_count(2)
                 .show_term_doc_count_error(false)
                 .missing("N/A")
-                .order(TermsOrder::new("test_order", SortOrder::Asc)),
+                .order(vec![
+                    TermsOrder::new("test_order_1", SortOrder::Asc),
+                    TermsOrder::new("test_order_2", SortOrder::Desc),
+                ]),
             json!({
                 "terms": {
                     "field": "test_field",
@@ -208,7 +211,8 @@ mod tests {
                     "show_term_doc_count_error": false,
                     "missing": "N/A",
                     "order": [
-                        { "test_order": "asc" }
+                        { "test_order_1": "asc" },
+                        { "test_order_2": "desc" }
                     ]
                 }
             }),
@@ -235,9 +239,7 @@ mod tests {
                     "missing": 123,
                     "include": ["mazda", "honda"],
                     "exclude": "water_.*",
-                    "order": [
-                        { "test_order": "asc" }
-                    ]
+                    "order": { "test_order": "asc" }
                 },
                 "aggs": {
                     "test_sub_agg": {
