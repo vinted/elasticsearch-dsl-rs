@@ -76,6 +76,7 @@ aggregation!(
     Children(ChildrenAggregation),
     Composite(CompositeAggregation),
     Nested(NestedAggregation),
+    Range(RangeAggregation),
 );
 
 /// Type alias for a collection of aggregations
