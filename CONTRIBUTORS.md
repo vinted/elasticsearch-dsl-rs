@@ -15,6 +15,7 @@ Shout out to our top contributors!
 - [constlhq](https://api.github.com/users/constlhq)
 - [Jakimcikas](https://api.github.com/users/Jakimcikas)
 - [jbcrail](https://api.github.com/users/jbcrail)
+- [mdeltito](https://api.github.com/users/mdeltito)
 - [mykolas-kairys](https://api.github.com/users/mykolas-kairys)
 - [oknozor](https://api.github.com/users/oknozor)
 - [fulmicoton](https://api.github.com/users/fulmicoton)
