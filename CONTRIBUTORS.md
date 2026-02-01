@@ -8,6 +8,7 @@ Shout out to our top contributors!
 - [iamazy](https://api.github.com/users/iamazy)
 - [JonasBakys0](https://api.github.com/users/JonasBakys0)
 - [FrederickFrance](https://api.github.com/users/FrederickFrance)
+- [mdeltito](https://api.github.com/users/mdeltito)
 - [oleg-vinted](https://api.github.com/users/oleg-vinted)
 - [zcourts](https://api.github.com/users/zcourts)
 - [dainiusjocas](https://api.github.com/users/dainiusjocas)
