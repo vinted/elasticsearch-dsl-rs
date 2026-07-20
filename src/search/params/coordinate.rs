@@ -17,7 +17,7 @@ impl Coordinate {
 
 impl Display for Coordinate {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        format!("[{}, {}]", &self.x, &self.y).fmt(f)
+        format!("[{}, {}]", self.x, self.y).fmt(f)
     }
 }
 
