@@ -74,7 +74,6 @@
     missing_debug_implementations,
     missing_docs,
     non_shorthand_field_patterns,
-    no_mangle_generic_items,
     overflowing_literals,
     path_statements,
     patterns_in_fns_without_body,

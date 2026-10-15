@@ -116,6 +116,10 @@ fn main() {
 
 See [examples](examples) for more.
 
+## Development
+
+Use the latest stable Rust toolchain. CI treats compiler warnings as errors.
+
 #### License
 
 <sup>
